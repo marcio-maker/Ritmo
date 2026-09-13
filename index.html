@@ -8,505 +8,326 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Sala de Aula — Gestão de Pessoas | RH</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html { -webkit-text-size-adjust: 100%; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
 
-  :root {
-    --bg: #0a0e1a;
-    --bg-elev: #131a2b;
-    --surface: rgba(148, 163, 184, .05);
-    --surface-hover: rgba(148, 163, 184, .09);
-    --border: rgba(148, 163, 184, .12);
-    --border-strong: rgba(148, 163, 184, .22);
-    --text: #cbd5e1;
-    --text-dim: #94a3b8;
-    --text-faint: #64748b;
-    --accent: #8b5cf6;
-    --accent-strong: #7c3aed;
-    --accent-soft: rgba(139, 92, 246, .15);
-    --accent-glow: rgba(139, 92, 246, .35);
-    --page-bg: rgba(148, 163, 184, .04);
-    --page-border: rgba(148, 163, 184, .14);
-    --page-text: #cbd5e1;
-    --page-text-strong: #e2e8f0;
-    --enfase: #fbbf24;
-    --shadow-lg: 0 12px 32px rgba(0,0,0,.35);
-    --shadow-xl: 0 24px 64px rgba(0,0,0,.5);
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 18px;
-    --radius-xl: 24px;
-    --font-tamanho: 1.02rem;
-    --transition: cubic-bezier(.2, .8, .3, 1);
+  :root{
+    --bg:#0a0e1a;--bg-elev:#131a2b;--surface:rgba(148,163,184,.05);--surface-hover:rgba(148,163,184,.09);
+    --border:rgba(148,163,184,.12);--border-strong:rgba(148,163,184,.22);
+    --text:#cbd5e1;--text-dim:#94a3b8;--text-faint:#64748b;
+    --accent:#8b5cf6;--accent-soft:rgba(139,92,246,.15);--accent-glow:rgba(139,92,246,.35);
+    --page-bg:rgba(148,163,184,.04);--page-border:rgba(148,163,184,.14);
+    --page-text:#cbd5e1;--page-text-strong:#e2e8f0;--enfase:#fbbf24;
+    --shadow-lg:0 12px 32px rgba(0,0,0,.35);--shadow-xl:0 24px 64px rgba(0,0,0,.5);
+    --r-sm:8px;--r-md:12px;--r-lg:18px;--r-xl:24px;
+    --font-tamanho:1.02rem;--transition:cubic-bezier(.2,.8,.3,1);
+  }
+  body[data-tema="claro"]{
+    --bg:#f1f5f9;--bg-elev:#fff;--surface:rgba(15,23,42,.03);--surface-hover:rgba(15,23,42,.06);
+    --border:rgba(15,23,42,.08);--border-strong:rgba(15,23,42,.15);
+    --text:#334155;--text-dim:#64748b;--text-faint:#94a3b8;
+    --accent:#7c3aed;--accent-soft:rgba(124,58,237,.12);
+    --page-bg:#fff;--page-border:rgba(15,23,42,.06);--page-text:#1e293b;--page-text-strong:#0f172a;
+    --enfase:#b45309;--shadow-lg:0 12px 32px rgba(15,23,42,.08);--shadow-xl:0 24px 64px rgba(15,23,42,.12);
+  }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Georgia,serif;
+    background:var(--bg);color:var(--text);min-height:100dvh;display:flex;flex-direction:column;
+    overflow-x:hidden;transition:background .4s var(--transition),color .4s var(--transition);
+    padding-bottom:calc(env(safe-area-inset-bottom) + 140px);-webkit-font-smoothing:antialiased;
   }
 
-  body[data-tema="claro"] {
-    --bg: #f1f5f9;
-    --bg-elev: #ffffff;
-    --surface: rgba(15, 23, 42, .03);
-    --surface-hover: rgba(15, 23, 42, .06);
-    --border: rgba(15, 23, 42, .08);
-    --border-strong: rgba(15, 23, 42, .15);
-    --text: #334155;
-    --text-dim: #64748b;
-    --text-faint: #94a3b8;
-    --accent: #7c3aed;
-    --accent-soft: rgba(124, 58, 237, .12);
-    --page-bg: #ffffff;
-    --page-border: rgba(15, 23, 42, .06);
-    --page-text: #1e293b;
-    --page-text-strong: #0f172a;
-    --enfase: #b45309;
-    --shadow-lg: 0 12px 32px rgba(15, 23, 42, .08);
-    --shadow-xl: 0 24px 64px rgba(15, 23, 42, .12);
+  /* ─── Tipografia comum (títulos pequenos) ─── */
+  .app-titulo,.folha-titulo,.drawer-titulo,.secao-titulo{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-weight:700;text-transform:uppercase;letter-spacing:.22em;
   }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Georgia, serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    transition: background .4s var(--transition), color .4s var(--transition);
-    padding-bottom: calc(env(safe-area-inset-bottom) + 140px);
-    -webkit-font-smoothing: antialiased;
+  /* ─── Header ─── */
+  .app-header{
+    position:sticky;top:0;z-index:100;
+    padding:calc(env(safe-area-inset-top) + 12px) 18px 12px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:linear-gradient(180deg,var(--bg) 0%,transparent 100%);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  }
+  .app-titulo{font-size:.68rem;color:var(--text-dim);opacity:.8}
+
+  /* ─── Botões de ícone (menu, fechar, ctrl) ─── */
+  .btn-icon{
+    width:42px;height:42px;border-radius:50%;
+    border:1px solid var(--border);background:var(--surface);color:var(--text);
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:transform .2s var(--transition),background .2s;
+    touch-action:manipulation;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  }
+  .btn-icon:hover{background:var(--surface-hover)}
+  .btn-icon:active{transform:scale(.92)}
+  .btn-icon.sm{width:36px;height:36px}
+
+  /* ─── Conteúdo / Folha ─── */
+  .conteudo{flex:1;padding:0 18px;display:flex;flex-direction:column;max-width:720px;margin:0 auto;width:100%}
+  .folha{
+    background:var(--page-bg);border:1px solid var(--page-border);border-radius:var(--r-lg);
+    padding:22px 22px 26px;position:relative;box-shadow:var(--shadow-lg);
+    transition:background .4s var(--transition),border-color .4s var(--transition),opacity .3s;
+    font-family:Georgia,"Times New Roman",serif;font-size:var(--font-tamanho);line-height:1.75;
+    color:var(--page-text);text-align:justify;hyphens:auto;-webkit-hyphens:auto;
+    animation:fadeInUp .5s var(--transition);
+  }
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .folha::before{
+    content:'';position:absolute;top:0;left:28px;right:28px;height:3px;
+    background:linear-gradient(90deg,var(--accent),#2563eb);border-radius:0 0 3px 3px;opacity:.9;
+  }
+  .folha-header{text-align:center;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--page-border)}
+  .folha-titulo{font-size:.62rem;letter-spacing:.24em;color:var(--text-dim);margin-bottom:10px}
+  .folha-bolinhas{display:flex;justify-content:center;gap:6px}
+  .bolinha{
+    width:6px;height:6px;border-radius:50%;background:var(--border-strong);
+    transition:background .3s var(--transition),transform .3s var(--transition);
+  }
+  .bolinha.ativa{background:var(--accent);transform:scale(1.5);box-shadow:0 0 8px var(--accent-glow)}
+
+  /* ─── Falas ─── */
+  .fala{
+    display:inline;margin:0;padding:0;transition:background .3s,color .3s;
+    cursor:pointer;border-radius:3px;
+  }
+  .fala::after{content:' '}
+  .simbolo{
+    font-weight:700;margin-right:3px;font-size:1em;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;opacity:.9;
+  }
+  .fala.professor .simbolo{color:#a78bfa;font-size:1.1em;letter-spacing:.04em}
+  .fala.aluno1 .simbolo{color:#60a5fa}
+  .fala.aluno2 .simbolo{color:#fbbf24}
+  .fala.aluno3 .simbolo{color:#34d399}
+  .fala.aluno4 .simbolo{color:#f472b6}
+  .fala.aluno5 .simbolo{color:#22d3ee}
+  .fala.aluno6 .simbolo{color:#fb923c}
+  .fala.aluno7 .simbolo{color:#c084fc}
+  .fala.falando{background:var(--accent-soft);padding:1px 4px;margin:0 -4px;color:var(--page-text-strong);font-weight:500}
+  .fala.falando .simbolo{opacity:1}
+  .fala.falada{opacity:.35}
+  .fala.futura{opacity:.92}
+  .fala:hover{background:var(--accent-soft)}
+  .enfase{color:var(--enfase);font-weight:700;font-style:italic;letter-spacing:.01em}
+  .quebra{display:block;height:14px}
+
+  /* ─── Overlay / Drawer ─── */
+  .overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.55);
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    opacity:0;pointer-events:none;transition:opacity .35s var(--transition);z-index:9998;
+  }
+  .overlay.ativo{opacity:1;pointer-events:auto}
+  .drawer{
+    position:fixed;top:0;right:0;bottom:0;width:min(340px,88vw);
+    background:var(--bg-elev);border-left:1px solid var(--border);box-shadow:var(--shadow-xl);
+    z-index:9999;transform:translateX(100%);transition:transform .4s var(--transition);
+    display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top) + 20px) 22px calc(env(safe-area-inset-bottom) + 24px);
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  .drawer.ativo{transform:translateX(0)}
+  .drawer-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+  .drawer-titulo{font-size:.72rem;color:var(--text-dim)}
+
+  .secao{margin-bottom:26px}
+  .secao-titulo{font-size:.58rem;letter-spacing:.2em;color:var(--text-faint);margin-bottom:12px;padding-left:2px}
+
+  /* ─── Toggle tema ─── */
+  .toggle-linha{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 14px;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--r-md);cursor:pointer;transition:background .2s,border-color .2s;
+    touch-action:manipulation;user-select:none;-webkit-user-select:none;
+  }
+  .toggle-linha:hover{background:var(--surface-hover)}
+  .toggle-label{
+    display:flex;align-items:center;gap:12px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:.86rem;font-weight:500;color:var(--text);
+  }
+  .toggle-label .emoji{font-size:1.1rem}
+  .switch{
+    position:relative;width:44px;height:26px;background:var(--border-strong);
+    border-radius:13px;transition:background .3s var(--transition);flex-shrink:0;
+  }
+  .switch::after{
+    content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;
+    background:#fff;border-radius:50%;transition:transform .3s var(--transition);
+    box-shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  .switch.ativo{background:var(--accent)}
+  .switch.ativo::after{transform:translateX(18px)}
+
+  /* ─── Fonte ─── */
+  .fonte-controle{
+    display:flex;align-items:center;gap:12px;padding:8px 14px;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);
+  }
+  .btn-fonte{
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--border);
+    background:var(--bg-elev);color:var(--text);cursor:pointer;
+    font-family:inherit;font-weight:700;font-size:.82rem;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .2s,transform .15s,border-color .2s;
+    touch-action:manipulation;flex-shrink:0;
+  }
+  .btn-fonte:hover{background:var(--surface-hover);border-color:var(--border-strong)}
+  .btn-fonte:active{transform:scale(.9)}
+  .btn-fonte:disabled{opacity:.3;cursor:not-allowed}
+  .fonte-barra{flex:1;height:4px;background:var(--border);border-radius:2px;position:relative;overflow:hidden}
+  .fonte-barra-fill{
+    position:absolute;top:0;left:0;bottom:0;
+    background:linear-gradient(90deg,var(--accent),#2563eb);
+    border-radius:2px;transition:width .3s var(--transition);
   }
 
-  .app-header {
-    position: sticky; top: 0; z-index: 100;
-    padding: calc(env(safe-area-inset-top) + 12px) 18px 12px;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    background: linear-gradient(180deg, var(--bg) 0%, transparent 100%);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  /* ─── Lista de blocos ─── */
+  .blocos-lista{display:flex;flex-direction:column;gap:6px}
+  .bloco-item{
+    display:flex;align-items:center;gap:12px;padding:14px 16px;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);
+    cursor:pointer;transition:background .2s,border-color .2s,transform .15s;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    text-align:left;color:var(--text);touch-action:manipulation;
+    user-select:none;-webkit-user-select:none;
+  }
+  .bloco-item:hover{background:var(--surface-hover)}
+  .bloco-item:active{transform:scale(.98)}
+  .bloco-item.ativo{background:var(--accent-soft);border-color:var(--accent)}
+  .bloco-num{
+    width:32px;height:32px;border-radius:50%;background:var(--border);color:var(--text-dim);
+    display:flex;align-items:center;justify-content:center;
+    font-size:.82rem;font-weight:700;flex-shrink:0;transition:background .2s,color .2s;
+  }
+  .bloco-item.ativo .bloco-num{background:var(--accent);color:#fff}
+  .bloco-info{flex:1;min-width:0}
+  .bloco-nome{font-size:.86rem;font-weight:600;color:var(--text);margin-bottom:2px}
+  .bloco-item.ativo .bloco-nome{color:var(--accent)}
+  .bloco-desc{font-size:.68rem;color:var(--text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bloco-check{color:var(--accent);font-size:1rem;flex-shrink:0;opacity:0;transition:opacity .2s}
+  .bloco-item.ativo .bloco-check{opacity:1}
+
+  /* ─── Player ─── */
+  #player{
+    position:fixed;bottom:calc(env(safe-area-inset-bottom) + 20px);left:50%;transform:translateX(-50%);
+    width:min(340px,calc(100vw - 32px));background:var(--bg-elev);
+    border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--shadow-xl);
+    padding:8px 8px 10px;z-index:500;user-select:none;-webkit-user-select:none;touch-action:none;
+    animation:fadeInUp .5s var(--transition);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  }
+  .player-handle{height:14px;display:flex;align-items:center;justify-content:center;cursor:grab;margin-bottom:2px}
+  .player-handle::before{content:'';width:32px;height:3px;background:var(--border-strong);border-radius:2px}
+  .player-controles{display:flex;align-items:center;justify-content:space-between;gap:4px;padding:0 4px}
+  .btn-ctrl{
+    border:none;background:transparent;color:var(--text);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;border-radius:12px;
+    transition:background .2s,transform .15s,color .2s;
+    touch-action:manipulation;font-family:inherit;
+  }
+  .btn-ctrl:hover:not(:disabled){background:var(--surface-hover)}
+  .btn-ctrl:active:not(:disabled){transform:scale(.9)}
+  .btn-ctrl:disabled{opacity:.25;cursor:not-allowed}
+  .btn-sec{width:40px;height:40px}
+  .btn-play{
+    width:56px;height:56px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),#6366f1);color:#fff;
+    box-shadow:0 6px 20px var(--accent-glow);
+    transition:transform .2s var(--transition),background .3s,box-shadow .3s;
+  }
+  .btn-play:hover{transform:scale(1.05)}
+  .btn-play:active{transform:scale(.95)}
+  .btn-play.tocando{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    box-shadow:0 6px 20px rgba(220,38,38,.4);
+  }
+  .player-rodape{display:flex;align-items:center;justify-content:space-between;padding:6px 12px 0;gap:8px}
+  .btn-vel{
+    padding:5px 10px;font-family:ui-monospace,"SF Mono",Menlo,monospace;
+    font-size:.7rem;font-weight:700;color:var(--text-dim);background:var(--surface);
+    border:1px solid var(--border);border-radius:8px;cursor:pointer;
+    transition:background .2s,color .2s,border-color .2s;
+    touch-action:manipulation;letter-spacing:.02em;
+  }
+  .btn-vel:hover{background:var(--surface-hover)}
+  .btn-vel.ativa{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+  .player-progresso{
+    font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.66rem;font-weight:600;
+    color:var(--text-faint);letter-spacing:.05em;
   }
 
-  .app-titulo {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: .68rem; font-weight: 700; letter-spacing: .22em;
-    text-transform: uppercase; color: var(--text-dim); opacity: .8;
+  /* ─── Toast ─── */
+  .toast{
+    position:fixed;bottom:calc(env(safe-area-inset-bottom) + 120px);left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--bg-elev);color:var(--text);border:1px solid var(--border);
+    padding:10px 18px;border-radius:99px;
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    font-size:.78rem;font-weight:600;box-shadow:var(--shadow-lg);
+    opacity:0;pointer-events:none;
+    transition:opacity .3s var(--transition),transform .3s var(--transition);
+    z-index:9997;white-space:nowrap;max-width:calc(100vw - 32px);
+    overflow:hidden;text-overflow:ellipsis;
+  }
+  .toast.ativo{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ─── Debug ─── */
+  #debugPanel{
+    position:fixed;top:12px;left:12px;right:12px;background:rgba(0,0,0,.95);
+    border:1px solid #334155;border-radius:12px;padding:14px;color:#cbd5e1;
+    font-family:ui-monospace,Menlo,monospace;font-size:.68rem;line-height:1.5;
+    z-index:10000;max-height:70vh;overflow-y:auto;display:none;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  }
+  #debugPanel.ativo{display:block}
+  #debugPanel h3{
+    font-size:.72rem;color:#fbbf24;margin-bottom:10px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  #debugPanel h3 button{
+    background:#7c3aed;color:#fff;border:none;border-radius:6px;
+    padding:4px 10px;font-size:.65rem;font-family:inherit;cursor:pointer;font-weight:700;
+  }
+  #debugPanel .linha{
+    display:flex;justify-content:space-between;padding:3px 0;
+    border-bottom:1px solid rgba(148,163,184,.1);
+  }
+  #debugPanel .linha.ativa{color:#fbbf24;font-weight:700}
+  #debugPanel .voz{color:#93c5fd}
+  #debugPanel .info{
+    margin-top:10px;padding-top:10px;
+    border-top:1px solid rgba(148,163,184,.15);
+    color:#94a3b8;font-size:.62rem;
+  }
+  #debugPanel .aviso{
+    margin-top:8px;padding:8px;background:rgba(220,38,38,.15);
+    border-radius:6px;color:#fca5a5;font-size:.65rem;
+  }
+  #debugPanel .sucesso{
+    margin-top:8px;padding:8px;background:rgba(34,197,94,.15);
+    border-radius:6px;color:#86efac;font-size:.65rem;
   }
 
-  .btn-menu {
-    width: 42px; height: 42px; border-radius: 50%;
-    border: 1px solid var(--border); background: var(--surface);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    color: var(--text); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform .2s var(--transition), background .2s;
-    touch-action: manipulation;
+  @media(max-width:380px){
+    .folha{padding:18px 16px 22px;font-size:.95rem}
+    .conteudo{padding:0 14px}
+    #player{width:calc(100vw - 24px)}
+    .btn-sec{width:36px;height:36px}
+    .btn-play{width:50px;height:50px}
   }
-  .btn-menu:hover { background: var(--surface-hover); }
-  .btn-menu:active { transform: scale(.92); }
-
-  .conteudo {
-    flex: 1; padding: 0 18px;
-    display: flex; flex-direction: column;
-    max-width: 720px; margin: 0 auto; width: 100%;
+  @media(min-width:600px){
+    .conteudo{padding:0 32px}
+    .folha{padding:28px 32px 32px}
+    #player{width:360px}
   }
-
-  .folha {
-    background: var(--page-bg);
-    border: 1px solid var(--page-border);
-    border-radius: var(--radius-lg);
-    padding: 22px 22px 26px;
-    position: relative;
-    box-shadow: var(--shadow-lg);
-    transition: background .4s var(--transition), border-color .4s var(--transition), opacity .3s;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: var(--font-tamanho);
-    line-height: 1.75;
-    color: var(--page-text);
-    text-align: justify;
-    hyphens: auto; -webkit-hyphens: auto;
-    animation: fadeInUp .5s var(--transition);
-  }
-
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .folha::before {
-    content: ''; position: absolute; top: 0; left: 28px; right: 28px; height: 3px;
-    background: linear-gradient(90deg, var(--accent), #2563eb);
-    border-radius: 0 0 3px 3px; opacity: .9;
-  }
-
-  .folha-header {
-    text-align: center; margin-bottom: 18px; padding-bottom: 14px;
-    border-bottom: 1px solid var(--page-border);
-  }
-
-  .folha-titulo {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: .62rem; letter-spacing: .24em; text-transform: uppercase;
-    color: var(--text-dim); font-weight: 700; margin-bottom: 10px;
-  }
-
-  .folha-bolinhas { display: flex; justify-content: center; gap: 6px; }
-  .bolinha {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--border-strong);
-    transition: background .3s var(--transition), transform .3s var(--transition);
-  }
-  .bolinha.ativa {
-    background: var(--accent); transform: scale(1.5);
-    box-shadow: 0 0 8px var(--accent-glow);
-  }
-
-  .fala {
-    display: inline; margin: 0; padding: 0;
-    transition: background .3s, color .3s; cursor: pointer; border-radius: 3px;
-  }
-  .fala::after { content: ' '; }
-
-  .simbolo {
-    font-weight: 700; margin-right: 3px; font-size: 1em;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    opacity: .9;
-  }
-  .fala.professor .simbolo { color: #a78bfa; font-size: 1.1em; letter-spacing: .04em; }
-  .fala.aluno1 .simbolo   { color: #60a5fa; }
-  .fala.aluno2 .simbolo   { color: #fbbf24; }
-  .fala.aluno3 .simbolo   { color: #34d399; }
-  .fala.aluno4 .simbolo   { color: #f472b6; }
-  .fala.aluno5 .simbolo   { color: #22d3ee; }
-  .fala.aluno6 .simbolo   { color: #fb923c; }
-  .fala.aluno7 .simbolo   { color: #c084fc; }
-
-  .fala.falando {
-    background: var(--accent-soft); padding: 1px 4px; margin: 0 -4px;
-    color: var(--page-text-strong); font-weight: 500;
-  }
-  .fala.falando .simbolo { opacity: 1; }
-  .fala.falada { opacity: .35; }
-  .fala.futura { opacity: .92; }
-  .fala:hover { background: var(--accent-soft); }
-
-  .enfase { color: var(--enfase); font-weight: 700; font-style: italic; letter-spacing: .01em; }
-  .quebra { display: block; height: 14px; }
-
-  .overlay {
-    position: fixed; inset: 0;
-    background: rgba(0, 0, 0, .55);
-    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-    opacity: 0; pointer-events: none;
-    transition: opacity .35s var(--transition);
-    z-index: 9998;
-  }
-  .overlay.ativo { opacity: 1; pointer-events: auto; }
-
-  .drawer {
-    position: fixed; top: 0; right: 0; bottom: 0;
-    width: min(340px, 88vw);
-    background: var(--bg-elev);
-    border-left: 1px solid var(--border);
-    box-shadow: var(--shadow-xl);
-    z-index: 9999; transform: translateX(100%);
-    transition: transform .4s var(--transition);
-    display: flex; flex-direction: column;
-    padding: calc(env(safe-area-inset-top) + 20px) 22px calc(env(safe-area-inset-bottom) + 24px);
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
-  }
-  .drawer.ativo { transform: translateX(0); }
-
-  .drawer-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 28px;
-  }
-
-  .drawer-titulo {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: .72rem; font-weight: 700; letter-spacing: .22em;
-    text-transform: uppercase; color: var(--text-dim);
-  }
-
-  .btn-fechar {
-    width: 36px; height: 36px; border-radius: 50%;
-    border: 1px solid var(--border); background: var(--surface);
-    color: var(--text); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform .2s, background .2s;
-    touch-action: manipulation;
-  }
-  .btn-fechar:hover { background: var(--surface-hover); }
-  .btn-fechar:active { transform: scale(.9); }
-
-  .secao { margin-bottom: 26px; }
-  .secao-titulo {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: .58rem; font-weight: 700; letter-spacing: .2em;
-    text-transform: uppercase; color: var(--text-faint);
-    margin-bottom: 12px; padding-left: 2px;
-  }
-
-  .toggle-linha {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 14px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: background .2s, border-color .2s;
-    touch-action: manipulation;
-    user-select: none; -webkit-user-select: none;
-  }
-  .toggle-linha:hover { background: var(--surface-hover); }
-
-  .toggle-label {
-    display: flex; align-items: center; gap: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: .86rem; font-weight: 500; color: var(--text);
-  }
-  .toggle-label .emoji { font-size: 1.1rem; }
-
-  .switch {
-    position: relative; width: 44px; height: 26px;
-    background: var(--border-strong); border-radius: 13px;
-    transition: background .3s var(--transition); flex-shrink: 0;
-  }
-  .switch::after {
-    content: ''; position: absolute; top: 3px; left: 3px;
-    width: 20px; height: 20px; background: #fff; border-radius: 50%;
-    transition: transform .3s var(--transition);
-    box-shadow: 0 1px 3px rgba(0,0,0,.3);
-  }
-  .switch.ativo { background: var(--accent); }
-  .switch.ativo::after { transform: translateX(18px); }
-
-  .fonte-controle {
-    display: flex; align-items: center; gap: 12px;
-    padding: 8px 14px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: var(--radius-md);
-  }
-
-  .btn-fonte {
-    width: 36px; height: 36px; border-radius: 50%;
-    border: 1px solid var(--border); background: var(--bg-elev);
-    color: var(--text); cursor: pointer;
-    font-family: inherit; font-weight: 700; font-size: .82rem;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .2s, transform .15s, border-color .2s;
-    touch-action: manipulation; flex-shrink: 0;
-  }
-  .btn-fonte:hover { background: var(--surface-hover); border-color: var(--border-strong); }
-  .btn-fonte:active { transform: scale(.9); }
-  .btn-fonte:disabled { opacity: .3; cursor: not-allowed; }
-
-  .fonte-barra {
-    flex: 1; height: 4px; background: var(--border);
-    border-radius: 2px; position: relative; overflow: hidden;
-  }
-  .fonte-barra-fill {
-    position: absolute; top: 0; left: 0; bottom: 0;
-    background: linear-gradient(90deg, var(--accent), #2563eb);
-    border-radius: 2px; transition: width .3s var(--transition);
-  }
-
-  .blocos-lista { display: flex; flex-direction: column; gap: 6px; }
-
-  .bloco-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 16px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: background .2s, border-color .2s, transform .15s;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    text-align: left; color: var(--text);
-    touch-action: manipulation;
-    user-select: none; -webkit-user-select: none;
-  }
-  .bloco-item:hover { background: var(--surface-hover); }
-  .bloco-item:active { transform: scale(.98); }
-  .bloco-item.ativo { background: var(--accent-soft); border-color: var(--accent); }
-
-  .bloco-num {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: var(--border); color: var(--text-dim);
-    display: flex; align-items: center; justify-content: center;
-    font-size: .82rem; font-weight: 700; flex-shrink: 0;
-    transition: background .2s, color .2s;
-  }
-  .bloco-item.ativo .bloco-num { background: var(--accent); color: #fff; }
-
-  .bloco-info { flex: 1; min-width: 0; }
-  .bloco-nome {
-    font-size: .86rem; font-weight: 600;
-    color: var(--text); margin-bottom: 2px;
-  }
-  .bloco-item.ativo .bloco-nome { color: var(--accent); }
-  .bloco-desc {
-    font-size: .68rem; color: var(--text-faint);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
-  .bloco-check {
-    color: var(--accent); font-size: 1rem; flex-shrink: 0;
-    opacity: 0; transition: opacity .2s;
-  }
-  .bloco-item.ativo .bloco-check { opacity: 1; }
-
-  #player {
-    position: fixed; bottom: calc(env(safe-area-inset-bottom) + 20px);
-    left: 50%; transform: translateX(-50%);
-    width: min(340px, calc(100vw - 32px));
-    background: var(--bg-elev);
-    border: 1px solid var(--border); border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
-    padding: 8px 8px 10px; z-index: 500;
-    user-select: none; -webkit-user-select: none;
-    touch-action: none;
-    animation: fadeInUp .5s var(--transition);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  }
-
-  .player-handle {
-    height: 14px; display: flex; align-items: center;
-    justify-content: center; cursor: grab; margin-bottom: 2px;
-  }
-  .player-handle::before {
-    content: ''; width: 32px; height: 3px;
-    background: var(--border-strong); border-radius: 2px;
-  }
-
-  .player-controles {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 4px; padding: 0 4px;
-  }
-
-  .btn-ctrl {
-    border: none; background: transparent; color: var(--text);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    border-radius: 12px;
-    transition: background .2s, transform .15s, color .2s;
-    touch-action: manipulation; font-family: inherit;
-  }
-  .btn-ctrl:hover:not(:disabled) { background: var(--surface-hover); }
-  .btn-ctrl:active:not(:disabled) { transform: scale(.9); }
-  .btn-ctrl:disabled { opacity: .25; cursor: not-allowed; }
-
-  .btn-sec { width: 40px; height: 40px; }
-
-  .btn-play {
-    width: 56px; height: 56px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), #6366f1);
-    color: #fff; box-shadow: 0 6px 20px var(--accent-glow);
-    transition: transform .2s var(--transition), background .3s, box-shadow .3s;
-  }
-  .btn-play:hover { transform: scale(1.05); }
-  .btn-play:active { transform: scale(.95); }
-  .btn-play.tocando {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    box-shadow: 0 6px 20px rgba(220, 38, 38, .4);
-  }
-
-  .player-rodape {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 6px 12px 0; gap: 8px;
-  }
-
-  .btn-vel {
-    padding: 5px 10px;
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: .7rem; font-weight: 700; color: var(--text-dim);
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; cursor: pointer;
-    transition: background .2s, color .2s, border-color .2s;
-    touch-action: manipulation; letter-spacing: .02em;
-  }
-  .btn-vel:hover { background: var(--surface-hover); }
-  .btn-vel.ativa { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
-
-  .player-progresso {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: .66rem; font-weight: 600;
-    color: var(--text-faint); letter-spacing: .05em;
-  }
-
-  .toast {
-    position: fixed; bottom: calc(env(safe-area-inset-bottom) + 120px);
-    left: 50%; transform: translateX(-50%) translateY(20px);
-    background: var(--bg-elev); color: var(--text);
-    border: 1px solid var(--border);
-    padding: 10px 18px; border-radius: 99px;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: .78rem; font-weight: 600;
-    box-shadow: var(--shadow-lg);
-    opacity: 0; pointer-events: none;
-    transition: opacity .3s var(--transition), transform .3s var(--transition);
-    z-index: 9997; white-space: nowrap;
-    max-width: calc(100vw - 32px);
-    overflow: hidden; text-overflow: ellipsis;
-  }
-  .toast.ativo { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  #debugPanel {
-    position: fixed; top: 12px; left: 12px; right: 12px;
-    background: rgba(0, 0, 0, .95);
-    border: 1px solid #334155; border-radius: 12px;
-    padding: 14px; color: #cbd5e1;
-    font-family: ui-monospace, Menlo, monospace;
-    font-size: .68rem; line-height: 1.5;
-    z-index: 10000; max-height: 70vh; overflow-y: auto;
-    display: none;
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  }
-  #debugPanel.ativo { display: block; }
-  #debugPanel h3 {
-    font-size: .72rem; color: #fbbf24; margin-bottom: 10px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  #debugPanel h3 button {
-    background: #7c3aed; color: #fff; border: none;
-    border-radius: 6px; padding: 4px 10px;
-    font-size: .65rem; font-family: inherit;
-    cursor: pointer; font-weight: 700;
-  }
-  #debugPanel .linha {
-    display: flex; justify-content: space-between;
-    padding: 3px 0; border-bottom: 1px solid rgba(148, 163, 184, .1);
-  }
-  #debugPanel .linha.ativa { color: #fbbf24; font-weight: 700; }
-  #debugPanel .voz { color: #93c5fd; }
-  #debugPanel .info {
-    margin-top: 10px; padding-top: 10px;
-    border-top: 1px solid rgba(148, 163, 184, .15);
-    color: #94a3b8; font-size: .62rem;
-  }
-  #debugPanel .aviso {
-    margin-top: 8px; padding: 8px;
-    background: rgba(220, 38, 38, .15);
-    border-radius: 6px; color: #fca5a5; font-size: .65rem;
-  }
-  #debugPanel .sucesso {
-    margin-top: 8px; padding: 8px;
-    background: rgba(34, 197, 94, .15);
-    border-radius: 6px; color: #86efac; font-size: .65rem;
-  }
-
-  @media (max-width: 380px) {
-    .folha { padding: 18px 16px 22px; font-size: .95rem; }
-    .conteudo { padding: 0 14px; }
-    #player { width: calc(100vw - 24px); }
-    .btn-sec { width: 36px; height: 36px; }
-    .btn-play { width: 50px; height: 50px; }
-  }
-
-  @media (min-width: 600px) {
-    .conteudo { padding: 0 32px; }
-    .folha { padding: 28px 32px 32px; }
-    #player { width: 360px; }
-  }
-
-  @media (min-width: 900px) {
-    .folha { padding: 32px 40px 36px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: .01ms !important;
-      transition-duration: .01ms !important;
-    }
+  @media(min-width:900px){.folha{padding:32px 40px 36px}}
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
   }
 </style>
 </head>
@@ -514,11 +335,9 @@
 
 <header class="app-header">
   <div class="app-titulo">Sala de Aula · Gestão de Pessoas</div>
-  <button class="btn-menu" id="btnMenu" aria-label="Abrir menu" aria-expanded="false">
+  <button class="btn-icon" id="btnMenu" aria-label="Abrir menu" aria-expanded="false">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-      <line x1="4" y1="7" x2="20" y2="7"/>
-      <line x1="4" y1="12" x2="20" y2="12"/>
-      <line x1="4" y1="17" x2="20" y2="17"/>
+      <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
     </svg>
   </button>
 </header>
@@ -532,10 +351,9 @@
 <aside class="drawer" id="drawer" aria-hidden="true">
   <div class="drawer-header">
     <span class="drawer-titulo">Menu</span>
-    <button class="btn-fechar" id="btnFechar" aria-label="Fechar menu">
+    <button class="btn-icon sm" id="btnFechar" aria-label="Fechar menu">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-        <line x1="6" y1="6" x2="18" y2="18"/>
-        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
       </svg>
     </button>
   </div>
@@ -555,9 +373,7 @@
     <div class="secao-titulo">Tamanho do texto</div>
     <div class="fonte-controle">
       <button class="btn-fonte" id="btnFonteMenos" aria-label="Diminuir fonte">A−</button>
-      <div class="fonte-barra">
-        <div class="fonte-barra-fill" id="fonteBarraFill"></div>
-      </div>
+      <div class="fonte-barra"><div class="fonte-barra-fill" id="fonteBarraFill"></div></div>
       <button class="btn-fonte" id="btnFonteMais" aria-label="Aumentar fonte">A+</button>
     </div>
   </section>
@@ -571,7 +387,7 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <div id="debugPanel">
-  <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
+  <h3>🎙️ Debug de Vozes <button type="button" onclick="fecharDebug()">Fechar</button></h3>
   <div id="debugElenco"></div>
 </div>
 
@@ -579,29 +395,19 @@
   <div class="player-handle" id="handle"></div>
   <div class="player-controles">
     <button class="btn-ctrl btn-sec" id="btnCapAnterior" aria-label="Bloco anterior">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/></svg>
     </button>
     <button class="btn-ctrl btn-sec" id="btnAnterior" aria-label="Fala anterior">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
     </button>
-    <button class="btn-ctrl btn-play" id="btnPlay" aria-label="Ouvir ou pausar">
-      <svg id="iconePlay" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
+    <button class="btn-ctrl btn-play" id="btnPlay" aria-label="Ouvir ou pausar" aria-pressed="false">
+      <svg id="iconePlay" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
     </button>
     <button class="btn-ctrl btn-sec" id="btnProximo" aria-label="Próxima fala">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/></svg>
     </button>
     <button class="btn-ctrl btn-sec" id="btnCapProximo" aria-label="Próximo bloco">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"/></svg>
     </button>
   </div>
   <div class="player-rodape">
@@ -611,386 +417,358 @@
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════
-   AMBIENTE
-   ═══════════════════════════════════════════════════ */
+'use strict';
+
+/* ══════════ AMBIENTE ══════════ */
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-// ✅ synth ANTES de qualquer uso (bug hoisting resolvido)
 const synth = window.speechSynthesis || null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-/* ═══════════════════════════════════════════════════
-   SEGURANÇA — escape HTML
-   ═══════════════════════════════════════════════════ */
-function escapeHTML(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-/* ═══════════════════════════════════════════════════
-   PREFERÊNCIAS
-   ═══════════════════════════════════════════════════ */
+/* ══════════ PREFS ══════════ */
 const FONTES = [0.80, 0.88, 0.95, 1.02, 1.10, 1.20, 1.30, 1.45];
-
-let prefTema = 'escuro';
-let prefTamanho = 1.02;
-let prefVelocidade = 1.0;
-
+let prefTema = 'escuro', prefTamanho = 1.02, prefVelocidade = 1.0;
 try {
   const t = localStorage.getItem('pref-tema');
   if (t === 'claro' || t === 'escuro') prefTema = t;
-
   const s = parseFloat(localStorage.getItem('pref-tamanho'));
   if (isFinite(s) && s >= 0.5 && s <= 2.0) prefTamanho = s;
-
   const v = parseFloat(localStorage.getItem('pref-velocidade'));
   if (isFinite(v) && v >= 0.5 && v <= 3.0) prefVelocidade = v;
 } catch(e) {}
-
-function salvarPrefs() {
+const salvarPrefs = () => {
   try {
     localStorage.setItem('pref-tema', prefTema);
     localStorage.setItem('pref-tamanho', String(prefTamanho));
     localStorage.setItem('pref-velocidade', String(prefVelocidade));
   } catch(e) {}
-}
+};
 
-/* ═══════════════════════════════════════════════════
-   TEMA
-   ═══════════════════════════════════════════════════ */
+/* ══════════ TEMA ══════════ */
 function aplicarTema() {
   document.body.setAttribute('data-tema', prefTema);
-  const emoji = document.getElementById('temaEmoji');
-  const label = document.getElementById('temaLabel');
-  const sw = document.getElementById('temaSwitch');
-  if (emoji) emoji.textContent = prefTema === 'claro' ? '☀️' : '🌙';
-  if (label) label.textContent = prefTema === 'claro' ? 'Modo claro' : 'Modo escuro';
-  if (sw) sw.classList.toggle('ativo', prefTema === 'claro');
+  $('temaEmoji').textContent = prefTema === 'claro' ? '☀️' : '🌙';
+  $('temaLabel').textContent = prefTema === 'claro' ? 'Modo claro' : 'Modo escuro';
+  $('temaSwitch').classList.toggle('ativo', prefTema === 'claro');
 }
-
 function alternarTema() {
   prefTema = prefTema === 'claro' ? 'escuro' : 'claro';
-  salvarPrefs();
-  aplicarTema();
+  salvarPrefs(); aplicarTema();
 }
 
-/* ═══════════════════════════════════════════════════
-   FONTE
-   ═══════════════════════════════════════════════════ */
-function acharIndiceFonte() {
-  let melhor = 0;
-  let menorDist = Math.abs(FONTES[0] - prefTamanho);
+/* ══════════ FONTE ══════════ */
+function indiceFonte() {
+  let melhor = 0, menor = Math.abs(FONTES[0] - prefTamanho);
   for (let i = 1; i < FONTES.length; i++) {
     const d = Math.abs(FONTES[i] - prefTamanho);
-    if (d < menorDist) { menorDist = d; melhor = i; }
+    if (d < menor) { menor = d; melhor = i; }
   }
   return melhor;
 }
-
 function aplicarFonte() {
   const tam = (isFinite(prefTamanho) && prefTamanho > 0.3 && prefTamanho < 2.5) ? prefTamanho : 1.02;
   document.documentElement.style.setProperty('--font-tamanho', tam + 'rem');
-
-  const i = acharIndiceFonte();
-  const pct = ((i + 1) / FONTES.length) * 100;
-  const fill = document.getElementById('fonteBarraFill');
-  if (fill) fill.style.width = pct + '%';
-
-  const btnM = document.getElementById('btnFonteMenos');
-  const btnP = document.getElementById('btnFonteMais');
-  if (btnM) btnM.disabled = (i <= 0);
-  if (btnP) btnP.disabled = (i >= FONTES.length - 1);
+  const i = indiceFonte();
+  $('fonteBarraFill').style.width = ((i + 1) / FONTES.length) * 100 + '%';
+  $('btnFonteMenos').disabled = i <= 0;
+  $('btnFonteMais').disabled = i >= FONTES.length - 1;
 }
-
-function ajustarFonte(direcao) {
-  const i = acharIndiceFonte();
-  const novo = Math.max(0, Math.min(FONTES.length - 1, i + direcao));
+function ajustarFonte(dir) {
+  const i = indiceFonte();
+  const novo = Math.max(0, Math.min(FONTES.length - 1, i + dir));
   if (novo === i) return;
   prefTamanho = FONTES[novo];
-  salvarPrefs();
-  aplicarFonte();
+  salvarPrefs(); aplicarFonte();
 }
 
-/* ═══════════════════════════════════════════════════
-   TOAST
-   ═══════════════════════════════════════════════════ */
+/* ══════════ TOAST ══════════ */
 let toastTimer = null;
 function mostrarToast(txt) {
-  const el = document.getElementById('toast');
-  if (!el) return;
+  const el = $('toast');
   el.textContent = txt;
   el.classList.add('ativo');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('ativo'), 1800);
 }
 
-/* ═══════════════════════════════════════════════════
-   MENU DRAWER
-   ═══════════════════════════════════════════════════ */
+/* ══════════ MENU ══════════ */
 function abrirMenu() {
-  document.getElementById('drawer').classList.add('ativo');
-  document.getElementById('overlay').classList.add('ativo');
-  document.getElementById('btnMenu').setAttribute('aria-expanded', 'true');
-  document.getElementById('drawer').setAttribute('aria-hidden', 'false');
+  $('drawer').classList.add('ativo');
+  $('overlay').classList.add('ativo');
+  $('btnMenu').setAttribute('aria-expanded', 'true');
+  $('drawer').setAttribute('aria-hidden', 'false');
 }
 function fecharMenu() {
-  document.getElementById('drawer').classList.remove('ativo');
-  document.getElementById('overlay').classList.remove('ativo');
-  document.getElementById('btnMenu').setAttribute('aria-expanded', 'false');
-  document.getElementById('drawer').setAttribute('aria-hidden', 'true');
+  $('drawer').classList.remove('ativo');
+  $('overlay').classList.remove('ativo');
+  $('btnMenu').setAttribute('aria-expanded', 'false');
+  $('drawer').setAttribute('aria-hidden', 'true');
 }
 
-/* ═══════════════════════════════════════════════════
-   VOZES
-   ═══════════════════════════════════════════════════ */
-let todasAsVozes = [];
-let elenco = null;
-let felipeEncontrado = false;
-let iosDesbloqueado = false;
+/* ══════════ VOZES ══════════ */
+let todasAsVozes = [], elenco = null, felipeEncontrado = false, iosDesbloqueado = false;
 
-function carregarVozes(callback) {
-  if (!synth) { callback(); return; }
+function carregarVozes(cb) {
+  if (!synth) return cb();
   let jaChamou = false;
-  const finalizar = () => {
-    if (jaChamou) return;
-    jaChamou = true;
-    callback();
-  };
+  const fim = () => { if (!jaChamou) { jaChamou = true; cb(); } };
 
-  try {
-    let vozes = speechSynthesis.getVoices();
-    if (vozes.length > 0) { todasAsVozes = vozes; finalizar(); return; }
+  let v = speechSynthesis.getVoices();
+  if (v.length) { todasAsVozes = v; return fim(); }
 
-    const handler = () => {
-      try {
-        vozes = speechSynthesis.getVoices();
-        if (vozes.length > 0) {
-          todasAsVozes = vozes;
-          speechSynthesis.removeEventListener('voiceschanged', handler);
-          finalizar();
-        }
-      } catch(e) { finalizar(); }
-    };
-
-    if (speechSynthesis.addEventListener) {
-      speechSynthesis.addEventListener('voiceschanged', handler);
-    } else {
-      speechSynthesis.onvoiceschanged = handler;
+  const handler = () => {
+    v = speechSynthesis.getVoices();
+    if (v.length) {
+      todasAsVozes = v;
+      if (speechSynthesis.removeEventListener) speechSynthesis.removeEventListener('voiceschanged', handler);
+      fim();
     }
+  };
+  if (speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', handler);
+  else speechSynthesis.onvoiceschanged = handler;
 
-    let tentativas = 0;
-    const poll = () => {
-      try {
-        tentativas++;
-        vozes = speechSynthesis.getVoices();
-        if (vozes.length > 0) { todasAsVozes = vozes; finalizar(); return; }
-        if (tentativas < 30) setTimeout(poll, 200);
-        else finalizar();
-      } catch(e) { finalizar(); }
-    };
-    setTimeout(poll, 200);
-  } catch(e) { finalizar(); }
+  let t = 0;
+  const poll = () => {
+    t++;
+    v = speechSynthesis.getVoices();
+    if (v.length) { todasAsVozes = v; return fim(); }
+    if (t < 30) setTimeout(poll, 200);
+    else fim();
+  };
+  setTimeout(poll, 200);
 }
 
-function vozesPtBR() {
-  return todasAsVozes.filter(v => {
-    const lang = (v.lang || '').toLowerCase().replace('_', '-');
-    return lang === 'pt-br' || lang.startsWith('pt-br');
-  });
-}
+const vozesPtBR = () => todasAsVozes.filter(v => {
+  const l = (v.lang || '').toLowerCase().replace('_', '-');
+  return l === 'pt-br' || l.startsWith('pt-br');
+});
 
-/* ═══════════════════════════════════════════════════
-   PERFIS DE VOZ
-   ═══════════════════════════════════════════════════ */
+/* ══════════ PERFIS (gerados de tabela compacta) ══════════ */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
-const SIMBOLOS = {
-  professor: '§',
-  aluno1:    '▸',
-  aluno2:    '◂',
-  aluno3:    '›',
-  aluno4:    '‹',
-  aluno5:    '▴',
-  aluno6:    '●',
-  aluno7:    '▾'
+const SIMBOLOS = { professor:'§', aluno1:'▸', aluno2:'◂', aluno3:'›',
+                   aluno4:'‹', aluno5:'▴', aluno6:'●', aluno7:'▾' };
+
+// [rate, pitch, microCurta, microLonga]
+const VOZ_BASE = {
+  professor:[0.90, 0.75, 180, 300],
+  aluno1:   [1.22, 1.38,  55, 110],
+  aluno2:   [0.88, 0.96, 155, 230],
+  aluno3:   [1.15, 1.28,  75, 140],
+  aluno4:   [0.94, 1.02, 135, 210],
+  aluno5:   [1.28, 1.45,  45, 100],
+  aluno6:   [1.05, 1.12, 100, 180],
+  aluno7:   [0.82, 0.92, 175, 260]
 };
 
-const PERFIS = {
-  professor: {
-    rate: 0.90, pitch: 0.75, volume: 1.0,
-    microCurta: 180, microLonga: 300,
-    rateEnfase: 0.84, pitchEnfase: 0.72,
-    pausas: { abertura:900, definicao:460, pergunta:300, confirmacao:400, guarde:1050, conclusao:820, pausa:640 }
-  },
-  aluno1: { rate:1.22, pitch:1.38, volume:0.93, microCurta:55,  microLonga:110, rateEnfase:1.14, pitchEnfase:1.30,
-    pausas:{ abertura:160, definicao:130, pergunta:180, confirmacao:130, guarde:200, conclusao:180, pausa:280 } },
-  aluno3: { rate:1.15, pitch:1.28, volume:0.93, microCurta:75,  microLonga:140, rateEnfase:1.08, pitchEnfase:1.24,
-    pausas:{ abertura:200, definicao:160, pergunta:210, confirmacao:150, guarde:230, conclusao:210, pausa:320 } },
-  aluno5: { rate:1.28, pitch:1.45, volume:0.93, microCurta:45,  microLonga:100, rateEnfase:1.20, pitchEnfase:1.40,
-    pausas:{ abertura:140, definicao:115, pergunta:160, confirmacao:115, guarde:175, conclusao:155, pausa:250 } },
-  aluno6: { rate:1.05, pitch:1.12, volume:0.93, microCurta:100, microLonga:180, rateEnfase:0.97, pitchEnfase:1.08,
-    pausas:{ abertura:260, definicao:210, pergunta:230, confirmacao:190, guarde:280, conclusao:260, pausa:380 } },
-  aluno2: { rate:0.88, pitch:0.96, volume:0.93, microCurta:155, microLonga:230, rateEnfase:0.82, pitchEnfase:0.93,
-    pausas:{ abertura:280, definicao:240, pergunta:260, confirmacao:220, guarde:300, conclusao:280, pausa:420 } },
-  aluno4: { rate:0.94, pitch:1.02, volume:0.93, microCurta:135, microLonga:210, rateEnfase:0.87, pitchEnfase:0.98,
-    pausas:{ abertura:260, definicao:220, pergunta:240, confirmacao:200, guarde:290, conclusao:270, pausa:400 } },
-  aluno7: { rate:0.82, pitch:0.92, volume:0.93, microCurta:175, microLonga:260, rateEnfase:0.76, pitchEnfase:0.89,
-    pausas:{ abertura:300, definicao:260, pergunta:280, confirmacao:240, guarde:320, conclusao:300, pausa:450 } }
-};
+const PERFIS = {};
+for (const [papel, [rate, pitch, mc, ml]] of Object.entries(VOZ_BASE)) {
+  PERFIS[papel] = {
+    rate, pitch, volume: papel === 'professor' ? 1.0 : 0.93,
+    microCurta: mc, microLonga: ml,
+    rateEnfase: rate * 0.93, pitchEnfase: pitch * 0.95,
+    pausas: {
+      abertura:    Math.round(mc * 5.0),
+      definicao:   Math.round(mc * 2.5),
+      pergunta:    Math.round(mc * 1.8),
+      confirmacao: Math.round(mc * 2.2),
+      guarde:      Math.round(mc * 5.8),
+      conclusao:   Math.round(mc * 4.5),
+      pausa:       Math.round(ml * 2.0)
+    }
+  };
+}
+// Ajuste específico para o professor (pausas mais longas)
+Object.assign(PERFIS.professor.pausas, {
+  abertura:900, definicao:460, pergunta:300, confirmacao:400,
+  guarde:1050, conclusao:820, pausa:640
+});
 
-/* ═══════════════════════════════════════════════════
-   CONTEÚDO — 3 BLOCOS (com exemplos da V2)
-   ═══════════════════════════════════════════════════ */
+/* ══════════ CONTEÚDO (expandido) ══════════ */
 const CAPITULOS = [
-  {
-    titulo: 'Bloco 1',
-    subtitulo: 'Fundamentos da gestão de pessoas',
-    aula: [
-      { papel:'professor', tipo:'abertura', texto:"Bom dia, turma. Hoje vamos compreender a gestão de pessoas de forma mais completa. Muita gente ainda enxerga essa área só como o setor que contrata e resolve documentos. Vamos entender por que ela vai muito além disso e como influencia a experiência, o desenvolvimento e os resultados das pessoas dentro da organização." },
+{
+  titulo:'Bloco 1',
+  subtitulo:'Fundamentos da gestão de pessoas',
+  aula:[
+    { papel:'professor', tipo:'abertura', texto:"Bom dia, turma. Hoje vamos compreender a gestão de pessoas de forma mais completa. Muita gente ainda enxerga essa área só como o setor que contrata e resolve documentos. Vamos entender por que ela vai muito além disso e como influencia a experiência, o desenvolvimento e os resultados das pessoas dentro da organização." },
 
-      { papel:'aluno1', tipo:'pergunta', texto:"Professor, a gente usa RH e gestão de pessoas como se fosse a mesma coisa. Tem diferença mesmo?" },
-      { papel:'professor', tipo:'definicao', texto:"Os dois nomes costumam se referir à mesma área, mas a expressão *gestão de pessoas* carrega uma mudança de olhar. Quando falamos apenas em recursos humanos, ainda parece que a pessoa é um recurso que a empresa utiliza. Já a gestão de pessoas reforça que estamos falando de profissionais que pensam, aprendem, colaboram e influenciam resultados." },
-      { papel:'aluno2', tipo:'confirmacao', texto:"Então o nome muda a forma de enxergar quem trabalha na organização." },
-      { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A área continua cuidando de processos administrativos, mas passa a se preocupar também com condições de trabalho, desenvolvimento, respeito e segurança. Não é só administrar gente. É criar condições para que as pessoas trabalhem melhor." },
+    { papel:'aluno1', tipo:'pergunta', texto:"Professor, a gente usa RH e gestão de pessoas como se fosse a mesma coisa. Tem diferença mesmo?" },
+    { papel:'professor', tipo:'definicao', texto:"Os dois nomes costumam se referir à mesma área, mas a expressão *gestão de pessoas* carrega uma mudança de olhar. Quando falamos apenas em recursos humanos, ainda parece que a pessoa é um recurso que a empresa utiliza. Já a gestão de pessoas reforça que estamos falando de profissionais que pensam, aprendem, colaboram e influenciam resultados." },
+    { papel:'aluno2', tipo:'confirmacao', texto:"Então o nome muda a forma de enxergar quem trabalha na organização." },
+    { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A área continua cuidando de processos administrativos, mas passa a se preocupar também com condições de trabalho, desenvolvimento, respeito e segurança. Não é só administrar gente. É criar condições para que as pessoas trabalhem melhor." },
 
-      { papel:'aluno3', tipo:'pergunta', texto:"Quais são os principais processos dessa área?" },
-      { papel:'professor', tipo:'definicao', texto:"Podemos pensar em um ciclo. A organização planeja quantas pessoas precisa e quais competências serão necessárias. Depois recruta e seleciona, integra os novos profissionais, oferece treinamento, acompanha o desempenho, cuida da remuneração e dos benefícios, e promove saúde, segurança e qualidade de vida." },
-      { papel:'aluno4', tipo:'pergunta', texto:"E esse ciclo termina quando a pessoa deixa a empresa?" },
-      { papel:'professor', tipo:'definicao', texto:"O desligamento também faz parte. A empresa precisa conduzir esse momento com respeito, cumprir suas obrigações e, sempre que possível, aprender com os motivos da saída." },
-      { papel:'professor', tipo:'definicao', texto:"Uma rotatividade muito alta costuma ser um sinal de alerta. Imagine uma loja que perde três vendedores em seis meses. Pode ser salário baixo, liderança ruim, falta de perspectiva ou clima pesado. O número sozinho não explica tudo, mas mostra que algo precisa ser investigado." },
+    { papel:'aluno3', tipo:'pergunta', texto:"Quais são os principais processos dessa área?" },
+    { papel:'professor', tipo:'definicao', texto:"Podemos pensar em um ciclo. A organização planeja quantas pessoas precisa e quais competências serão necessárias. Depois recruta e seleciona, integra os novos profissionais, oferece treinamento, acompanha o desempenho, cuida da remuneração e dos benefícios, e promove saúde, segurança e qualidade de vida." },
+    { papel:'aluno4', tipo:'pergunta', texto:"E esse ciclo termina quando a pessoa deixa a empresa?" },
+    { papel:'professor', tipo:'definicao', texto:"O desligamento também faz parte. A empresa precisa conduzir esse momento com respeito, cumprir suas obrigações e, sempre que possível, aprender com os motivos da saída." },
+    { papel:'professor', tipo:'definicao', texto:"Uma rotatividade muito alta costuma ser um sinal de alerta. Imagine uma loja que perde três vendedores em seis meses. Pode ser salário baixo, liderança ruim, falta de perspectiva ou clima pesado. O número sozinho não explica tudo, mas mostra que algo precisa ser investigado." },
 
-      { papel:'aluno5', tipo:'pergunta', texto:"Qual é a diferença entre treinamento e desenvolvimento?" },
-      { papel:'professor', tipo:'definicao', texto:"Treinamento normalmente responde a uma necessidade mais imediata. Por exemplo: ensinar alguém a usar um sistema novo ou um procedimento específico. Já o desenvolvimento é mais amplo. Ele prepara a pessoa para desafios futuros, novas responsabilidades e crescimento profissional. A avaliação de desempenho também faz parte desse processo: não deve ser apenas uma nota, mas servir para orientar melhorias e reconhecer contribuições." },
-      { papel:'aluno1', tipo:'confirmacao', texto:"Então ensinar o sistema é treinamento. Preparar alguém para liderar uma equipe no futuro é desenvolvimento." },
-      { papel:'professor', tipo:'confirmacao', texto:"Muito bem. Os dois são importantes, mas respondem a momentos diferentes. Uma organização precisa treinar para resolver problemas atuais e desenvolver para construir capacidades futuras." },
+    { papel:'aluno5', tipo:'pergunta', texto:"Qual é a diferença entre treinamento e desenvolvimento?" },
+    { papel:'professor', tipo:'definicao', texto:"Treinamento normalmente responde a uma necessidade mais imediata. Por exemplo: ensinar alguém a usar um sistema novo ou um procedimento específico. Já o desenvolvimento é mais amplo. Ele prepara a pessoa para desafios futuros, novas responsabilidades e crescimento profissional. A avaliação de desempenho também faz parte desse processo: não deve ser apenas uma nota, mas servir para orientar melhorias e reconhecer contribuições." },
+    { papel:'aluno1', tipo:'confirmacao', texto:"Então ensinar o sistema é treinamento. Preparar alguém para liderar uma equipe no futuro é desenvolvimento." },
+    { papel:'professor', tipo:'confirmacao', texto:"Muito bem. Os dois são importantes, mas respondem a momentos diferentes. Uma organização precisa treinar para resolver problemas atuais e desenvolver para construir capacidades futuras." },
 
-      { papel:'aluno6', tipo:'pergunta', texto:"Quem é responsável por tudo isso? Só o RH?" },
-      { papel:'professor', tipo:'definicao', texto:"Não. O RH cria políticas, processos e oferece suporte especializado. Mas a liderança participa diretamente. É o gestor quem orienta o trabalho no dia a dia, dá retorno, distribui responsabilidades e percebe dificuldades da equipe." },
-      { papel:'aluno2', tipo:'pergunta', texto:"E o próprio profissional também tem responsabilidade nisso?" },
-      { papel:'professor', tipo:'definicao', texto:"Sim. A gestão de pessoas é uma responsabilidade compartilhada. A organização precisa oferecer condições justas e claras. A liderança precisa conduzir bem a equipe. E o profissional também precisa participar do próprio desenvolvimento, cumprir acordos e buscar melhorar seu trabalho." },
+    { papel:'aluno6', tipo:'pergunta', texto:"Quem é responsável por tudo isso? Só o RH?" },
+    { papel:'professor', tipo:'definicao', texto:"Não. O RH cria políticas, processos e oferece suporte especializado. Mas a liderança participa diretamente. É o gestor quem orienta o trabalho no dia a dia, dá retorno, distribui responsabilidades e percebe dificuldades da equipe." },
+    { papel:'aluno2', tipo:'pergunta', texto:"E o próprio profissional também tem responsabilidade nisso?" },
+    { papel:'professor', tipo:'definicao', texto:"Sim. A gestão de pessoas é uma responsabilidade compartilhada. A organização precisa oferecer condições justas e claras. A liderança precisa conduzir bem a equipe. E o profissional também precisa participar do próprio desenvolvimento, cumprir acordos e buscar melhorar seu trabalho." },
 
-      { papel:'aluno7', tipo:'pergunta', texto:"Como a empresa sabe se está fazendo uma boa gestão de pessoas?" },
-      { papel:'professor', tipo:'definicao', texto:"Ela precisa olhar evidências. Pode acompanhar rotatividade, absenteísmo, participação em treinamentos, desempenho das equipes, qualidade das contratações e a percepção das pessoas sobre o ambiente de trabalho. Nenhum indicador explica tudo sozinho, mas vários sinais juntos ajudam a compreender a realidade." },
-      { papel:'aluno3', tipo:'pergunta', texto:"Uma empresa pode ter bons resultados financeiros e, mesmo assim, fazer uma gestão ruim de pessoas?" },
-      { papel:'professor', tipo:'definicao', texto:"Pode. Resultados imediatos não justificam desrespeito, discriminação, excesso de pressão ou falta de segurança. Uma gestão responsável precisa equilibrar desempenho, ética, sustentabilidade e cuidado com as pessoas." },
+    // ── NOVO: exemplo de call center ──
+    { papel:'aluno3', tipo:'pergunta', texto:"Professor, tem um exemplo mais concreto dessa responsabilidade compartilhada?" },
+    { papel:'professor', tipo:'definicao', texto:"Imagine um call center com alta rotatividade. A organização pode oferecer pausas adequadas e metas realistas. A liderança pode ouvir os atendentes e ajustar escalas. E o próprio atendente pode sinalizar dificuldades e participar dos treinamentos. Se apenas um lado se esforça, o resultado não se sustenta." },
 
-      { papel:'aluno4', tipo:'guarde', texto:"Então gestão de pessoas não é apenas colocar a pessoa certa na vaga. É acompanhar toda a relação dela com o trabalho." },
-      { papel:'professor', tipo:'guarde', texto:"Guarde esta ideia: gestão de pessoas envolve planejar, atrair, integrar, desenvolver, reconhecer, proteger e, quando necessário, conduzir o desligamento das pessoas com responsabilidade." },
-      { papel:'professor', tipo:'conclusao', texto:"Por isso, a área não deve ser vista apenas como operacional nem apenas como estratégica. Ela precisa fazer as duas coisas: garantir que os processos funcionem e contribuir para que a organização alcance seus objetivos sem esquecer que seus resultados dependem de pessoas. No próximo bloco, vamos dar um passo adiante e entender como essa visão se conecta ao planejamento do negócio." }
-    ]
-  },
-  {
-    titulo: 'Bloco 2',
-    subtitulo: 'Gestão estratégica de pessoas',
-    aula: [
-      { papel:'professor', tipo:'abertura', texto:"Agora vamos aprofundar a gestão estratégica de pessoas. No bloco anterior, vimos os processos que acompanham a trajetória do profissional. A pergunta central agora é: como transformar os objetivos da organização em decisões concretas sobre pessoas, competências, liderança e trabalho?" },
+    // ── NOVO: avaliação 360 ──
+    { papel:'aluno5', tipo:'pergunta', texto:"E como funciona a avaliação 360 graus? Ela entra onde?" },
+    { papel:'professor', tipo:'definicao', texto:"A avaliação 360 graus reúne percepções de várias fontes: o próprio profissional, colegas, liderança e, às vezes, clientes. Ela não substitui a avaliação formal, mas amplia o olhar. O cuidado é usar esse retorno para desenvolvimento, não para punição." },
 
-      { papel:'aluno2', tipo:'pergunta', texto:"Professor, o que exatamente significa alinhar pessoas e negócio?" },
-      { papel:'professor', tipo:'definicao', texto:"Significa compreender o que a organização pretende alcançar e verificar quais comportamentos, conhecimentos, estruturas e profissionais serão necessários para isso. Se a empresa quer crescer, precisa planejar equipes. Se quer inovar, precisa criar espaço para aprendizagem e novas ideias." },
-      { papel:'aluno5', tipo:'pergunta', texto:"Então a estratégia de pessoas só começa depois que a estratégia da empresa já está pronta?" },
-      { papel:'professor', tipo:'definicao', texto:"Não necessariamente. A área de pessoas deve participar da construção e da execução da estratégia. Uma decisão de expansão, por exemplo, só será viável se houver profissionais em quantidade suficiente, com as competências certas e preparados no prazo necessário." },
+    { papel:'aluno7', tipo:'pergunta', texto:"Como a empresa sabe se está fazendo uma boa gestão de pessoas?" },
+    { papel:'professor', tipo:'definicao', texto:"Ela precisa olhar evidências. Pode acompanhar rotatividade, absenteísmo, participação em treinamentos, desempenho das equipes, qualidade das contratações e a percepção das pessoas sobre o ambiente de trabalho. Nenhum indicador explica tudo sozinho, mas vários sinais juntos ajudam a compreender a realidade." },
+    { papel:'aluno3', tipo:'pergunta', texto:"Uma empresa pode ter bons resultados financeiros e, mesmo assim, fazer uma gestão ruim de pessoas?" },
+    { papel:'professor', tipo:'definicao', texto:"Pode. Resultados imediatos não justificam desrespeito, discriminação, excesso de pressão ou falta de segurança. Uma gestão responsável precisa equilibrar desempenho, ética, sustentabilidade e cuidado com as pessoas." },
 
-      { papel:'aluno1', tipo:'pergunta', texto:"Como seria esse planejamento no caso de uma nova filial?" },
-      { papel:'professor', tipo:'definicao', texto:"Primeiro, a empresa analisa o projeto e identifica as funções necessárias. Depois estima quantas pessoas serão contratadas, quais profissionais podem ser transferidos, que conhecimentos já existem e quais lacunas precisam ser preenchidas." },
-      { papel:'professor', tipo:'definicao', texto:"Em seguida define prazos, orçamento, treinamento e responsáveis. Também precisa pensar na integração da nova equipe, na liderança da filial e na forma de acompanhar os resultados depois da abertura. Sem esse planejamento, a filial pode abrir com gente despreparada ou em número insuficiente." },
+    // ── NOVO: indicadores combinados ──
+    { papel:'aluno6', tipo:'pergunta', texto:"Se a rotatividade cai, mas o absenteísmo sobe, o que isso indica?" },
+    { papel:'professor', tipo:'definicao', texto:"Pode indicar que as pessoas estão permanecendo, mas adoecendo ou desmotivadas. Os indicadores precisam ser lidos em conjunto. Um número isolado esconde o contexto. Por isso, a área costuma cruzar rotatividade, absenteísmo, clima e desempenho antes de concluir qualquer coisa." },
 
-      { papel:'aluno6', tipo:'pergunta', texto:"O que são competências nesse contexto?" },
-      { papel:'professor', tipo:'definicao', texto:"Competências são a combinação de conhecimentos, habilidades e atitudes que permite realizar um trabalho com qualidade. Para uma função de atendimento, por exemplo, podem ser necessárias comunicação, escuta, conhecimento do produto e capacidade de resolver problemas." },
-      { papel:'aluno3', tipo:'pergunta', texto:"E basta contratar pessoas que já tenham todas essas competências?" },
-      { papel:'professor', tipo:'definicao', texto:"Nem sempre. A organização pode contratar algumas competências e desenvolver outras. Essa decisão depende do prazo, do orçamento, da disponibilidade no mercado e da capacidade de aprendizagem das pessoas. Uma boa estratégia não olha apenas para o que falta hoje, mas também para o potencial de desenvolvimento." },
+    { papel:'aluno4', tipo:'guarde', texto:"Então gestão de pessoas não é apenas colocar a pessoa certa na vaga. É acompanhar toda a relação dela com o trabalho." },
+    { papel:'professor', tipo:'guarde', texto:"Guarde esta ideia: gestão de pessoas envolve planejar, atrair, integrar, desenvolver, reconhecer, proteger e, quando necessário, conduzir o desligamento das pessoas com responsabilidade." },
+    { papel:'professor', tipo:'conclusao', texto:"Por isso, a área não deve ser vista apenas como operacional nem apenas como estratégica. Ela precisa fazer as duas coisas: garantir que os processos funcionem e contribuir para que a organização alcance seus objetivos sem esquecer que seus resultados dependem de pessoas. No próximo bloco, vamos dar um passo adiante e entender como essa visão se conecta ao planejamento do negócio." }
+  ]
+},
+{
+  titulo:'Bloco 2',
+  subtitulo:'Gestão estratégica de pessoas',
+  aula:[
+    { papel:'professor', tipo:'abertura', texto:"Agora vamos aprofundar a gestão estratégica de pessoas. No bloco anterior, vimos os processos que acompanham a trajetória do profissional. A pergunta central agora é: como transformar os objetivos da organização em decisões concretas sobre pessoas, competências, liderança e trabalho?" },
 
-      { papel:'aluno4', tipo:'pergunta', texto:"Qual é a relação entre estratégia de pessoas e cultura organizacional?" },
-      { papel:'professor', tipo:'definicao', texto:"A cultura é formada pelos valores e comportamentos que se repetem e são reconhecidos dentro da organização. Se uma empresa diz que valoriza colaboração, mas recompensa apenas resultados individuais, existe uma contradição entre o discurso e a prática." },
-      { papel:'aluno7', tipo:'confirmacao', texto:"Então uma política de pessoas pode fracassar se não combinar com a forma como a empresa realmente funciona." },
-      { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A estratégia precisa ser coerente com a liderança, os processos, os incentivos e as decisões do cotidiano. Não adianta falar em desenvolvimento se ninguém recebe retorno ou tempo para aprender." },
+    { papel:'aluno2', tipo:'pergunta', texto:"Professor, o que exatamente significa alinhar pessoas e negócio?" },
+    { papel:'professor', tipo:'definicao', texto:"Significa compreender o que a organização pretende alcançar e verificar quais comportamentos, conhecimentos, estruturas e profissionais serão necessários para isso. Se a empresa quer crescer, precisa planejar equipes. Se quer inovar, precisa criar espaço para aprendizagem e novas ideias." },
+    { papel:'aluno5', tipo:'pergunta', texto:"Então a estratégia de pessoas só começa depois que a estratégia da empresa já está pronta?" },
+    { papel:'professor', tipo:'definicao', texto:"Não necessariamente. A área de pessoas deve participar da construção e da execução da estratégia. Uma decisão de expansão, por exemplo, só será viável se houver profissionais em quantidade suficiente, com as competências certas e preparados no prazo necessário." },
 
-      { papel:'aluno1', tipo:'pergunta', texto:"Como medir se a estratégia de pessoas está dando resultado?" },
-      { papel:'professor', tipo:'definicao', texto:"A empresa pode acompanhar indicadores. O tempo para preencher uma vaga mostra a eficiência do recrutamento. A rotatividade indica quantas pessoas deixam a organização. O absenteísmo mostra faltas e afastamentos. Também podemos acompanhar desempenho, conclusão de treinamentos e percepção das equipes." },
-      { papel:'aluno2', tipo:'pergunta', texto:"Um indicador alto ou baixo já mostra que existe um problema?" },
-      { papel:'professor', tipo:'definicao', texto:"Não automaticamente. O indicador é um sinal que precisa ser interpretado. Uma rotatividade alta pode ocorrer por salários pouco competitivos, liderança inadequada, mercado aquecido ou uma mudança planejada. É preciso investigar as causas antes de decidir." },
+    { papel:'aluno1', tipo:'pergunta', texto:"Como seria esse planejamento no caso de uma nova filial?" },
+    { papel:'professor', tipo:'definicao', texto:"Primeiro, a empresa analisa o projeto e identifica as funções necessárias. Depois estima quantas pessoas serão contratadas, quais profissionais podem ser transferidos, que conhecimentos já existem e quais lacunas precisam ser preenchidas." },
+    { papel:'professor', tipo:'definicao', texto:"Em seguida define prazos, orçamento, treinamento e responsáveis. Também precisa pensar na integração da nova equipe, na liderança da filial e na forma de acompanhar os resultados depois da abertura. Sem esse planejamento, a filial pode abrir com gente despreparada ou em número insuficiente." },
 
-      { papel:'aluno5', tipo:'pergunta', texto:"Qual seria a diferença entre o modelo tradicional e o estratégico em uma situação de crise?" },
-      { papel:'professor', tipo:'definicao', texto:"No modelo tradicional, o setor pode apenas executar a decisão depois que ela foi tomada. No modelo estratégico, participa da análise: avalia competências críticas, alternativas de treinamento, reorganização do trabalho, comunicação com a equipe e impactos sobre a saúde e o desempenho." },
-      { papel:'professor', tipo:'definicao', texto:"Imagine uma empresa que precisa reduzir custos. No modelo tradicional, o RH só cumpre a ordem de demitir. No modelo estratégico, ajuda a avaliar se é possível realocar pessoas, treinar para novas funções ou redistribuir o trabalho antes de tomar a decisão final." },
+    // ── NOVO: caso prático de expansão ──
+    { papel:'aluno3', tipo:'pergunta', texto:"E se a empresa descobrir, no meio do caminho, que não terá gente suficiente a tempo?" },
+    { papel:'professor', tipo:'definicao', texto:"Ela pode rever o cronograma, antecipar contratações, formar parcerias com instituições de ensino, remanejar profissionais de outras unidades ou treinar internamente com mais intensidade. A decisão final combina prazo, custo e risco. Não existe resposta única." },
 
-      { papel:'aluno6', tipo:'guarde', texto:"Então estratégia não é fazer um documento bonito. É tomar decisões de pessoas conectadas a um objetivo e acompanhar se funcionaram." },
-      { papel:'professor', tipo:'guarde', texto:"Perfeito. O ciclo estratégico é diagnosticar, planejar, executar, medir e ajustar. Se a realidade mudar, o plano também precisa ser revisto." },
-      { papel:'professor', tipo:'conclusao', texto:"Gestão estratégica de pessoas é, portanto, antecipar necessidades e transformar objetivos organizacionais em ações responsáveis sobre trabalho, competências e desenvolvimento. Ela aproxima a gestão de pessoas das decisões importantes sem reduzir o ser humano a um número ou indicador. No próximo bloco, vamos aplicar esse planejamento a uma etapa concreta: o recrutamento." }
-    ]
-  },
-  {
-    titulo: 'Bloco 3',
-    subtitulo: 'Recrutamento e atração de talentos',
-    aula: [
-      { papel:'professor', tipo:'abertura', texto:"Neste bloco, vamos aplicar o que estudamos. No primeiro bloco, vimos que o recrutamento faz parte do ciclo de gestão de pessoas. No segundo, entendemos que ele precisa responder à estratégia da organização. Agora vamos aprofundar o processo inteiro, desde a identificação da necessidade até a chegada dos candidatos à etapa de seleção." },
+    { papel:'aluno6', tipo:'pergunta', texto:"O que são competências nesse contexto?" },
+    { papel:'professor', tipo:'definicao', texto:"Competências são a combinação de conhecimentos, habilidades e atitudes que permite realizar um trabalho com qualidade. Para uma função de atendimento, por exemplo, podem ser necessárias comunicação, escuta, conhecimento do produto e capacidade de resolver problemas." },
+    { papel:'aluno3', tipo:'pergunta', texto:"E basta contratar pessoas que já tenham todas essas competências?" },
+    { papel:'professor', tipo:'definicao', texto:"Nem sempre. A organização pode contratar algumas competências e desenvolver outras. Essa decisão depende do prazo, do orçamento, da disponibilidade no mercado e da capacidade de aprendizagem das pessoas. Uma boa estratégia não olha apenas para o que falta hoje, mas também para o potencial de desenvolvimento." },
 
-      { papel:'aluno7', tipo:'pergunta', texto:"Professor, o recrutamento começa quando a empresa publica a vaga?" },
-      { papel:'professor', tipo:'definicao', texto:"Não. Antes de publicar, a empresa precisa confirmar que existe uma necessidade real, entender por que a vaga surgiu e analisar se o trabalho pode ser reorganizado ou desenvolvido internamente. Publicar uma vaga sem esse cuidado é um dos erros mais comuns." },
-      { papel:'aluno1', tipo:'pergunta', texto:"E depois dessa confirmação, qual é o próximo passo?" },
-      { papel:'professor', tipo:'definicao', texto:"É analisar o cargo. A empresa deve descrever as responsabilidades, as atividades principais, a quem a pessoa responderá, quais resultados serão esperados e quais condições de trabalho existirão. Sem essa clareza, a vaga fica confusa e atrai candidatos inadequados." },
+    // ── NOVO: matriz de competências ──
+    { papel:'aluno4', tipo:'pergunta', texto:"Existe alguma ferramenta para organizar isso?" },
+    { papel:'professor', tipo:'definicao', texto:"Sim. Uma delas é a matriz de competências, que cruza funções e competências, mostrando o que já existe, o que falta e quem pode ser desenvolvido. Ela ajuda a priorizar treinamentos e a planejar movimentações internas com mais clareza." },
 
-      { papel:'aluno3', tipo:'pergunta', texto:"Qual é a diferença entre requisito e competência?" },
-      { papel:'professor', tipo:'definicao', texto:"Requisito é uma condição necessária ou desejável para a vaga, como determinada formação ou experiência. Competência é a capacidade de aplicar conhecimentos, habilidades e atitudes no trabalho. Os dois devem estar relacionados às atividades reais do cargo." },
-      { papel:'aluno5', tipo:'pergunta', texto:"E como a empresa decide se fará recrutamento interno ou externo?" },
-      { papel:'professor', tipo:'definicao', texto:"No recrutamento interno, a organização procura entre seus próprios profissionais. Pode promover, transferir ou remanejar alguém. Essa opção aproveita conhecimento da cultura, pode motivar a equipe e costuma ser mais rápida, mas reduz a entrada de perspectivas novas." },
-      { papel:'aluno2', tipo:'pergunta', texto:"E quando o externo é mais indicado?" },
-      { papel:'professor', tipo:'definicao', texto:"Quando a organização precisa de competências que não possui, quer ampliar a diversidade de experiências ou não encontrou um profissional adequado internamente. O processo externo pode alcançar mais candidatos, mas costuma exigir mais tempo de divulgação, análise e integração." },
-      { papel:'aluno4', tipo:'confirmacao', texto:"Então o recrutamento misto permite olhar para dentro e para fora ao mesmo tempo." },
-      { papel:'professor', tipo:'confirmacao', texto:"Sim. Ele combina as duas fontes. A escolha depende da urgência, da estratégia, do perfil da vaga, das possibilidades de desenvolvimento e das condições do mercado de trabalho." },
+    { papel:'aluno4', tipo:'pergunta', texto:"Qual é a relação entre estratégia de pessoas e cultura organizacional?" },
+    { papel:'professor', tipo:'definicao', texto:"A cultura é formada pelos valores e comportamentos que se repetem e são reconhecidos dentro da organização. Se uma empresa diz que valoriza colaboração, mas recompensa apenas resultados individuais, existe uma contradição entre o discurso e a prática." },
+    { papel:'aluno7', tipo:'confirmacao', texto:"Então uma política de pessoas pode fracassar se não combinar com a forma como a empresa realmente funciona." },
+    { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A estratégia precisa ser coerente com a liderança, os processos, os incentivos e as decisões do cotidiano. Não adianta falar em desenvolvimento se ninguém recebe retorno ou tempo para aprender." },
 
-      { papel:'aluno6', tipo:'pergunta', texto:"Quais canais a empresa pode usar para encontrar candidatos?" },
-      { papel:'professor', tipo:'definicao', texto:"Pode usar o próprio site, redes profissionais, sites de emprego, instituições de ensino, agências, banco de talentos, programas de indicação e ações voltadas a grupos específicos. O canal deve combinar com o perfil que a empresa precisa alcançar." },
-      { papel:'aluno7', tipo:'pergunta', texto:"Uma boa divulgação é suficiente para garantir bons candidatos?" },
-      { papel:'professor', tipo:'definicao', texto:"Não. A descrição da vaga precisa ser clara e realista. Deve informar atividades, requisitos, local ou modalidade de trabalho, faixa de horário quando necessário e etapas do processo. É importante diferenciar a descrição do cargo do perfil profissional: a descrição mostra o que será feito; o perfil mostra quais conhecimentos, habilidades e atitudes são necessários para realizar o trabalho." },
-      { papel:'professor', tipo:'definicao', texto:"Compare duas vagas. Uma diz apenas: “precisa de pessoa jovem, dinâmica e com boa aparência”. Outra descreve: “atender clientes com clareza, registrar informações com organização e cumprir o horário comercial”. A segunda atrai candidatos mais adequados e evita discriminação." },
+    { papel:'aluno1', tipo:'pergunta', texto:"Como medir se a estratégia de pessoas está dando resultado?" },
+    { papel:'professor', tipo:'definicao', texto:"A empresa pode acompanhar indicadores. O tempo para preencher uma vaga mostra a eficiência do recrutamento. A rotatividade indica quantas pessoas deixam a organização. O absenteísmo mostra faltas e afastamentos. Também podemos acompanhar desempenho, conclusão de treinamentos e percepção das equipes." },
+    { papel:'aluno2', tipo:'pergunta', texto:"Um indicador alto ou baixo já mostra que existe um problema?" },
+    { papel:'professor', tipo:'definicao', texto:"Não automaticamente. O indicador é um sinal que precisa ser interpretado. Uma rotatividade alta pode ocorrer por salários pouco competitivos, liderança inadequada, mercado aquecido ou uma mudança planejada. É preciso investigar as causas antes de decidir." },
 
-      { papel:'aluno1', tipo:'pergunta', texto:"O que há de errado em pedir uma pessoa jovem, com boa aparência e dinâmica?" },
-      { papel:'professor', tipo:'definicao', texto:"Esses critérios podem ser subjetivos, discriminatórios ou não ter relação com o trabalho. É melhor descrever a competência necessária. Por exemplo: capacidade de atender o público com clareza, organização para registrar informações e disponibilidade para o horário informado." },
-      { papel:'aluno3', tipo:'pergunta', texto:"Como a empresa deve tratar os dados e as informações dos candidatos?" },
-      { papel:'professor', tipo:'definicao', texto:"Deve coletar apenas informações necessárias, explicar a finalidade do uso, restringir o acesso e proteger os dados. Também precisa comunicar o processo com respeito, evitar promessas que não poderá cumprir e dar retorno sempre que possível." },
+    // ── NOVO: People Analytics ──
+    { papel:'aluno5', tipo:'pergunta', texto:"Ouvi falar em People Analytics. É isso que estamos discutindo?" },
+    { papel:'professor', tipo:'definicao', texto:"People Analytics é o uso de dados para apoiar decisões sobre pessoas. Ele não substitui a escuta e o julgamento humano, mas ajuda a identificar padrões. Por exemplo: cruzar desempenho, tempo de casa e participação em treinamentos pode revelar quem está pronto para assumir uma nova função." },
 
-      { papel:'aluno5', tipo:'pergunta', texto:"Depois que os currículos chegam, a empresa já está fazendo seleção?" },
-      { papel:'professor', tipo:'definicao', texto:"A triagem inicial começa a aproximar o recrutamento da seleção, mas os conceitos continuam diferentes. Recrutamento é o esforço para atrair e formar um conjunto de candidatos. Seleção é a comparação dos candidatos com critérios definidos para escolher quem melhor atende à vaga." },
-      { papel:'aluno2', tipo:'confirmacao', texto:"Então recrutar é trazer pessoas qualificadas para o processo, e selecionar é avaliar e decidir." },
-      { papel:'professor', tipo:'confirmacao', texto:"Exatamente. Uma seleção bem feita depende de um recrutamento bem planejado, porque não é possível escolher adequadamente se a empresa não atrai candidatos suficientes ou se divulga a vaga para o público errado." },
+    { papel:'aluno5', tipo:'pergunta', texto:"Qual seria a diferença entre o modelo tradicional e o estratégico em uma situação de crise?" },
+    { papel:'professor', tipo:'definicao', texto:"No modelo tradicional, o setor pode apenas executar a decisão depois que ela foi tomada. No modelo estratégico, participa da análise: avalia competências críticas, alternativas de treinamento, reorganização do trabalho, comunicação com a equipe e impactos sobre a saúde e o desempenho." },
+    { papel:'professor', tipo:'definicao', texto:"Imagine uma empresa que precisa reduzir custos. No modelo tradicional, o RH só cumpre a ordem de demitir. No modelo estratégico, ajuda a avaliar se é possível realocar pessoas, treinar para novas funções ou redistribuir o trabalho antes de tomar a decisão final." },
 
-      { papel:'aluno4', tipo:'pergunta', texto:"Como saber se o recrutamento foi eficiente?" },
-      { papel:'professor', tipo:'definicao', texto:"A empresa pode analisar quantos candidatos aderentes foram atraídos, quanto tempo levou para preencher a vaga, qual foi o custo, quais canais trouxeram melhores resultados e se as pessoas contratadas permaneceram e tiveram bom desempenho." },
+    // ── NOVO: OKRs e metas ──
+    { papel:'aluno6', tipo:'pergunta', texto:"E como a área de pessoas se conecta a metodologias como OKR?" },
+    { papel:'professor', tipo:'definicao', texto:"Os OKRs traduzem objetivos em resultados-chave mensuráveis. A área de pessoas pode ter seus próprios OKRs, alinhados aos da organização. Por exemplo: reduzir em vinte por cento o tempo de preenchimento de vagas sem perder qualidade, ou aumentar a participação em treinamentos obrigatórios." },
 
-      { papel:'aluno6', tipo:'guarde', texto:"Então o recrutamento não termina simplesmente quando alguém é contratado. A empresa também precisa avaliar a qualidade do processo." },
-      { papel:'professor', tipo:'guarde', texto:"Isso mesmo. Guarde esta sequência: identificar a necessidade, analisar o cargo, definir o perfil, escolher os canais, divulgar, atrair candidatos e encaminhá-los para uma seleção justa e coerente." },
-      { papel:'professor', tipo:'conclusao', texto:"Recrutar não é procurar qualquer pessoa para preencher rapidamente uma vaga. É construir uma ponte entre uma necessidade real da organização e profissionais que possam contribuir, aprendendo e trabalhando em condições claras, éticas e compatíveis com a função." },
-      { papel:'professor', tipo:'conclusao', texto:"Percebam a integração: a gestão de pessoas define o cuidado com a trajetória profissional; a estratégia mostra que as decisões precisam atender aos objetivos do negócio; e o recrutamento transforma essa necessidade em uma ação concreta." },
-      { papel:'aluno7', tipo:'guarde', texto:"Se eu receber uma questão longa, devo começar pelo conceito de gestão de pessoas, relacioná-lo à estratégia e depois mostrar como o recrutamento atende à necessidade identificada." },
-      { papel:'professor', tipo:'guarde', texto:"Exatamente. Uma resposta completa não apresenta conceitos isolados. Ela explica o conceito, mostra a relação entre eles, aplica a uma situação e avalia consequências e cuidados. Essa é a lógica que vamos usar para revisar todo o conteúdo." }
-    ]
-  }
+    { papel:'aluno6', tipo:'guarde', texto:"Então estratégia não é fazer um documento bonito. É tomar decisões de pessoas conectadas a um objetivo e acompanhar se funcionaram." },
+    { papel:'professor', tipo:'guarde', texto:"Perfeito. O ciclo estratégico é diagnosticar, planejar, executar, medir e ajustar. Se a realidade mudar, o plano também precisa ser revisto." },
+    { papel:'professor', tipo:'conclusao', texto:"Gestão estratégica de pessoas é, portanto, antecipar necessidades e transformar objetivos organizacionais em ações responsáveis sobre trabalho, competências e desenvolvimento. Ela aproxima a gestão de pessoas das decisões importantes sem reduzir o ser humano a um número ou indicador. No próximo bloco, vamos aplicar esse planejamento a uma etapa concreta: o recrutamento." }
+  ]
+},
+{
+  titulo:'Bloco 3',
+  subtitulo:'Recrutamento e atração de talentos',
+  aula:[
+    { papel:'professor', tipo:'abertura', texto:"Neste bloco, vamos aplicar o que estudamos. No primeiro bloco, vimos que o recrutamento faz parte do ciclo de gestão de pessoas. No segundo, entendemos que ele precisa responder à estratégia da organização. Agora vamos aprofundar o processo inteiro, desde a identificação da necessidade até a chegada dos candidatos à etapa de seleção." },
+
+    { papel:'aluno7', tipo:'pergunta', texto:"Professor, o recrutamento começa quando a empresa publica a vaga?" },
+    { papel:'professor', tipo:'definicao', texto:"Não. Antes de publicar, a empresa precisa confirmar que existe uma necessidade real, entender por que a vaga surgiu e analisar se o trabalho pode ser reorganizado ou desenvolvido internamente. Publicar uma vaga sem esse cuidado é um dos erros mais comuns." },
+    { papel:'aluno1', tipo:'pergunta', texto:"E depois dessa confirmação, qual é o próximo passo?" },
+    { papel:'professor', tipo:'definicao', texto:"É analisar o cargo. A empresa deve descrever as responsabilidades, as atividades principais, a quem a pessoa responderá, quais resultados serão esperados e quais condições de trabalho existirão. Sem essa clareza, a vaga fica confusa e atrai candidatos inadequados." },
+
+    { papel:'aluno3', tipo:'pergunta', texto:"Qual é a diferença entre requisito e competência?" },
+    { papel:'professor', tipo:'definicao', texto:"Requisito é uma condição necessária ou desejável para a vaga, como determinada formação ou experiência. Competência é a capacidade de aplicar conhecimentos, habilidades e atitudes no trabalho. Os dois devem estar relacionados às atividades reais do cargo." },
+
+    { papel:'aluno5', tipo:'pergunta', texto:"E como a empresa decide se fará recrutamento interno ou externo?" },
+    { papel:'professor', tipo:'definicao', texto:"No recrutamento interno, a organização procura entre seus próprios profissionais. Pode promover, transferir ou remanejar alguém. Essa opção aproveita conhecimento da cultura, pode motivar a equipe e costuma ser mais rápida, mas reduz a entrada de perspectivas novas." },
+    { papel:'aluno2', tipo:'pergunta', texto:"E quando o externo é mais indicado?" },
+    { papel:'professor', tipo:'definicao', texto:"Quando a organização precisa de competências que não possui, quer ampliar a diversidade de experiências ou não encontrou um profissional adequado internamente. O processo externo pode alcançar mais candidatos, mas costuma exigir mais tempo de divulgação, análise e integração." },
+    { papel:'aluno4', tipo:'confirmacao', texto:"Então o recrutamento misto permite olhar para dentro e para fora ao mesmo tempo." },
+    { papel:'professor', tipo:'confirmacao', texto:"Sim. Ele combina as duas fontes. A escolha depende da urgência, da estratégia, do perfil da vaga, das possibilidades de desenvolvimento e das condições do mercado de trabalho." },
+
+    // ── NOVO: funil de recrutamento ──
+    { papel:'aluno6', tipo:'pergunta', texto:"Professor, ouvi falar em funil de recrutamento. O que é isso?" },
+    { papel:'professor', tipo:'definicao', texto:"É uma forma de visualizar as etapas do processo. No topo ficam as pessoas que veem a vaga; depois vêm as que se candidatam; em seguida, as que passam pela triagem; depois as entrevistadas; e, no final, as contratadas. Cada etapa perde volume, e a empresa analisa onde está perdendo mais gente." },
+
+    { papel:'aluno6', tipo:'pergunta', texto:"Quais canais a empresa pode usar para encontrar candidatos?" },
+    { papel:'professor', tipo:'definicao', texto:"Pode usar o próprio site, redes profissionais, sites de emprego, instituições de ensino, agências, banco de talentos, programas de indicação e ações voltadas a grupos específicos. O canal deve combinar com o perfil que a empresa precisa alcançar." },
+    { papel:'aluno7', tipo:'pergunta', texto:"Uma boa divulgação é suficiente para garantir bons candidatos?" },
+    { papel:'professor', tipo:'definicao', texto:"Não. A descrição da vaga precisa ser clara e realista. Deve informar atividades, requisitos, local ou modalidade de trabalho, faixa de horário quando necessário e etapas do processo. É importante diferenciar a descrição do cargo do perfil profissional: a descrição mostra o que será feito; o perfil mostra quais conhecimentos, habilidades e atitudes são necessários para realizar o trabalho." },
+    { papel:'professor', tipo:'definicao', texto:"Compare duas vagas. Uma diz apenas: “precisa de pessoa jovem, dinâmica e com boa aparência”. Outra descreve: “atender clientes com clareza, registrar informações com organização e cumprir o horário comercial”. A segunda atrai candidatos mais adequados e evita discriminação." },
+
+    // ── NOVO: employer branding ──
+    { papel:'aluno1', tipo:'pergunta', texto:"E o que é employer branding? Tem a ver com isso?" },
+    { papel:'professor', tipo:'definicao', texto:"Tem. Employer branding é a forma como a organização é percebida por quem trabalha nela e por quem poderia trabalhar. Uma boa reputação ajuda a atrair candidatos alinhados à cultura. Uma reputação ruim espanta gente qualificada, mesmo quando o salário é competitivo." },
+
+    { papel:'aluno1', tipo:'pergunta', texto:"O que há de errado em pedir uma pessoa jovem, com boa aparência e dinâmica?" },
+    { papel:'professor', tipo:'definicao', texto:"Esses critérios podem ser subjetivos, discriminatórios ou não ter relação com o trabalho. É melhor descrever a competência necessária. Por exemplo: capacidade de atender o público com clareza, organização para registrar informações e disponibilidade para o horário informado." },
+    { papel:'aluno3', tipo:'pergunta', texto:"Como a empresa deve tratar os dados e as informações dos candidatos?" },
+    { papel:'professor', tipo:'definicao', texto:"Deve coletar apenas informações necessárias, explicar a finalidade do uso, restringir o acesso e proteger os dados. Também precisa comunicar o processo com respeito, evitar promessas que não poderá cumprir e dar retorno sempre que possível." },
+
+    { papel:'aluno5', tipo:'pergunta', texto:"Depois que os currículos chegam, a empresa já está fazendo seleção?" },
+    { papel:'professor', tipo:'definicao', texto:"A triagem inicial começa a aproximar o recrutamento da seleção, mas os conceitos continuam diferentes. Recrutamento é o esforço para atrair e formar um conjunto de candidatos. Seleção é a comparação dos candidatos com critérios definidos para escolher quem melhor atende à vaga." },
+    { papel:'aluno2', tipo:'confirmacao', texto:"Então recrutar é trazer pessoas qualificadas para o processo, e selecionar é avaliar e decidir." },
+    { papel:'professor', tipo:'confirmacao', texto:"Exatamente. Uma seleção bem feita depende de um recrutamento bem planejado, porque não é possível escolher adequadamente se a empresa não atrai candidatos suficientes ou se divulga a vaga para o público errado." },
+
+    // ── NOVO: entrevista por competências ──
+    { papel:'aluno4', tipo:'pergunta', texto:"E como funciona uma entrevista por competências?" },
+    { papel:'professor', tipo:'definicao', texto:"Ela parte de situações concretas. Em vez de perguntar apenas o que a pessoa faria, pede exemplos do que já fez. Por exemplo: “conte uma situação em que você precisou resolver um conflito com um cliente”. Assim, a empresa avalia comportamento real, não só discurso." },
+
+    { papel:'aluno4', tipo:'pergunta', texto:"Como saber se o recrutamento foi eficiente?" },
+    { papel:'professor', tipo:'definicao', texto:"A empresa pode analisar quantos candidatos aderentes foram atraídos, quanto tempo levou para preencher a vaga, qual foi o custo, quais canais trouxeram melhores resultados e se as pessoas contratadas permaneceram e tiveram bom desempenho." },
+
+    // ── NOVO: métricas de recrutamento ──
+    { papel:'aluno6', tipo:'pergunta', texto:"Essas métricas têm nomes específicos?" },
+    { papel:'professor', tipo:'definicao', texto:"Sim. O tempo médio entre abrir e fechar a vaga é chamado de time-to-hire. A origem dos candidatos que avançam é o source-of-hire. A qualidade da contratação pode ser medida pela retenção e pelo desempenho depois de alguns meses. Cada empresa escolhe as métricas que fazem sentido para sua realidade." },
+
+    { papel:'aluno6', tipo:'guarde', texto:"Então o recrutamento não termina simplesmente quando alguém é contratado. A empresa também precisa avaliar a qualidade do processo." },
+    { papel:'professor', tipo:'guarde', texto:"Isso mesmo. Guarde esta sequência: identificar a necessidade, analisar o cargo, definir o perfil, escolher os canais, divulgar, atrair candidatos e encaminhá-los para uma seleção justa e coerente." },
+    { papel:'professor', tipo:'conclusao', texto:"Recrutar não é procurar qualquer pessoa para preencher rapidamente uma vaga. É construir uma ponte entre uma necessidade real da organização e profissionais que possam contribuir, aprendendo e trabalhando em condições claras, éticas e compatíveis com a função." },
+    { papel:'professor', tipo:'conclusao', texto:"Percebam a integração: a gestão de pessoas define o cuidado com a trajetória profissional; a estratégia mostra que as decisões precisam atender aos objetivos do negócio; e o recrutamento transforma essa necessidade em uma ação concreta." },
+    { papel:'aluno7', tipo:'guarde', texto:"Se eu receber uma questão longa, devo começar pelo conceito de gestão de pessoas, relacioná-lo à estratégia e depois mostrar como o recrutamento atende à necessidade identificada." },
+    { papel:'professor', tipo:'guarde', texto:"Exatamente. Uma resposta completa não apresenta conceitos isolados. Ela explica o conceito, mostra a relação entre eles, aplica a uma situação e avalia consequências e cuidados. Essa é a lógica que vamos usar para revisar todo o conteúdo." }
+  ]
+}
 ];
 
-/* ═══════════════════════════════════════════════════
-   ESTADO
-   ═══════════════════════════════════════════════════ */
-let tocando = false;
-let pausado = false;
-let cancelar = false;
-let indiceCapitulo = 0;
-let indiceAtual = 0;
-let velocidade = prefVelocidade;
+/* ══════════ ESTADO ══════════ */
+let tocando = false, pausado = false, cancelar = false;
+let indiceCapitulo = 0, indiceAtual = 0, velocidade = prefVelocidade;
 
-function getAulaAtual() { return CAPITULOS[indiceCapitulo].aula; }
-function getTotalCapitulos() { return CAPITULOS.length; }
+const aulaAtual = () => CAPITULOS[indiceCapitulo].aula;
+const totalCaps  = () => CAPITULOS.length;
+const falasValidas = aula => aula.filter(f => f.tipo !== 'pausa');
 
-/* ═══════════════════════════════════════════════════
-   iOS UNLOCK (com guarda)
-   ═══════════════════════════════════════════════════ */
-function desbloquearAudioIOS() {
-  if (!isIOS) return;
-  if (iosDesbloqueado) return;
-  if (!synth) return;
+/* ══════════ iOS UNLOCK ══════════ */
+function desbloquearIOS(forcar = false) {
+  if (!isIOS || !synth) return;
+  if (iosDesbloqueado && !forcar) return;
   try {
     const u = new SpeechSynthesisUtterance(' ');
     u.volume = 0.01; u.rate = 2.0; u.pitch = 1.0;
@@ -999,41 +777,24 @@ function desbloquearAudioIOS() {
     iosDesbloqueado = true;
   } catch(e) {}
 }
+document.addEventListener('touchstart', () => desbloquearIOS(), { once: true, passive: true });
+document.addEventListener('click', () => desbloquearIOS(), { once: true });
 
-function revalidarUnlockIOS() {
-  if (!isIOS) return;
-  if (!synth) return;
-  try {
-    const u = new SpeechSynthesisUtterance(' ');
-    u.volume = 0.01; u.rate = 2.0;
-    if (elenco && elenco.professor) u.voice = elenco.professor;
-    synth.speak(u);
-  } catch(e) {}
-}
-
-document.addEventListener('touchstart', desbloquearAudioIOS, { once: true, passive: true });
-document.addEventListener('click', desbloquearAudioIOS, { once: true });
-
-/* ═══════════════════════════════════════════════════
-   RENDER
-   ═══════════════════════════════════════════════════ */
-function renderTextoLegivel(texto) {
-  let t = String(texto).replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
-  t = escapeHTML(t);
-  t = t.replace(/\*([^*]+)\*/g, '<span class="enfase">$1</span>');
-  return t;
+/* ══════════ RENDER ══════════ */
+function renderTexto(t) {
+  return esc(String(t).replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' '))
+    .replace(/\*([^*]+)\*/g, '<span class="enfase">$1</span>');
 }
 
 function renderCapitulo() {
-  const el = document.getElementById('folha');
-  if (!el) return;
+  const el = $('folha');
   el.style.opacity = 0;
-  setTimeout(function() {
+  setTimeout(() => {
     el.innerHTML = '';
 
+    // Header
     const header = document.createElement('div');
     header.className = 'folha-header';
-
     const titulo = document.createElement('div');
     titulo.className = 'folha-titulo';
     titulo.textContent = CAPITULOS[indiceCapitulo].subtitulo;
@@ -1041,7 +802,7 @@ function renderCapitulo() {
 
     const bolinhas = document.createElement('div');
     bolinhas.className = 'folha-bolinhas';
-    for (let p = 0; p < getTotalCapitulos(); p++) {
+    for (let p = 0; p < totalCaps(); p++) {
       const b = document.createElement('div');
       b.className = 'bolinha' + (p === indiceCapitulo ? ' ativa' : '');
       bolinhas.appendChild(b);
@@ -1049,8 +810,8 @@ function renderCapitulo() {
     header.appendChild(bolinhas);
     el.appendChild(header);
 
-    const aula = getAulaAtual();
-    aula.forEach(function(fala, i) {
+    // Falas
+    aulaAtual().forEach((fala, i) => {
       if (fala.tipo === 'pausa') {
         const br = document.createElement('div');
         br.className = 'quebra';
@@ -1060,79 +821,64 @@ function renderCapitulo() {
       const div = document.createElement('div');
       div.className = 'fala ' + fala.papel + ' futura';
       div.id = 'fala-' + i;
-      const simbolo = SIMBOLOS[fala.papel] || '·';
-      div.innerHTML = '<span class="simbolo">' + simbolo + '</span>' + renderTextoLegivel(fala.texto);
-      div.addEventListener('click', function() { irParaFala(i); });
+      div.innerHTML = '<span class="simbolo">' + (SIMBOLOS[fala.papel] || '·') + '</span>' + renderTexto(fala.texto);
+      div.addEventListener('click', () => irParaFala(i));
       el.appendChild(div);
     });
 
     el.style.opacity = 1;
     atualizarProgresso();
-    atualizarBotoesNavegacao();
+    atualizarBotoesNav();
   }, 150);
 }
 
 function irParaFala(idx) {
-  const aula = getAulaAtual();
-  if (idx < 0 || idx >= aula.length) return;
-  if (aula[idx].tipo === 'pausa') return;
+  const aula = aulaAtual();
+  if (idx < 0 || idx >= aula.length || aula[idx].tipo === 'pausa') return;
 
-  const estavaTocando = tocando && !pausado;
+  const tocava = tocando && !pausado;
   pararSilencioso();
   indiceAtual = idx;
 
-  destacarFala(idx);
-  atualizarBotoesNavegacao();
+  destacarFalas(idx);
+  atualizarBotoesNav();
 
-  if (estavaTocando) {
-    setTimeout(function() { tocarDeOndeParou(); }, 80);
-  } else {
-    mostrarToast('📍 Fala ' + contarFalas(idx));
-  }
+  if (tocava) setTimeout(tocarDeOndeParou, 80);
+  else mostrarToast('📍 Fala ' + contarFalas(idx));
 }
 
 function contarFalas(idx) {
-  const aula = getAulaAtual();
+  const aula = aulaAtual();
   let n = 0;
-  for (let k = 0; k <= idx && k < aula.length; k++) {
-    if (aula[k].tipo !== 'pausa') n++;
-  }
-  const total = aula.filter(function(f) { return f.tipo !== 'pausa'; }).length;
-  return n + ' / ' + total;
+  for (let k = 0; k <= idx && k < aula.length; k++) if (aula[k].tipo !== 'pausa') n++;
+  return n + ' / ' + falasValidas(aula).length;
 }
 
-function destacarFala(idx) {
-  document.querySelectorAll('.fala').forEach(function(el) {
-    const numIdx = parseInt(el.id.replace('fala-', ''));
+function destacarFalas(idx) {
+  document.querySelectorAll('.fala').forEach(el => {
+    const i = parseInt(el.id.replace('fala-', ''), 10);
     el.classList.remove('falando', 'falada', 'futura');
-    if (numIdx < idx) el.classList.add('falada');
-    else if (numIdx === idx) el.classList.add('falando');
-    else el.classList.add('futura');
+    el.classList.add(i < idx ? 'falada' : i === idx ? 'falando' : 'futura');
   });
-  const atual = document.getElementById('fala-' + idx);
+  const atual = $('fala-' + idx);
   if (atual) {
-    const rect = atual.getBoundingClientRect();
-    if (rect.top < 100 || rect.bottom > window.innerHeight - 220) {
+    const r = atual.getBoundingClientRect();
+    if (r.top < 100 || r.bottom > window.innerHeight - 220)
       atual.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
   }
 }
 
 function resetDestaques() {
-  document.querySelectorAll('.fala').forEach(function(el) {
+  document.querySelectorAll('.fala').forEach(el => {
     el.classList.remove('falando', 'falada');
     el.classList.add('futura');
   });
 }
 
-/* ═══════════════════════════════════════════════════
-   NAVEGAÇÃO DE CAPÍTULO
-   ═══════════════════════════════════════════════════ */
+/* ══════════ NAVEGAÇÃO ══════════ */
 function irParaCapitulo(novo) {
-  if (novo < 0 || novo >= getTotalCapitulos()) return;
-  if (novo === indiceCapitulo) return;
-
-  const estavaTocando = tocando && !pausado;
+  if (novo < 0 || novo >= totalCaps() || novo === indiceCapitulo) return;
+  const tocava = tocando && !pausado;
   pararSilencioso();
 
   indiceCapitulo = novo;
@@ -1142,56 +888,27 @@ function irParaCapitulo(novo) {
   atualizarListaBlocos();
   mostrarToast('📖 ' + CAPITULOS[indiceCapitulo].subtitulo);
 
-  if (estavaTocando) {
-    setTimeout(function() { tocarDeOndeParou(); }, 400);
-  }
+  if (tocava) setTimeout(tocarDeOndeParou, 400);
 }
-
-function pularCapitulo(direcao) {
-  irParaCapitulo(indiceCapitulo + direcao);
-}
+const pularCapitulo = dir => irParaCapitulo(indiceCapitulo + dir);
 
 function atualizarProgresso() {
-  const el = document.getElementById('playerProgresso');
-  if (el) el.textContent = 'Bloco ' + (indiceCapitulo + 1) + ' / ' + getTotalCapitulos();
+  $('playerProgresso').textContent = 'Bloco ' + (indiceCapitulo + 1) + ' / ' + totalCaps();
 }
 
 function atualizarListaBlocos() {
-  const el = document.getElementById('blocosLista');
-  if (!el) return;
+  const el = $('blocosLista');
   el.innerHTML = '';
-  CAPITULOS.forEach(function(cap, i) {
+  CAPITULOS.forEach((cap, i) => {
     const item = document.createElement('button');
     item.className = 'bloco-item' + (i === indiceCapitulo ? ' ativo' : '');
     item.type = 'button';
-
-    const num = document.createElement('div');
-    num.className = 'bloco-num';
-    num.textContent = String(i + 1);
-
-    const info = document.createElement('div');
-    info.className = 'bloco-info';
-
-    const nome = document.createElement('div');
-    nome.className = 'bloco-nome';
-    nome.textContent = cap.titulo;
-
-    const desc = document.createElement('div');
-    desc.className = 'bloco-desc';
-    desc.textContent = cap.subtitulo;
-
-    info.appendChild(nome);
-    info.appendChild(desc);
-
-    const check = document.createElement('div');
-    check.className = 'bloco-check';
-    check.textContent = '✓';
-
-    item.appendChild(num);
-    item.appendChild(info);
-    item.appendChild(check);
-
-    item.addEventListener('click', function() {
+    item.innerHTML =
+      '<div class="bloco-num">' + (i + 1) + '</div>' +
+      '<div class="bloco-info"><div class="bloco-nome">' + esc(cap.titulo) + '</div>' +
+      '<div class="bloco-desc">' + esc(cap.subtitulo) + '</div></div>' +
+      '<div class="bloco-check">✓</div>';
+    item.addEventListener('click', () => {
       if (i === indiceCapitulo) return;
       irParaCapitulo(i);
       setTimeout(fecharMenu, 200);
@@ -1200,180 +917,135 @@ function atualizarListaBlocos() {
   });
 }
 
-/* ═══════════════════════════════════════════════════
-   UI
-   ═══════════════════════════════════════════════════ */
+/* ══════════ UI ══════════ */
 function setBtnEstado(playing) {
-  const btn = document.getElementById('btnPlay');
-  const icone = document.getElementById('iconePlay');
-  if (!btn || !icone) return;
-  if (playing) {
-    btn.classList.add('tocando');
-    icone.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-  } else {
-    btn.classList.remove('tocando');
-    icone.innerHTML = '<path d="M8 5v14l11-7z"/>';
-  }
+  const btn = $('btnPlay'), icone = $('iconePlay');
+  btn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+  btn.classList.toggle('tocando', playing);
+  icone.innerHTML = playing
+    ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+    : '<path d="M8 5v14l11-7z"/>';
 }
 
-function atualizarBotoesNavegacao() {
-  const aula = getAulaAtual();
-  const btnA = document.getElementById('btnAnterior');
-  const btnP = document.getElementById('btnProximo');
-  const btnCA = document.getElementById('btnCapAnterior');
-  const btnCP = document.getElementById('btnCapProximo');
+function atualizarBotoesNav() {
+  const aula = aulaAtual();
+  const ehPrimeiro = indiceCapitulo === 0;
+  const ehUltimo   = indiceCapitulo === totalCaps() - 1;
 
-  const ehPrimeiroCap = (indiceCapitulo === 0);
-  const ehUltimoCap = (indiceCapitulo === getTotalCapitulos() - 1);
+  const temAnterior = aula.slice(0, indiceAtual).some(f => f.tipo !== 'pausa') || !ehPrimeiro;
+  const temProximo  = aula.slice(indiceAtual + 1).some(f => f.tipo !== 'pausa') || !ehUltimo;
 
-  if (btnA && btnP) {
-    const temAnterior = aula.slice(0, indiceAtual).some(function(f) { return f.tipo !== 'pausa'; });
-    const temProximo  = aula.slice(indiceAtual + 1).some(function(f) { return f.tipo !== 'pausa'; });
-
-    btnA.disabled = !temAnterior && ehPrimeiroCap;
-    btnP.disabled = !temProximo && ehUltimoCap;
-
-    if (!temProximo && !ehUltimoCap) btnP.disabled = false;
-    if (!temAnterior && !ehPrimeiroCap) btnA.disabled = false;
-  }
-  if (btnCA) btnCA.disabled = ehPrimeiroCap;
-  if (btnCP) btnCP.disabled = ehUltimoCap;
+  $('btnAnterior').disabled = !temAnterior;
+  $('btnProximo').disabled = !temProximo;
+  $('btnCapAnterior').disabled = ehPrimeiro;
+  $('btnCapProximo').disabled = ehUltimo;
 }
 
-/* ═══════════════════════════════════════════════════
-   VELOCIDADE
-   ═══════════════════════════════════════════════════ */
+/* ══════════ VELOCIDADE ══════════ */
 const VELOCIDADES = [0.75, 1.0, 1.25, 1.5, 2.0];
-
 function atualizarBtnVel() {
-  const btn = document.getElementById('btnVel');
-  if (!btn) return;
+  const btn = $('btnVel');
   btn.textContent = velocidade.toFixed(2).replace(/0$/, '') + '×';
   btn.classList.toggle('ativa', velocidade !== 1.0);
 }
-
 function ciclarVelocidade() {
   const i = VELOCIDADES.indexOf(velocidade);
   velocidade = VELOCIDADES[(i + 1) % VELOCIDADES.length];
   prefVelocidade = velocidade;
-  salvarPrefs();
-  atualizarBtnVel();
+  salvarPrefs(); atualizarBtnVel();
   mostrarToast('⚡ ' + velocidade.toFixed(2).replace(/0$/, '') + '×');
   if (tocando && !pausado) {
     const idx = indiceAtual;
     pararSilencioso();
-    setTimeout(function() { indiceAtual = idx; tocarDeOndeParou(); }, 100);
+    setTimeout(() => { indiceAtual = idx; tocarDeOndeParou(); }, 100);
   }
 }
 
-/* ═══════════════════════════════════════════════════
-   PLAY / PAUSE / PULAR
-   ═══════════════════════════════════════════════════ */
+/* ══════════ PLAY / PAUSE ══════════ */
 function togglePlay() {
   if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
-    mostrarToast('⚠️ Áudio não compatível com este navegador');
-    return;
+    mostrarToast('⚠️ Áudio não compatível com este navegador'); return;
   }
-  desbloquearAudioIOS();
-  if (isIOS) revalidarUnlockIOS();
+  desbloquearIOS();
+  if (isIOS) desbloquearIOS(true);
 
   if (tocando && !pausado) {
-    pausado = true;
-    cancelar = true;
+    pausado = true; cancelar = true;
     try { synth.cancel(); } catch(e) {}
     setBtnEstado(false);
     return;
   }
   if (tocando && pausado) {
     pausado = false;
-    setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 150 : 60);
+    setTimeout(tocarDeOndeParou, isIOS ? 150 : 60);
     return;
   }
   indiceAtual = 0;
-  setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 180 : 80);
+  setTimeout(tocarDeOndeParou, isIOS ? 180 : 80);
 }
 
 function pararSilencioso() {
   cancelar = true;
   if (synth) { try { synth.cancel(); } catch(e) {} }
-  tocando = false;
-  pausado = false;
+  tocando = false; pausado = false;
   setBtnEstado(false);
 }
 
-function pularFrase(direcao) {
-  const aula = getAulaAtual();
-  let novo = indiceAtual + direcao;
-  while (novo >= 0 && novo < aula.length && aula[novo].tipo === 'pausa') novo += direcao;
+function pularFrase(dir) {
+  const aula = aulaAtual();
+  let novo = indiceAtual + dir;
+  while (novo >= 0 && novo < aula.length && aula[novo].tipo === 'pausa') novo += dir;
 
   if (novo < 0) {
     if (indiceCapitulo > 0) {
       irParaCapitulo(indiceCapitulo - 1);
-      const anterior = getAulaAtual();
-      for (let i = anterior.length - 1; i >= 0; i--) {
-        if (anterior[i].tipo !== 'pausa') { indiceAtual = i; break; }
-      }
-      destacarFala(indiceAtual);
-      atualizarBotoesNavegacao();
+      const ant = aulaAtual();
+      for (let i = ant.length - 1; i >= 0; i--)
+        if (ant[i].tipo !== 'pausa') { indiceAtual = i; break; }
+      destacarFalas(indiceAtual);
+      atualizarBotoesNav();
     }
     return;
   }
   if (novo >= aula.length) {
-    if (indiceCapitulo < getTotalCapitulos() - 1) {
-      pularCapitulo(1);
-    } else {
-      mostrarToast('✅ Fim do conteúdo');
-    }
+    if (indiceCapitulo < totalCaps() - 1) pularCapitulo(1);
+    else mostrarToast('✅ Fim do conteúdo');
     return;
   }
 
-  const estavaTocando = tocando && !pausado;
+  const tocava = tocando && !pausado;
   pararSilencioso();
   indiceAtual = novo;
-
-  destacarFala(indiceAtual);
-  atualizarBotoesNavegacao();
-
-  if (estavaTocando) {
-    setTimeout(function() { tocarDeOndeParou(); }, 80);
-  }
+  destacarFalas(indiceAtual);
+  atualizarBotoesNav();
+  if (tocava) setTimeout(tocarDeOndeParou, 80);
 }
 
-/* ═══════════════════════════════════════════════════
-   FALA
-   ═══════════════════════════════════════════════════ */
-function dividirComMicroPausas(texto) {
-  const partesLongas = texto.split(/\s*\|\|\s*/);
-  const segmentos = [];
-  partesLongas.forEach(function(parte, iLonga) {
-    if (iLonga > 0) segmentos.push({ tipo:'pausaLonga' });
-    const partesCurtas = parte.split(/\s*\|\s*/);
-    partesCurtas.forEach(function(p, iCurta) {
-      if (iCurta > 0) segmentos.push({ tipo:'pausaCurta' });
-      if (p.trim()) {
-        const comEnfase = p.split(/(\*[^*]+\*)/g);
-        comEnfase.forEach(function(frag) {
-          if (!frag) return;
-          if (frag.startsWith('*') && frag.endsWith('*')) {
-            segmentos.push({ tipo:'enfase', texto: frag.slice(1, -1).trim() });
-          } else if (frag.trim()) {
-            segmentos.push({ tipo:'fala', texto: frag.trim() });
-          }
-        });
-      }
+/* ══════════ FALA ══════════ */
+function dividirSegmentos(texto) {
+  const segs = [];
+  String(texto).split(/\s*\|\|\s*/).forEach((parte, iL) => {
+    if (iL > 0) segs.push({ tipo:'pausaLonga' });
+    parte.split(/\s*\|\s*/).forEach((p, iC) => {
+      if (iC > 0) segs.push({ tipo:'pausaCurta' });
+      if (!p.trim()) return;
+      p.split(/(\*[^*]+\*)/g).forEach(frag => {
+        if (!frag) return;
+        if (frag.startsWith('*') && frag.endsWith('*'))
+          segs.push({ tipo:'enfase', texto: frag.slice(1, -1).trim() });
+        else if (frag.trim())
+          segs.push({ tipo:'fala', texto: frag.trim() });
+      });
     });
   });
-  return segmentos;
+  return segs;
 }
 
 function falar(texto, rate, pitch, volume, voz) {
-  return new Promise(function(resolve) {
-    let resolvido = false;
-    const finalizar = function() {
-      if (!resolvido) { resolvido = true; resolve(); }
-    };
-
-    if (!synth) { finalizar(); return; }
+  return new Promise(resolve => {
+    let ok = false;
+    const fim = () => { if (!ok) { ok = true; resolve(); } };
+    if (!synth) return fim();
 
     const u = new SpeechSynthesisUtterance(texto);
     u.lang = (voz && voz.lang) || 'pt-BR';
@@ -1381,57 +1053,39 @@ function falar(texto, rate, pitch, volume, voz) {
     u.pitch = Math.max(0, Math.min(2.0, pitch));
     u.volume = (volume == null) ? 1.0 : volume;
     if (voz) u.voice = voz;
-    u.onend = finalizar;
-    u.onerror = finalizar;
+    u.onend = fim; u.onerror = fim;
 
-    try { synth.speak(u); } catch(e) { finalizar(); return; }
-
-    const estimativa = Math.max(3000, texto.length * 130 / u.rate);
-    setTimeout(finalizar, estimativa);
+    try { synth.speak(u); } catch(e) { return fim(); }
+    setTimeout(fim, Math.max(3000, texto.length * 130 / u.rate));
   });
 }
 
-async function falarComMicroPausas(textoOriginal, perfil, voz) {
-  const segmentos = dividirComMicroPausas(textoOriginal);
-  for (let i = 0; i < segmentos.length; i++) {
-    const seg = segmentos[i];
+async function falarComMicroPausas(texto, perfil, voz) {
+  for (const seg of dividirSegmentos(texto)) {
     if (cancelar) return;
-    if (seg.tipo === 'pausaCurta') {
-      await esperar(perfil.microCurta / velocidade);
-    } else if (seg.tipo === 'pausaLonga') {
-      await esperar(perfil.microLonga / velocidade);
-    } else if (seg.tipo === 'enfase') {
-      await falar(seg.texto, perfil.rateEnfase, perfil.pitchEnfase, perfil.volume, voz);
-    } else if (seg.tipo === 'fala') {
-      await falar(seg.texto, perfil.rate, perfil.pitch, perfil.volume, voz);
-    }
+    if (seg.tipo === 'pausaCurta') await esperar(perfil.microCurta / velocidade);
+    else if (seg.tipo === 'pausaLonga') await esperar(perfil.microLonga / velocidade);
+    else if (seg.tipo === 'enfase') await falar(seg.texto, perfil.rateEnfase, perfil.pitchEnfase, perfil.volume, voz);
+    else if (seg.tipo === 'fala') await falar(seg.texto, perfil.rate, perfil.pitch, perfil.volume, voz);
   }
 }
 
-function esperar(ms) {
-  return new Promise(function(resolve) { setTimeout(resolve, ms); });
-}
+const esperar = ms => new Promise(r => setTimeout(r, ms));
 
-/* ═══════════════════════════════════════════════════
-   LOOP PRINCIPAL
-   ═══════════════════════════════════════════════════ */
+/* ══════════ LOOP ══════════ */
 async function tocarDeOndeParou() {
   if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
-    mostrarToast('⚠️ Áudio não compatível com este navegador');
-    return;
+    mostrarToast('⚠️ Áudio não compatível com este navegador'); return;
   }
   if (!elenco || !elenco.professor) {
-    mostrarToast('⚠️ Sem vozes pt-BR');
-    return;
+    mostrarToast('⚠️ Sem vozes pt-BR'); return;
   }
 
-  const aula = getAulaAtual();
-  cancelar = false;
-  tocando = true;
-  pausado = false;
+  const aula = aulaAtual();
+  cancelar = false; tocando = true; pausado = false;
   setBtnEstado(true);
 
-  const indiceInicial = indiceAtual;
+  const idxInicial = indiceAtual;
 
   for (let i = indiceAtual; i < aula.length; i++) {
     if (cancelar) return;
@@ -1443,17 +1097,17 @@ async function tocarDeOndeParou() {
       continue;
     }
 
-    const voz = elenco[fala.papel];
-    const perfil = PERFIS[fala.papel];
+    const voz = elenco[fala.papel] || elenco.professor;
+    const perfil = PERFIS[fala.papel] || PERFIS.professor;
 
     const pausaAntes = perfil.pausas[fala.tipo] || 0;
-    const ehPrimeiraFalaDoPlay = (i === indiceInicial);
-    if (pausaAntes > 0 && !(isIOS && ehPrimeiraFalaDoPlay)) {
+    const ehPrimeira = (i === idxInicial);
+    if (pausaAntes > 0 && !(isIOS && ehPrimeira)) {
       await esperar(pausaAntes / velocidade);
     }
 
-    destacarFala(i);
-    atualizarBotoesNavegacao();
+    destacarFalas(i);
+    atualizarBotoesNav();
 
     await falarComMicroPausas(fala.texto, perfil, voz);
     if (cancelar) return;
@@ -1462,62 +1116,45 @@ async function tocarDeOndeParou() {
   if (!cancelar) {
     resetDestaques();
     setBtnEstado(false);
-    tocando = false;
-    pausado = false;
-    atualizarBotoesNavegacao();
-
-    if (indiceCapitulo < getTotalCapitulos() - 1) {
-      mostrarToast('✅ Fim do Bloco ' + (indiceCapitulo + 1) + ' — toque em ⇥');
-    } else {
-      mostrarToast('✅ Fim do conteúdo');
-    }
+    tocando = false; pausado = false;
+    atualizarBotoesNav();
+    mostrarToast(indiceCapitulo < totalCaps() - 1
+      ? '✅ Fim do Bloco ' + (indiceCapitulo + 1) + ' — toque em ⇥'
+      : '✅ Fim do conteúdo');
   }
 }
 
-/* ═══════════════════════════════════════════════════
-   PLAYER ARRASTÁVEL
-   ═══════════════════════════════════════════════════ */
-const player = document.getElementById('player');
-const handle = document.getElementById('handle');
-let arrastando = false;
-let startX = 0, startY = 0, startLeft = 0, startTop = 0;
-let moveu = false;
+/* ══════════ ARRASTE DO PLAYER ══════════ */
+const player = $('player'), handle = $('handle');
+let arrastando = false, moveu = false;
+let sx = 0, sy = 0, sl = 0, st = 0;
 
 function iniciarArraste(e) {
   if (e.target !== handle && !handle.contains(e.target)) return;
-  arrastando = true;
-  moveu = false;
-  const rect = player.getBoundingClientRect();
-  startLeft = rect.left;
-  startTop = rect.top;
-  const ponto = e.touches ? e.touches[0] : e;
-  startX = ponto.clientX;
-  startY = ponto.clientY;
-  player.style.left = startLeft + 'px';
-  player.style.top = startTop + 'px';
+  arrastando = true; moveu = false;
+  const r = player.getBoundingClientRect();
+  sl = r.left; st = r.top;
+  const p = e.touches ? e.touches[0] : e;
+  sx = p.clientX; sy = p.clientY;
+  player.style.left = sl + 'px';
+  player.style.top = st + 'px';
   player.style.transform = 'none';
   player.style.bottom = 'auto';
   e.preventDefault();
 }
-
 function moverArraste(e) {
   if (!arrastando) return;
-  const ponto = e.touches ? e.touches[0] : e;
-  const dx = ponto.clientX - startX;
-  const dy = ponto.clientY - startY;
+  const p = e.touches ? e.touches[0] : e;
+  const dx = p.clientX - sx, dy = p.clientY - sy;
   if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moveu = true;
-  const novoLeft = Math.max(8, Math.min(window.innerWidth - player.offsetWidth - 8, startLeft + dx));
-  const novoTop  = Math.max(8, Math.min(window.innerHeight - player.offsetHeight - 8, startTop + dy));
-  player.style.left = novoLeft + 'px';
-  player.style.top  = novoTop + 'px';
+  player.style.left = Math.max(8, Math.min(window.innerWidth - player.offsetWidth - 8, sl + dx)) + 'px';
+  player.style.top  = Math.max(8, Math.min(window.innerHeight - player.offsetHeight - 8, st + dy)) + 'px';
 }
-
 function soltarArraste(e) {
   if (!arrastando) return;
   arrastando = false;
   if (e && e.preventDefault) e.preventDefault();
 }
-
 handle.addEventListener('mousedown', iniciarArraste);
 document.addEventListener('mousemove', moverArraste);
 document.addEventListener('mouseup', soltarArraste);
@@ -1525,170 +1162,129 @@ handle.addEventListener('touchstart', iniciarArraste, { passive: false });
 document.addEventListener('touchmove', moverArraste, { passive: false });
 document.addEventListener('touchend', soltarArraste);
 
-/* ═══════════════════════════════════════════════════
-   DEBUG (3 toques no handle)
-   ═══════════════════════════════════════════════════ */
-let toquesHandle = [];
-handle.addEventListener('touchend', function() {
+/* ══════════ DEBUG (3 toques) ══════════ */
+let toques = [];
+function registrarToque() {
   if (moveu) return;
   const agora = Date.now();
-  toquesHandle.push(agora);
-  toquesHandle = toquesHandle.filter(function(t) { return agora - t < 700; });
-
-  if (toquesHandle.length === 3) {
-    const dp = document.getElementById('debugPanel');
+  toques.push(agora);
+  toques = toques.filter(t => agora - t < 700);
+  if (toques.length === 3) {
+    const dp = $('debugPanel');
     dp.classList.toggle('ativo');
     if (dp.classList.contains('ativo')) atualizarDebug();
-    toquesHandle = [];
+    toques = [];
   }
-});
-
-handle.addEventListener('click', function() {
-  if (moveu) return;
-  const agora = Date.now();
-  toquesHandle.push(agora);
-  toquesHandle = toquesHandle.filter(function(t) { return agora - t < 700; });
-
-  if (toquesHandle.length === 3) {
-    const dp = document.getElementById('debugPanel');
-    dp.classList.toggle('ativo');
-    if (dp.classList.contains('ativo')) atualizarDebug();
-    toquesHandle = [];
-  }
-});
+}
+handle.addEventListener('touchend', registrarToque);
+handle.addEventListener('click', registrarToque);
 
 function atualizarDebug() {
-  const el = document.getElementById('debugElenco');
-  if (!el) return;
+  const el = $('debugElenco');
   if (!elenco) { el.textContent = 'Elenco não montado.'; return; }
 
-  const linhas = Object.entries(elenco).map(function(par) {
-    const papel = par[0];
-    const voz = par[1];
-    const ativo = (getAulaAtual()[indiceAtual] && getAulaAtual()[indiceAtual].papel === papel) ? ' ativa' : '';
-    const perfil = PERFIS[papel];
-    const pitchTxt = perfil ? perfil.pitch.toFixed(2) : '—';
-    const rateTxt  = perfil ? perfil.rate.toFixed(2)  : '—';
-    return '<div class="linha' + ativo + '">' +
-      '<span>' + escapeHTML(papel) + '</span>' +
-      '<span class="voz">' + escapeHTML(voz.name) + ' · pitch ' + pitchTxt + ' · rate ' + rateTxt + '</span>' +
+  const falaAtual = aulaAtual()[indiceAtual];
+  const linhas = Object.entries(elenco).map(([papel, voz]) => {
+    const ativa = (falaAtual && falaAtual.papel === papel) ? ' ativa' : '';
+    const p = PERFIS[papel];
+    return '<div class="linha' + ativa + '">' +
+      '<span>' + esc(papel) + '</span>' +
+      '<span class="voz">' + esc(voz.name) + ' · pitch ' + p.pitch.toFixed(2) + ' · rate ' + p.rate.toFixed(2) + '</span>' +
       '</div>';
   }).join('');
 
-  const unicas = new Set(Object.values(elenco).map(function(v) { return v.name; })).size;
+  const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
   const ptBR = vozesPtBR().length;
 
   let aviso = '';
-  if (isIOS && !felipeEncontrado) {
+  if (isIOS && !felipeEncontrado)
     aviso = '<div class="aviso">📱 iPhone sem Felipe! Baixe em: Ajustes → Acessibilidade → Conteúdo Falado → Vozes → Português (Brasil) → Felipe.</div>';
-  } else if (isIOS && felipeEncontrado) {
+  else if (isIOS && felipeEncontrado)
     aviso = '<div class="sucesso">✅ iPhone com Felipe!</div>';
-  } else if (unicas < 3) {
+  else if (unicas < 3)
     aviso = '<div class="aviso">⚠️ Só ' + unicas + ' vozes distintas. Instale mais em Ajustes.</div>';
-  }
 
   el.innerHTML = linhas +
-    '<div class="info">' +
-      'Vozes únicas: ' + unicas + ' · pt-BR disponíveis: ' + ptBR + '<br>' +
-      'Total exposto: ' + todasAsVozes.length + '<br>' +
-      'Modo: ' + (isIOS ? 'iPhone/Safari' : 'Desktop/Microsoft') + '<br>' +
-      'Felipe detectado: ' + (felipeEncontrado ? '✅ sim' : '❌ não') + '<br>' +
-      'iOS desbloqueado: ' + (iosDesbloqueado ? '✅ sim' : '⏳ aguardando gesto') +
-    '</div>' + aviso;
+    '<div class="info">Vozes únicas: ' + unicas + ' · pt-BR disponíveis: ' + ptBR + '<br>' +
+    'Total exposto: ' + todasAsVozes.length + '<br>' +
+    'Modo: ' + (isIOS ? 'iPhone/Safari' : 'Desktop/Microsoft') + '<br>' +
+    'Felipe detectado: ' + (felipeEncontrado ? '✅ sim' : '❌ não') + '<br>' +
+    'iOS desbloqueado: ' + (iosDesbloqueado ? '✅ sim' : '⏳ aguardando gesto') + '</div>' + aviso;
 }
+function fecharDebug() { $('debugPanel').classList.remove('ativo'); }
 
-function fecharDebug() {
-  document.getElementById('debugPanel').classList.remove('ativo');
-}
-
-/* ═══════════════════════════════════════════════════
-   ELENCO
-   ═══════════════════════════════════════════════════ */
-function embaralhar(lista) {
-  const a = lista.slice();
-  for (let i = a.length - 1; i > 0; i--) {
+/* ══════════ ELENCO ══════════ */
+function embaralhar(a) {
+  const arr = a.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    const t = a[i]; a[i] = a[j]; a[j] = t;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return a;
+  return arr;
 }
 
-const PRIORIDADE_PROFESSOR = [
-  /felipe/i, /daniel/i, /antonio|antônio/i, /ricardo/i,
-  /lucas/i, /thiago/i, /paulo/i,
-  /microsoft.*(daniel|antonio|ricardo|felipe)/i,
-  /google.*português/i
-];
+const PRIORIDADE_PROF = [/felipe/i, /daniel/i, /antonio|antônio/i, /ricardo/i,
+                         /lucas/i, /thiago/i, /paulo/i,
+                         /microsoft.*(daniel|antonio|ricardo|felipe)/i, /google.*português/i];
+const PRIORIDADE_FEM = [/maria/i, /francisca/i, /thalita|talita/i,
+                        /luciana/i, /fernanda/i, /camila/i, /joana/i];
 
-const PRIORIDADE_ALUNAS = [
-  /maria/i, /francisca/i, /thalita|talita/i,
-  /luciana/i, /fernanda/i, /camila/i, /joana/i
-];
+function escolherPorPrioridade(vozes, regexes, usadas = null) {
+  for (const re of regexes) {
+    const v = vozes.find(v => re.test(v.name) && (!usadas || !usadas.has(v)));
+    if (v) return v;
+  }
+  return null;
+}
 
 function escolherVozProfessor(vozes) {
-  for (let i = 0; i < PRIORIDADE_PROFESSOR.length; i++) {
-    const regex = PRIORIDADE_PROFESSOR[i];
-    const v = vozes.find(function(v) { return regex.test(v.name); });
-    if (v) {
-      felipeEncontrado = /felipe/i.test(v.name);
-      return v;
-    }
+  const v = escolherPorPrioridade(vozes, PRIORIDADE_PROF);
+  if (v) {
+    felipeEncontrado = /felipe/i.test(v.name);
+    return v;
   }
-  const masc = vozes.filter(function(v) {
-    return /daniel|felipe|ricardo|lucas|joão|joao|carlos|pedro|paulo|thiago|mateus|gustavo|arthur|antonio|antônio|male|homem/i.test(v.name);
-  });
-  if (masc.length) return embaralhar(masc)[0];
-  return embaralhar(vozes)[0];
+  const masc = vozes.filter(v =>
+    /daniel|felipe|ricardo|lucas|joão|joao|carlos|pedro|paulo|thiago|mateus|gustavo|arthur|antonio|antônio|male|homem/i.test(v.name));
+  return masc.length ? embaralhar(masc)[0] : embaralhar(vozes)[0];
 }
 
 function escolherVozAluna(vozes, usadas) {
-  for (let i = 0; i < PRIORIDADE_ALUNAS.length; i++) {
-    const regex = PRIORIDADE_ALUNAS[i];
-    const v = vozes.find(function(v) { return regex.test(v.name) && !usadas.has(v); });
-    if (v) return v;
-  }
-  const fem = vozes.filter(function(v) {
-    return /maria|francisca|thalita|talita|luciana|fernanda|camila|joana|helena|mariana|ana|beatriz|carolina|female|mulher/i.test(v.name) && !usadas.has(v);
-  });
-  if (fem.length) return embaralhar(fem)[0];
-  return null;
+  const v = escolherPorPrioridade(vozes, PRIORIDADE_FEM, usadas);
+  if (v) return v;
+  const fem = vozes.filter(v =>
+    /maria|francisca|thalita|talita|luciana|fernanda|camila|joana|helena|mariana|ana|beatriz|carolina|female|mulher/i.test(v.name) && !usadas.has(v));
+  return fem.length ? embaralhar(fem)[0] : null;
 }
 
 function distribuirElenco(vozes) {
   if (!vozes.length) return null;
-
   const professor = escolherVozProfessor(vozes);
   const usadas = new Set([professor]);
-  const e = { professor: professor };
+  const e = { professor };
 
-  const alunasFem = ['aluno1','aluno3','aluno5','aluno6'];
-  alunasFem.forEach(function(papel) {
+  ['aluno1','aluno3','aluno5','aluno6'].forEach(p => {
     const v = escolherVozAluna(vozes, usadas);
-    if (v) { e[papel] = v; usadas.add(v); }
+    if (v) { e[p] = v; usadas.add(v); }
   });
 
-  const restantes = embaralhar(vozes.filter(function(v) { return !usadas.has(v); }));
-  const papeisRestantes = PAPEIS_ALUNO.filter(function(p) { return !e[p]; });
-  papeisRestantes.forEach(function(papel, i) {
-    if (restantes.length) {
-      e[papel] = restantes[i % restantes.length];
-    } else {
-      e[papel] = embaralhar(vozes)[i % vozes.length];
-    }
+  const restantes = embaralhar(vozes.filter(v => !usadas.has(v)));
+  PAPEIS_ALUNO.filter(p => !e[p]).forEach((p, i) => {
+    e[p] = restantes.length ? restantes[i % restantes.length] : embaralhar(vozes)[i % vozes.length];
   });
-
   return e;
 }
 
 function ajustarPerfilProfessor() {
   if (!isIOS) return;
   if (!felipeEncontrado) {
-    PERFIS.professor = {
-      rate: 0.85, pitch: 0.70, volume: 1.0,
-      microCurta: 200, microLonga: 350,
-      rateEnfase: 0.79, pitchEnfase: 0.68,
-      pausas: { abertura:950, definicao:490, pergunta:320, confirmacao:420, guarde:1120, conclusao:860, pausa:670 }
-    };
+    PERFIS.professor.rate = 0.85;
+    PERFIS.professor.pitch = 0.70;
+    PERFIS.professor.rateEnfase = 0.79;
+    PERFIS.professor.pitchEnfase = 0.68;
+    Object.assign(PERFIS.professor.pausas, {
+      abertura:950, definicao:490, pergunta:320, confirmacao:420,
+      guarde:1120, conclusao:860, pausa:670
+    });
   } else {
     PERFIS.professor.rate = 0.88;
     PERFIS.professor.pitch = 0.78;
@@ -1697,50 +1293,44 @@ function ajustarPerfilProfessor() {
   }
 }
 
-/* ═══════════════════════════════════════════════════
-   INIT
-   ═══════════════════════════════════════════════════ */
+/* ══════════ INIT ══════════ */
 aplicarTema();
 aplicarFonte();
 atualizarBtnVel();
 atualizarListaBlocos();
 
-document.getElementById('btnMenu').addEventListener('click', abrirMenu);
-document.getElementById('btnFechar').addEventListener('click', fecharMenu);
-document.getElementById('overlay').addEventListener('click', fecharMenu);
-document.getElementById('toggleTema').addEventListener('click', alternarTema);
-document.getElementById('btnFonteMenos').addEventListener('click', function() { ajustarFonte(-1); });
-document.getElementById('btnFonteMais').addEventListener('click', function() { ajustarFonte(1); });
+$('btnMenu').addEventListener('click', abrirMenu);
+$('btnFechar').addEventListener('click', fecharMenu);
+$('overlay').addEventListener('click', fecharMenu);
+$('toggleTema').addEventListener('click', alternarTema);
+$('btnFonteMenos').addEventListener('click', () => ajustarFonte(-1));
+$('btnFonteMais').addEventListener('click', () => ajustarFonte(1));
+$('btnPlay').addEventListener('click', togglePlay);
+$('btnAnterior').addEventListener('click', () => pularFrase(-1));
+$('btnProximo').addEventListener('click', () => pularFrase(1));
+$('btnCapAnterior').addEventListener('click', () => pularCapitulo(-1));
+$('btnCapProximo').addEventListener('click', () => pularCapitulo(1));
+$('btnVel').addEventListener('click', ciclarVelocidade);
 
-document.getElementById('btnPlay').addEventListener('click', togglePlay);
-document.getElementById('btnAnterior').addEventListener('click', function() { pularFrase(-1); });
-document.getElementById('btnProximo').addEventListener('click', function() { pularFrase(1); });
-document.getElementById('btnCapAnterior').addEventListener('click', function() { pularCapitulo(-1); });
-document.getElementById('btnCapProximo').addEventListener('click', function() { pularCapitulo(1); });
-document.getElementById('btnVel').addEventListener('click', ciclarVelocidade);
-
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', e => {
   if (e.key === 'Escape') fecharMenu();
-  if (e.key === ' ' && !e.target.matches('button, input, textarea')) {
-    e.preventDefault();
-    togglePlay();
-  }
+  if (e.key === ' ' && !e.target.matches('button, input, textarea')) { e.preventDefault(); togglePlay(); }
   if (e.key === 'ArrowRight') pularFrase(1);
   if (e.key === 'ArrowLeft') pularFrase(-1);
 });
 
 renderCapitulo();
 
-carregarVozes(function() {
+carregarVozes(() => {
   const ptBR = vozesPtBR();
   if (ptBR.length === 0) {
     if (todasAsVozes.length > 0) elenco = distribuirElenco(todasAsVozes);
-    atualizarBotoesNavegacao();
+    atualizarBotoesNav();
     return;
   }
   elenco = distribuirElenco(ptBR);
   ajustarPerfilProfessor();
-  atualizarBotoesNavegacao();
+  atualizarBotoesNav();
 });
 </script>
 </body>
