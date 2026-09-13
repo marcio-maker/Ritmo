@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Sala de Aula — RH Bloco 1</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Sala de Aula — Gestão de Pessoas | RH</title>
 <style>
   /* ═══════════════════════════════════════════════
      RESET & BASE
@@ -37,8 +38,6 @@
     --page-text: #cbd5e1;
     --page-text-strong: #e2e8f0;
     --enfase: #fbbf24;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,.15);
-    --shadow-md: 0 4px 12px rgba(0,0,0,.2);
     --shadow-lg: 0 12px 32px rgba(0,0,0,.35);
     --shadow-xl: 0 24px 64px rgba(0,0,0,.5);
     --radius-sm: 8px;
@@ -84,7 +83,7 @@
   }
 
   /* ═══════════════════════════════════════════════
-     HEADER COMPACTO (nome do app + menu)
+     HEADER
      ═══════════════════════════════════════════════ */
   .app-header {
     position: sticky;
@@ -165,7 +164,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Filete decorativo no topo da folha */
   .folha::before {
     content: '';
     position: absolute;
@@ -178,7 +176,6 @@
     opacity: .9;
   }
 
-  /* Cabeçalho da folha (título + bolinhas) */
   .folha-header {
     text-align: center;
     margin-bottom: 18px;
@@ -215,7 +212,7 @@
   }
 
   /* ═══════════════════════════════════════════════
-     FALAS — TEXTO CORRIDO
+     FALAS
      ═══════════════════════════════════════════════ */
   .fala {
     display: inline;
@@ -254,10 +251,7 @@
 
   .fala.falada { opacity: .35; }
   .fala.futura { opacity: .92; }
-
-  .fala:hover {
-    background: var(--accent-soft);
-  }
+  .fala:hover { background: var(--accent-soft); }
 
   .enfase {
     color: var(--enfase);
@@ -305,9 +299,7 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
-  .drawer.ativo {
-    transform: translateX(0);
-  }
+  .drawer.ativo { transform: translateX(0); }
 
   .drawer-header {
     display: flex;
@@ -342,9 +334,7 @@
   .btn-fechar:hover { background: var(--surface-hover); }
   .btn-fechar:active { transform: scale(.9); }
 
-  .secao {
-    margin-bottom: 26px;
-  }
+  .secao { margin-bottom: 26px; }
   .secao-titulo {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: .58rem;
@@ -356,7 +346,6 @@
     padding-left: 2px;
   }
 
-  /* Toggle de tema */
   .toggle-linha {
     display: flex;
     align-items: center;
@@ -408,7 +397,6 @@
   .switch.ativo { background: var(--accent); }
   .switch.ativo::after { transform: translateX(18px); }
 
-  /* Controle de fonte */
   .fonte-controle {
     display: flex;
     align-items: center;
@@ -459,7 +447,6 @@
     transition: width .3s var(--transition);
   }
 
-  /* Lista de blocos */
   .blocos-lista {
     display: flex;
     flex-direction: column;
@@ -510,19 +497,14 @@
     color: #fff;
   }
 
-  .bloco-info {
-    flex: 1;
-    min-width: 0;
-  }
+  .bloco-info { flex: 1; min-width: 0; }
   .bloco-nome {
     font-size: .86rem;
     font-weight: 600;
     color: var(--text);
     margin-bottom: 2px;
   }
-  .bloco-item.ativo .bloco-nome {
-    color: var(--accent);
-  }
+  .bloco-item.ativo .bloco-nome { color: var(--accent); }
   .bloco-desc {
     font-size: .68rem;
     color: var(--text-faint);
@@ -538,9 +520,7 @@
     opacity: 0;
     transition: opacity .2s;
   }
-  .bloco-item.ativo .bloco-check {
-    opacity: 1;
-  }
+  .bloco-item.ativo .bloco-check { opacity: 1; }
 
   /* ═══════════════════════════════════════════════
      PLAYER
@@ -602,16 +582,11 @@
     touch-action: manipulation;
     font-family: inherit;
   }
-  .btn-ctrl:hover:not(:disabled) {
-    background: var(--surface-hover);
-  }
+  .btn-ctrl:hover:not(:disabled) { background: var(--surface-hover); }
   .btn-ctrl:active:not(:disabled) { transform: scale(.9); }
   .btn-ctrl:disabled { opacity: .25; cursor: not-allowed; }
 
-  .btn-sec {
-    width: 40px;
-    height: 40px;
-  }
+  .btn-sec { width: 40px; height: 40px; }
 
   .btn-play {
     width: 56px;
@@ -698,6 +673,81 @@
   }
 
   /* ═══════════════════════════════════════════════
+     DEBUG
+     ═══════════════════════════════════════════════ */
+  #debugPanel {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, .95);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 14px;
+    color: #cbd5e1;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: .68rem;
+    line-height: 1.5;
+    z-index: 10000;
+    max-height: 70vh;
+    overflow-y: auto;
+    display: none;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  #debugPanel.ativo { display: block; }
+  #debugPanel h3 {
+    font-size: .72rem;
+    color: #fbbf24;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #debugPanel h3 button {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: .65rem;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  #debugPanel .linha {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, .1);
+  }
+  #debugPanel .linha.ativa { color: #fbbf24; font-weight: 700; }
+  #debugPanel .voz { color: #93c5fd; }
+  #debugPanel .info {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(148, 163, 184, .15);
+    color: #94a3b8;
+    font-size: .62rem;
+  }
+  #debugPanel .aviso {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(220, 38, 38, .15);
+    border-radius: 6px;
+    color: #fca5a5;
+    font-size: .65rem;
+  }
+  #debugPanel .sucesso {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(34, 197, 94, .15);
+    border-radius: 6px;
+    color: #86efac;
+    font-size: .65rem;
+  }
+
+  /* ═══════════════════════════════════════════════
      RESPONSIVO
      ═══════════════════════════════════════════════ */
   @media (max-width: 380px) {
@@ -717,13 +767,20 @@
   @media (min-width: 900px) {
     .folha { padding: 32px 40px 36px; }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      transition-duration: .01ms !important;
+    }
+  }
 </style>
 </head>
 <body data-tema="escuro">
 
 <!-- HEADER -->
 <header class="app-header">
-  <div class="app-titulo">Sala de Aula · RH</div>
+  <div class="app-titulo">Sala de Aula · Gestão de Pessoas</div>
   <button class="btn-menu" id="btnMenu" aria-label="Abrir menu" aria-expanded="false">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
       <line x1="4" y1="7" x2="20" y2="7"/>
@@ -753,7 +810,6 @@
     </button>
   </div>
 
-  <!-- APARÊNCIA -->
   <section class="secao">
     <div class="secao-titulo">Aparência</div>
     <div class="toggle-linha" id="toggleTema">
@@ -765,7 +821,6 @@
     </div>
   </section>
 
-  <!-- TAMANHO DO TEXTO -->
   <section class="secao">
     <div class="secao-titulo">Tamanho do texto</div>
     <div class="fonte-controle">
@@ -777,7 +832,6 @@
     </div>
   </section>
 
-  <!-- BLOCOS -->
   <section class="secao">
     <div class="secao-titulo">Blocos</div>
     <div class="blocos-lista" id="blocosLista"></div>
@@ -785,7 +839,13 @@
 </aside>
 
 <!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- DEBUG -->
+<div id="debugPanel">
+  <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
+  <div id="debugElenco"></div>
+</div>
 
 <!-- PLAYER -->
 <div id="player" role="region" aria-label="Controles de áudio">
@@ -829,7 +889,18 @@
    ═══════════════════════════════════════════════════ */
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const isMicrosoft = /Windows|Win32|Win64/.test(navigator.userAgent);
+
+/* ═══════════════════════════════════════════════════
+   SEGURANÇA — escape HTML (blindagem contra XSS)
+   ═══════════════════════════════════════════════════ */
+function escapeHTML(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 /* ═══════════════════════════════════════════════════
    PREFERÊNCIAS
@@ -935,11 +1006,13 @@ function abrirMenu() {
   document.getElementById('drawer').classList.add('ativo');
   document.getElementById('overlay').classList.add('ativo');
   document.getElementById('btnMenu').setAttribute('aria-expanded', 'true');
+  document.getElementById('drawer').setAttribute('aria-hidden', 'false');
 }
 function fecharMenu() {
   document.getElementById('drawer').classList.remove('ativo');
   document.getElementById('overlay').classList.remove('ativo');
   document.getElementById('btnMenu').setAttribute('aria-expanded', 'false');
+  document.getElementById('drawer').setAttribute('aria-hidden', 'true');
 }
 
 /* ═══════════════════════════════════════════════════
@@ -951,6 +1024,7 @@ let felipeEncontrado = false;
 let iosDesbloqueado = false;
 
 function carregarVozes(callback) {
+  if (!synth) { callback(); return; }
   let jaChamou = false;
   const finalizar = () => {
     if (jaChamou) return;
@@ -1044,84 +1118,101 @@ const PERFIS = {
 const CAPITULOS = [
   {
     titulo: 'Bloco 1',
-    subtitulo: 'O que é gestão de pessoas',
+    subtitulo: 'Fundamentos da gestão de pessoas',
     aula: [
-      { papel:'professor', tipo:'abertura', texto:"Bom dia, turma. Hoje vamos entender o que é *gestão de pessoas*." },
-      { papel:'aluno1', tipo:'pergunta', texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
-      { papel:'professor', tipo:'definicao', texto:"Boa pergunta. Gestão de pessoas é a área responsável por tudo que envolve o *ser humano* no trabalho." },
-      { papel:'professor', tipo:'definicao', texto:"Isso inclui atrair, desenvolver, motivar | e *manter* as pessoas dentro da empresa." },
-      { papel:'aluno2', tipo:'confirmacao', texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
-      { papel:'professor', tipo:'definicao', texto:"*Exatamente.* Durante muito tempo, essa área foi vista apenas como operacional." },
-      { papel:'professor', tipo:'definicao', texto:"Cuidava de folha de pagamento, ponto, férias | e documentação." },
-      { papel:'aluno1', tipo:'confirmacao', texto:"Ah, o famoso setor que resolvia papelada." },
-      { papel:'professor', tipo:'confirmacao', texto:"Isso mesmo. Era o setor da *papelada*." },
-      { papel:'aluno5', tipo:'pergunta', texto:"E o que fez o cenário mudar?" },
-      { papel:'professor', tipo:'definicao', texto:"Hoje o cenário mudou. A gestão de pessoas passou a ser *estratégica*." },
-      { papel:'professor', tipo:'definicao', texto:"Ela participa das *decisões importantes* da organização. Ajuda a definir rumos, preparar equipes e garantir que a empresa tenha as *pessoas certas* nos lugares certos." },
-      { papel:'aluno3', tipo:'pergunta', texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
-      { papel:'professor', tipo:'definicao', texto:"Tem. E é uma diferença *importante*." },
-      { papel:'professor', tipo:'definicao', texto:"Gestão de recursos humanos é o nome mais antigo, ligado à ideia de que pessoas são *recursos*, como máquinas ou dinheiro." },
-      { papel:'professor', tipo:'definicao', texto:"Gestão de pessoas é o nome mais *moderno*, que enxerga o ser humano como *parceiro* da organização, e não como simples recurso." },
-      { papel:'aluno4', tipo:'confirmacao', texto:"Então essa mudança de nome reflete uma mudança de mentalidade." },
-      { papel:'professor', tipo:'confirmacao', texto:"*Exatamente.* Antes, a pessoa era vista como custo. Agora, é vista como *diferencial competitivo*." },
-      { papel:'professor', tipo:'guarde', texto:"*Guarde isto.*" },
-      { papel:'professor', tipo:'guarde', texto:"Gestão de pessoas é a área que cuida do *ser humano* no trabalho." },
-      { papel:'aluno2', tipo:'guarde', texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
-      { papel:'professor', tipo:'conclusao', texto:"E passa a *construir resultados*. Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
+      { papel:'professor', tipo:'abertura', texto:"Bom dia, turma. Hoje vamos compreender a gestão de pessoas de forma mais completa. Não vamos tratá-la apenas como o setor que contrata ou resolve documentos. Vamos entender como ela influencia a experiência, o desenvolvimento e os resultados das pessoas dentro da organização." },
+      { papel:'aluno1', tipo:'pergunta', texto:"Professor, então gestão de pessoas é o mesmo que o departamento de recursos humanos?" },
+      { papel:'professor', tipo:'definicao', texto:"Os termos muitas vezes são usados para falar da mesma área, mas a expressão gestão de pessoas destaca uma ideia importante: as pessoas não são apenas recursos que a empresa utiliza. Elas são profissionais que pensam, aprendem, colaboram, tomam decisões e também influenciam os resultados." },
+      { papel:'aluno2', tipo:'confirmacao', texto:"Então o nome muda o modo de enxergar quem trabalha na organização." },
+      { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A mudança representa uma evolução de enfoque. A área continua cuidando de processos administrativos, mas também precisa criar condições para que as pessoas trabalhem com clareza, respeito, segurança e possibilidade de desenvolvimento." },
+      { papel:'aluno3', tipo:'pergunta', texto:"Quais são os principais processos de gestão de pessoas?" },
+      { papel:'professor', tipo:'definicao', texto:"Podemos pensar em um ciclo. Primeiro, a organização planeja de quantas pessoas precisa e quais competências serão necessárias. Depois, realiza recrutamento e seleção, integra os novos profissionais, oferece treinamento, acompanha o desempenho, cuida da remuneração e dos benefícios e promove saúde, segurança e qualidade de vida." },
+      { papel:'aluno4', tipo:'pergunta', texto:"E esse ciclo termina quando a pessoa deixa a empresa?" },
+      { papel:'professor', tipo:'definicao', texto:"O desligamento também faz parte da gestão de pessoas. A organização precisa conduzir esse momento com respeito, cumprir suas obrigações e, quando possível, aprender com os motivos da saída. Uma rotatividade muito alta pode indicar problemas de liderança, remuneração, clima ou falta de oportunidades." },
+      { papel:'aluno5', tipo:'pergunta', texto:"Professor, qual é a diferença entre treinamento e desenvolvimento?" },
+      { papel:'professor', tipo:'definicao', texto:"Treinamento normalmente está ligado a uma necessidade mais imediata, como aprender um sistema, um procedimento ou uma técnica. Desenvolvimento é mais amplo e prepara a pessoa para desafios futuros, novas responsabilidades e crescimento profissional." },
+      { papel:'aluno1', tipo:'confirmacao', texto:"Então ensinar alguém a usar um sistema é treinamento, enquanto preparar essa pessoa para liderar uma equipe pode ser desenvolvimento." },
+      { papel:'professor', tipo:'confirmacao', texto:"Muito bem. Os dois são importantes, mas respondem a necessidades diferentes. Uma organização pode treinar para resolver uma deficiência atual e desenvolver para construir capacidades futuras." },
+      { papel:'aluno6', tipo:'pergunta', texto:"Quem é responsável por tudo isso? Apenas o RH?" },
+      { papel:'professor', tipo:'definicao', texto:"Não. O RH cria políticas, processos e apoio especializado, mas a liderança participa diretamente. É o gestor que orienta o trabalho, dá retorno, distribui responsabilidades, reconhece resultados e percebe dificuldades no dia a dia." },
+      { papel:'aluno2', tipo:'pergunta', texto:"E os próprios trabalhadores também têm responsabilidade?" },
+      { papel:'professor', tipo:'definicao', texto:"Sim. A gestão de pessoas é uma responsabilidade compartilhada. A organização deve oferecer condições justas e claras, a liderança deve conduzir a equipe e o profissional também precisa participar do próprio desenvolvimento, cumprir acordos e buscar melhorar seu trabalho." },
+      { papel:'aluno7', tipo:'pergunta', texto:"Como a empresa sabe se está fazendo uma boa gestão de pessoas?" },
+      { papel:'professor', tipo:'definicao', texto:"Ela precisa observar evidências. Pode acompanhar a rotatividade, o absenteísmo, a participação em treinamentos, o desempenho, a satisfação das equipes e a qualidade das contratações. Nenhum indicador explica tudo sozinho, mas vários sinais juntos ajudam a compreender a realidade." },
+      { papel:'aluno3', tipo:'pergunta', texto:"Uma empresa pode ter bons resultados e, mesmo assim, fazer uma gestão ruim?" },
+      { papel:'professor', tipo:'definicao', texto:"Pode. Resultados imediatos não justificam desrespeito, discriminação, excesso de pressão ou falta de segurança. Uma gestão responsável precisa equilibrar desempenho, ética, sustentabilidade e cuidado com as pessoas." },
+      { papel:'aluno4', tipo:'guarde', texto:"Então gestão de pessoas não é apenas colocar a pessoa certa na vaga. É acompanhar toda a relação dela com o trabalho." },
+      { papel:'professor', tipo:'guarde', texto:"Guarde esta ideia: gestão de pessoas envolve planejar, atrair, integrar, desenvolver, reconhecer, proteger e, quando necessário, conduzir o desligamento das pessoas com responsabilidade." },
+      { papel:'professor', tipo:'conclusao', texto:"Por isso, a área não deve ser vista apenas como operacional nem apenas como estratégica. Ela precisa fazer as duas coisas: garantir que os processos funcionem e contribuir para que a organização alcance seus objetivos sem esquecer que seus resultados dependem de pessoas. No próximo bloco, vamos dar um passo adiante e entender como essa visão se conecta ao planejamento do negócio." }
     ]
   },
   {
     titulo: 'Bloco 2',
     subtitulo: 'Gestão estratégica de pessoas',
     aula: [
-      { papel:'professor', tipo:'abertura', texto:"Vamos agora entender o que é *gestão estratégica de pessoas*." },
-      { papel:'aluno2', tipo:'pergunta', texto:"Professor, o que muda quando ela passa a ser estratégica?" },
-      { papel:'professor', tipo:'definicao', texto:"É quando a área de recursos humanos deixa de agir só no *operacional* | e passa a participar do *planejamento* da organização." },
-      { papel:'professor', tipo:'definicao', texto:"Na prática, significa *alinhar* as políticas de pessoas aos objetivos do negócio." },
-      { papel:'aluno5', tipo:'pergunta', texto:"Pode dar um exemplo?" },
-      { papel:'professor', tipo:'definicao', texto:"Se a empresa quer *crescer*, o setor de pessoas precisa preparar a equipe para esse crescimento." },
-      { papel:'professor', tipo:'definicao', texto:"Se quer *inovar*, precisa contratar e desenvolver pessoas com esse perfil." },
-      { papel:'aluno1', tipo:'pergunta', texto:"E quais são as frentes de trabalho?" },
-      { papel:'professor', tipo:'definicao', texto:"São *quatro*. Primeiro, *atrai* talentos. Segundo, *desenvolve* esses talentos." },
-      { papel:'professor', tipo:'definicao', texto:"Terceiro, *mantém* as pessoas boas na empresa. Quarto, garante que tudo isso esteja ligado à *estratégia*." },
-      { papel:'aluno6', tipo:'pergunta', texto:"E qual a diferença do modelo tradicional para o estratégico?" },
-      { papel:'professor', tipo:'definicao', texto:"No modelo *tradicional*, o setor de pessoal só *executa*. Paga, registra, controla." },
-      { papel:'professor', tipo:'definicao', texto:"No modelo *estratégico*, o setor de pessoal *participa das decisões*. Antecipa necessidades. Propõe soluções." },
-      { papel:'aluno4', tipo:'confirmacao', texto:"Então ele deixa de ser só operacional." },
-      { papel:'professor', tipo:'confirmacao', texto:"*Exatamente.* Um exemplo ajuda a entender." },
-      { papel:'professor', tipo:'definicao', texto:"Imagine uma empresa que decidiu abrir uma filial em outra cidade." },
-      { papel:'professor', tipo:'definicao', texto:"No modelo tradicional, o setor de pessoal só vai agir quando a filial já estiver montada, contratando quem aparecer." },
-      { papel:'professor', tipo:'definicao', texto:"No modelo estratégico, participa *desde o começo*. Planeja quantas pessoas serão necessárias, que perfis, que treinamento, em que prazo." },
-      { papel:'professor', tipo:'guarde', texto:"*Guarde isto:* gestão estratégica de pessoas é *alinhar gente e negócio*." },
-      { papel:'professor', tipo:'conclusao', texto:"Não é só contratar e pagar. É *pensar no presente e no futuro* da organização." }
+      { papel:'professor', tipo:'abertura', texto:"Agora vamos aprofundar a gestão estratégica de pessoas. No bloco anterior, vimos os processos que acompanham a trajetória do profissional. A pergunta central agora é: como transformar os objetivos da organização em decisões concretas sobre pessoas, competências, liderança e trabalho?" },
+      { papel:'aluno2', tipo:'pergunta', texto:"Professor, o que exatamente significa alinhar pessoas e negócio?" },
+      { papel:'professor', tipo:'definicao', texto:"Significa compreender o que a organização pretende alcançar e verificar quais comportamentos, conhecimentos, estruturas e profissionais serão necessários para isso. Se a empresa quer crescer, precisa planejar equipes. Se quer inovar, precisa criar espaço para aprendizagem e novas ideias." },
+      { papel:'aluno5', tipo:'pergunta', texto:"Então a estratégia de pessoas começa depois que a estratégia da empresa está pronta?" },
+      { papel:'professor', tipo:'definicao', texto:"Não necessariamente. A área de pessoas deve participar da construção e da execução da estratégia. Uma decisão de expansão, por exemplo, só será viável se houver profissionais em quantidade suficiente, com as competências certas e preparados no prazo necessário." },
+      { papel:'aluno1', tipo:'pergunta', texto:"Como seria esse planejamento no caso de uma nova filial?" },
+      { papel:'professor', tipo:'definicao', texto:"Primeiro, a empresa analisa o projeto e identifica as funções necessárias. Depois, estima quantas pessoas serão contratadas, quais profissionais podem ser transferidos, que conhecimentos já existem e quais lacunas precisam ser preenchidas." },
+      { papel:'professor', tipo:'definicao', texto:"Em seguida, define prazos, orçamento, treinamento e responsáveis. Também precisa pensar na integração da nova equipe, na liderança da filial e na forma de acompanhar os resultados depois da abertura." },
+      { papel:'aluno6', tipo:'pergunta', texto:"O que são competências nesse contexto?" },
+      { papel:'professor', tipo:'definicao', texto:"Competências são a combinação de conhecimentos, habilidades e atitudes que permite realizar um trabalho com qualidade. Para uma função de atendimento, por exemplo, podem ser necessárias comunicação, escuta, conhecimento do produto e capacidade de resolver problemas." },
+      { papel:'aluno3', tipo:'pergunta', texto:"E basta contratar pessoas que já tenham todas essas competências?" },
+      { papel:'professor', tipo:'definicao', texto:"Nem sempre. A organização pode contratar algumas competências e desenvolver outras. Essa decisão depende do prazo, do orçamento, da disponibilidade no mercado e da capacidade de aprendizagem das pessoas. Uma boa estratégia não olha apenas para o que falta hoje, mas também para o potencial de desenvolvimento." },
+      { papel:'aluno4', tipo:'pergunta', texto:"Qual é a relação entre estratégia de pessoas e cultura organizacional?" },
+      { papel:'professor', tipo:'definicao', texto:"A cultura é formada pelos valores e comportamentos que se repetem e são reconhecidos dentro da organização. Se uma empresa diz que valoriza colaboração, mas recompensa apenas resultados individuais, existe uma contradição entre o discurso e a prática." },
+      { papel:'aluno7', tipo:'confirmacao', texto:"Então uma política de pessoas pode fracassar se não combinar com a forma como a empresa realmente funciona." },
+      { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A estratégia precisa ser coerente com a liderança, os processos, os incentivos e as decisões do cotidiano. Não adianta falar em desenvolvimento se ninguém recebe retorno ou tempo para aprender." },
+      { papel:'aluno1', tipo:'pergunta', texto:"Como medir se a estratégia de pessoas está dando resultado?" },
+      { papel:'professor', tipo:'definicao', texto:"A empresa pode acompanhar indicadores. O tempo para preencher uma vaga mostra a eficiência do recrutamento. A rotatividade indica quantas pessoas deixam a organização. O absenteísmo mostra faltas e afastamentos. Também podemos acompanhar desempenho, conclusão de treinamentos e percepção das equipes." },
+      { papel:'aluno2', tipo:'pergunta', texto:"Um indicador alto ou baixo já mostra que existe um problema?" },
+      { papel:'professor', tipo:'definicao', texto:"Não automaticamente. O indicador é um sinal que precisa ser interpretado. Uma rotatividade alta pode ocorrer por salários pouco competitivos, liderança inadequada, mercado aquecido ou uma mudança planejada. É preciso investigar as causas antes de decidir." },
+      { papel:'aluno5', tipo:'pergunta', texto:"Qual seria a diferença entre o modelo tradicional e o estratégico em uma situação de crise?" },
+      { papel:'professor', tipo:'definicao', texto:"No modelo tradicional, o setor pode apenas executar a decisão depois que ela foi tomada. No modelo estratégico, participa da análise: avalia competências críticas, alternativas de treinamento, reorganização do trabalho, comunicação com a equipe e impactos sobre a saúde e o desempenho." },
+      { papel:'aluno6', tipo:'guarde', texto:"Então estratégia não é fazer um documento bonito. É tomar decisões de pessoas conectadas a um objetivo e acompanhar se funcionaram." },
+      { papel:'professor', tipo:'guarde', texto:"Perfeito. O ciclo estratégico é diagnosticar, planejar, executar, medir e ajustar. Se a realidade mudar, o plano também precisa ser revisto." },
+      { papel:'professor', tipo:'conclusao', texto:"Gestão estratégica de pessoas é, portanto, antecipar necessidades e transformar objetivos organizacionais em ações responsáveis sobre trabalho, competências e desenvolvimento. Ela aproxima a gestão de pessoas das decisões importantes sem reduzir o ser humano a um número ou indicador. No próximo bloco, vamos aplicar esse planejamento a uma etapa concreta: o recrutamento." }
     ]
   },
   {
     titulo: 'Bloco 3',
-    subtitulo: 'Recrutamento',
+    subtitulo: 'Recrutamento e atração de talentos',
     aula: [
-      { papel:'professor', tipo:'abertura', texto:"Agora vamos falar sobre *recrutamento*." },
-      { papel:'aluno7', tipo:'pergunta', texto:"Professor, o que é recrutamento?" },
-      { papel:'professor', tipo:'definicao', texto:"Recrutamento é o processo de *atrair candidatos* para uma vaga. É a etapa em que a empresa vai ao mercado buscar pessoas com potencial para ocupar determinada função." },
-      { papel:'aluno1', tipo:'pergunta', texto:"E é a mesma coisa que seleção?" },
-      { papel:'professor', tipo:'definicao', texto:"*Não.* Muita gente confunde. *Recrutamento atrai. Seleção escolhe.*" },
-      { papel:'professor', tipo:'definicao', texto:"São duas etapas *diferentes*, uma depois da outra." },
-      { papel:'aluno3', tipo:'pergunta', texto:"E quais são os tipos de recrutamento?" },
-      { papel:'professor', tipo:'definicao', texto:"Existem *dois tipos principais*: o recrutamento *interno* e o recrutamento *externo*." },
-      { papel:'professor', tipo:'definicao', texto:"O *interno* busca candidatos dentro da própria empresa. Pode ser por promoção, transferência ou remanejamento." },
-      { papel:'aluno5', tipo:'pergunta', texto:"Quais são as vantagens do interno?" },
-      { papel:'professor', tipo:'definicao', texto:"*Motiva* quem já trabalha ali, aproveita quem já *conhece a cultura*, *custa menos* e é *mais rápido*." },
-      { papel:'professor', tipo:'definicao', texto:"Mas tem desvantagens. Pode gerar *acomodação*, porque as pessoas sabem que a vaga vai ser preenchida por alguém de dentro." },
-      { papel:'professor', tipo:'definicao', texto:"E *fecha a porta* para ideias novas de fora." },
-      { papel:'aluno2', tipo:'pergunta', texto:"E o recrutamento externo?" },
-      { papel:'professor', tipo:'definicao', texto:"Busca candidatos *no mercado*. Anúncios, redes sociais, indicações, sites de emprego, agências." },
-      { papel:'professor', tipo:'definicao', texto:"Tem vantagens. Traz *sangue novo*, *novas ideias*, *novas experiências*." },
-      { papel:'professor', tipo:'definicao', texto:"Tem desvantagens. *Custa mais*, *demora mais*, e a pessoa precisa de tempo para se adaptar à cultura da empresa." },
-      { papel:'aluno4', tipo:'pergunta', texto:"E existe um que mistura os dois?" },
-      { papel:'professor', tipo:'confirmacao', texto:"Existe. O recrutamento *misto*, que combina os dois. É o *mais comum* nas organizações bem estruturadas." },
-      { papel:'professor', tipo:'definicao', texto:"Primeiro, olham para dentro. Se não encontram, vão para fora." },
-      { papel:'professor', tipo:'guarde', texto:"*Guarde isto:* recrutamento é *atrair*." },
-      { papel:'professor', tipo:'conclusao', texto:"E a escolha entre interno e externo depende do *momento da empresa* e do *tipo de vaga*." }
+      { papel:'professor', tipo:'abertura', texto:"Neste bloco, vamos aplicar o que estudamos. No primeiro bloco, vimos que o recrutamento faz parte do ciclo de gestão de pessoas. No segundo, entendemos que ele precisa responder à estratégia da organização. Agora vamos aprofundar o processo inteiro, desde a identificação da necessidade até a chegada dos candidatos à etapa de seleção." },
+      { papel:'aluno7', tipo:'pergunta', texto:"Professor, o recrutamento começa quando a empresa publica a vaga?" },
+      { papel:'professor', tipo:'definicao', texto:"Não. Antes de publicar, a empresa precisa confirmar que existe uma necessidade real, entender por que a vaga surgiu e analisar se o trabalho pode ser reorganizado ou desenvolvido internamente." },
+      { papel:'aluno1', tipo:'pergunta', texto:"E depois dessa confirmação, qual é o próximo passo?" },
+      { papel:'professor', tipo:'definicao', texto:"É analisar o cargo. A empresa deve descrever as responsabilidades, as atividades principais, a quem a pessoa responderá, quais resultados serão esperados e quais condições de trabalho existirão." },
+      { papel:'aluno3', tipo:'pergunta', texto:"Qual é a diferença entre requisito e competência?" },
+      { papel:'professor', tipo:'definicao', texto:"Requisito é uma condição necessária ou desejável para a vaga, como determinada formação ou experiência. Competência é a capacidade de aplicar conhecimentos, habilidades e atitudes no trabalho. Os dois devem estar relacionados às atividades reais do cargo." },
+      { papel:'aluno5', tipo:'pergunta', texto:"E como a empresa decide se fará recrutamento interno ou externo?" },
+      { papel:'professor', tipo:'definicao', texto:"No recrutamento interno, a organização procura entre seus próprios profissionais. Pode promover, transferir ou remanejar alguém. Essa opção aproveita conhecimento da cultura, pode motivar a equipe e costuma ser mais rápida, mas reduz a entrada de perspectivas novas." },
+      { papel:'aluno2', tipo:'pergunta', texto:"E quando o externo é mais indicado?" },
+      { papel:'professor', tipo:'definicao', texto:"Quando a organização precisa de competências que não possui, quer ampliar a diversidade de experiências ou não encontrou um profissional adequado internamente. O processo externo pode alcançar mais candidatos, mas costuma exigir mais tempo de divulgação, análise e integração." },
+      { papel:'aluno4', tipo:'confirmacao', texto:"Então o recrutamento misto permite olhar para dentro e para fora ao mesmo tempo." },
+      { papel:'professor', tipo:'confirmacao', texto:"Sim. Ele combina as duas fontes. A escolha depende da urgência, da estratégia, do perfil da vaga, das possibilidades de desenvolvimento e das condições do mercado de trabalho." },
+      { papel:'aluno6', tipo:'pergunta', texto:"Quais canais a empresa pode usar para encontrar candidatos?" },
+      { papel:'professor', tipo:'definicao', texto:"Pode usar o próprio site, redes profissionais, sites de emprego, instituições de ensino, agências, banco de talentos, programas de indicação e ações voltadas a grupos específicos. O canal deve combinar com o perfil que a empresa precisa alcançar." },
+      { papel:'aluno7', tipo:'pergunta', texto:"Uma boa divulgação é suficiente para garantir bons candidatos?" },
+      { papel:'professor', tipo:'definicao', texto:"Não. A descrição da vaga precisa ser clara e realista. Deve informar atividades, requisitos, local ou modalidade de trabalho, faixa de horário quando necessário e etapas do processo. Uma divulgação vaga atrai pessoas sem o perfil adequado e pode afastar candidatos qualificados." },
+      { papel:'aluno1', tipo:'pergunta', texto:"O que há de errado em pedir uma pessoa jovem, com boa aparência e dinâmica?" },
+      { papel:'professor', tipo:'definicao', texto:"Esses critérios podem ser subjetivos, discriminatórios ou não ter relação com o trabalho. É melhor descrever a competência necessária. Por exemplo: capacidade de atender o público com clareza, organização para registrar informações e disponibilidade para o horário informado." },
+      { papel:'aluno3', tipo:'pergunta', texto:"Como a empresa deve tratar os dados e as informações dos candidatos?" },
+      { papel:'professor', tipo:'definicao', texto:"Deve coletar apenas informações necessárias, explicar a finalidade do uso, restringir o acesso e proteger os dados. Também precisa comunicar o processo com respeito, evitar promessas que não poderá cumprir e dar retorno sempre que possível." },
+      { papel:'aluno5', tipo:'pergunta', texto:"Depois que os currículos chegam, a empresa já está fazendo seleção?" },
+      { papel:'professor', tipo:'definicao', texto:"A triagem inicial começa a aproximar o recrutamento da seleção, mas os conceitos continuam diferentes. Recrutamento é o esforço para atrair e formar um conjunto de candidatos. Seleção é a comparação dos candidatos com critérios definidos para escolher quem melhor atende à vaga." },
+      { papel:'aluno2', tipo:'confirmacao', texto:"Então recrutar é trazer pessoas qualificadas para o processo, e selecionar é avaliar e decidir." },
+      { papel:'professor', tipo:'confirmacao', texto:"Exatamente. Uma seleção bem feita depende de um recrutamento bem planejado, porque não é possível escolher adequadamente se a empresa não atrai candidatos suficientes ou se divulga a vaga para o público errado." },
+      { papel:'aluno4', tipo:'pergunta', texto:"Como saber se o recrutamento foi eficiente?" },
+      { papel:'professor', tipo:'definicao', texto:"A empresa pode analisar quantos candidatos aderentes foram atraídos, quanto tempo levou para preencher a vaga, qual foi o custo, quais canais trouxeram melhores resultados e se as pessoas contratadas permaneceram e tiveram bom desempenho." },
+      { papel:'aluno6', tipo:'guarde', texto:"Então o recrutamento não termina simplesmente quando alguém é contratado. A empresa também precisa avaliar a qualidade do processo." },
+      { papel:'professor', tipo:'guarde', texto:"Isso mesmo. Guarde esta sequência: identificar a necessidade, analisar o cargo, definir o perfil, escolher os canais, divulgar, atrair candidatos e encaminhá-los para uma seleção justa e coerente." },
+      { papel:'professor', tipo:'conclusao', texto:"Recrutar não é procurar qualquer pessoa para preencher rapidamente uma vaga. É construir uma ponte entre uma necessidade real da organização e profissionais que possam contribuir, aprendendo e trabalhando em condições claras, éticas e compatíveis com a função. Percebam a integração: a gestão de pessoas define o cuidado com a trajetória profissional; a estratégia mostra que as decisões precisam atender aos objetivos do negócio; e o recrutamento transforma essa necessidade em uma ação concreta." },
+      { papel:'aluno7', tipo:'guarde', texto:"Se eu receber uma questão longa, devo começar pelo conceito de gestão de pessoas, relacioná-lo à estratégia e depois mostrar como o recrutamento atende à necessidade identificada." },
+      { papel:'professor', tipo:'guarde', texto:"Exatamente. Uma resposta completa não apresenta conceitos isolados. Ela explica o conceito, mostra a relação entre eles, aplica a uma situação e avalia consequências e cuidados. Essa é a lógica que vamos usar para revisar todo o conteúdo." }
     ]
   }
 ];
@@ -1129,7 +1220,7 @@ const CAPITULOS = [
 /* ═══════════════════════════════════════════════════
    ESTADO
    ═══════════════════════════════════════════════════ */
-let synth = window.speechSynthesis;
+let synth = window.speechSynthesis || null;
 let tocando = false;
 let pausado = false;
 let cancelar = false;
@@ -1141,7 +1232,7 @@ function getAulaAtual() { return CAPITULOS[indiceCapitulo].aula; }
 function getTotalCapitulos() { return CAPITULOS.length; }
 
 /* ═══════════════════════════════════════════════════
-   iOS UNLOCK
+   iOS UNLOCK — Reforçado
    ═══════════════════════════════════════════════════ */
 function desbloquearAudioIOS() {
   if (!isIOS) return;
@@ -1157,6 +1248,18 @@ function desbloquearAudioIOS() {
   } catch(e) {}
 }
 
+// Re-força o unlock em iOS (às vezes o Safari "esquece")
+function revalidarUnlockIOS() {
+  if (!isIOS) return;
+  try {
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0.01;
+    u.rate = 2.0;
+    if (elenco && elenco.professor) u.voice = elenco.professor;
+    synth.speak(u);
+  } catch(e) {}
+}
+
 document.addEventListener('touchstart', desbloquearAudioIOS, { once: true, passive: true });
 document.addEventListener('click', desbloquearAudioIOS, { once: true });
 
@@ -1164,8 +1267,15 @@ document.addEventListener('click', desbloquearAudioIOS, { once: true });
    RENDER
    ═══════════════════════════════════════════════════ */
 function renderTextoLegivel(texto) {
-  let t = texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
+  // 1. Remove marcadores | e || (viraram espaços no texto)
+  let t = String(texto).replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
+
+  // 2. Escapa HTML primeiro (blindagem contra XSS)
+  t = escapeHTML(t);
+
+  // 3. Aplica ênfase (*palavra*) já em texto escapado
   t = t.replace(/\*([^*]+)\*/g, '<span class="enfase">$1</span>');
+
   return t;
 }
 
@@ -1311,13 +1421,34 @@ function atualizarListaBlocos() {
     const item = document.createElement('button');
     item.className = 'bloco-item' + (i === indiceCapitulo ? ' ativo' : '');
     item.type = 'button';
-    item.innerHTML =
-      '<div class="bloco-num">' + (i + 1) + '</div>' +
-      '<div class="bloco-info">' +
-        '<div class="bloco-nome">' + cap.titulo + '</div>' +
-        '<div class="bloco-desc">' + cap.subtitulo + '</div>' +
-      '</div>' +
-      '<div class="bloco-check">✓</div>';
+
+    // Estrutura segura (sem innerHTML com dados dinâmicos)
+    const num = document.createElement('div');
+    num.className = 'bloco-num';
+    num.textContent = String(i + 1);
+
+    const info = document.createElement('div');
+    info.className = 'bloco-info';
+
+    const nome = document.createElement('div');
+    nome.className = 'bloco-nome';
+    nome.textContent = cap.titulo;
+
+    const desc = document.createElement('div');
+    desc.className = 'bloco-desc';
+    desc.textContent = cap.subtitulo;
+
+    info.appendChild(nome);
+    info.appendChild(desc);
+
+    const check = document.createElement('div');
+    check.className = 'bloco-check';
+    check.textContent = '✓';
+
+    item.appendChild(num);
+    item.appendChild(info);
+    item.appendChild(check);
+
     item.addEventListener('click', function() {
       if (i === indiceCapitulo) return;
       irParaCapitulo(i);
@@ -1350,14 +1481,24 @@ function atualizarBotoesNavegacao() {
   const btnCA = document.getElementById('btnCapAnterior');
   const btnCP = document.getElementById('btnCapProximo');
 
+  const ehPrimeiroCap = (indiceCapitulo === 0);
+  const ehUltimoCap = (indiceCapitulo === getTotalCapitulos() - 1);
+
   if (btnA && btnP) {
     const temAnterior = aula.slice(0, indiceAtual).some(function(f) { return f.tipo !== 'pausa'; });
     const temProximo  = aula.slice(indiceAtual + 1).some(function(f) { return f.tipo !== 'pausa'; });
-    btnA.disabled = !temAnterior;
-    btnP.disabled = !temProximo;
+
+    // ✅ Bug #2 corrigido: se não tem próximo na página E é último capítulo,
+    // desabilita o botão de próxima fala
+    btnA.disabled = !temAnterior && ehPrimeiroCap;
+    btnP.disabled = !temProximo && ehUltimoCap;
+
+    // Se tem próximo capítulo, mantém o botão ativo
+    if (!temProximo && !ehUltimoCap) btnP.disabled = false;
+    if (!temAnterior && !ehPrimeiroCap) btnA.disabled = false;
   }
-  if (btnCA) btnCA.disabled = (indiceCapitulo === 0);
-  if (btnCP) btnCP.disabled = (indiceCapitulo === getTotalCapitulos() - 1);
+  if (btnCA) btnCA.disabled = ehPrimeiroCap;
+  if (btnCP) btnCP.disabled = ehUltimoCap;
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1390,7 +1531,13 @@ function ciclarVelocidade() {
    PLAY / PAUSE / PULAR
    ═══════════════════════════════════════════════════ */
 function togglePlay() {
+  if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
+    mostrarToast('⚠️ Áudio não compatível com este navegador');
+    return;
+  }
   desbloquearAudioIOS();
+  // Re-força o unlock no iOS a cada play (garantia extra)
+  if (isIOS) revalidarUnlockIOS();
 
   if (tocando && !pausado) {
     pausado = true;
@@ -1401,11 +1548,11 @@ function togglePlay() {
   }
   if (tocando && pausado) {
     pausado = false;
-    setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 120 : 60);
+    setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 150 : 60);
     return;
   }
   indiceAtual = 0;
-  setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 150 : 80);
+  setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 180 : 80);
 }
 
 function pararSilencioso() {
@@ -1422,11 +1569,24 @@ function pularFrase(direcao) {
   while (novo >= 0 && novo < aula.length && aula[novo].tipo === 'pausa') novo += direcao;
 
   if (novo < 0) {
-    if (indiceCapitulo > 0) pularCapitulo(-1);
+    if (indiceCapitulo > 0) {
+      irParaCapitulo(indiceCapitulo - 1);
+      const anterior = getAulaAtual();
+      for (let i = anterior.length - 1; i >= 0; i--) {
+        if (anterior[i].tipo !== 'pausa') { indiceAtual = i; break; }
+      }
+      destacarFala(indiceAtual);
+      atualizarBotoesNavegacao();
+    }
     return;
   }
   if (novo >= aula.length) {
-    if (indiceCapitulo < getTotalCapitulos() - 1) pularCapitulo(1);
+    if (indiceCapitulo < getTotalCapitulos() - 1) {
+      pularCapitulo(1);
+    } else {
+      // ✅ Bug #2: último bloco, última fala → não faz nada
+      mostrarToast('✅ Fim do conteúdo');
+    }
     return;
   }
 
@@ -1514,9 +1674,13 @@ function esperar(ms) {
 }
 
 /* ═══════════════════════════════════════════════════
-   LOOP PRINCIPAL
+   LOOP PRINCIPAL — Bug #1 corrigido
    ═══════════════════════════════════════════════════ */
 async function tocarDeOndeParou() {
+  if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
+    mostrarToast('⚠️ Áudio não compatível com este navegador');
+    return;
+  }
   if (!elenco || !elenco.professor) {
     mostrarToast('⚠️ Sem vozes pt-BR');
     return;
@@ -1527,6 +1691,9 @@ async function tocarDeOndeParou() {
   tocando = true;
   pausado = false;
   setBtnEstado(true);
+
+  // ✅ Bug #1: capturar índice inicial ANTES do loop
+  const indiceInicial = indiceAtual;
 
   for (let i = indiceAtual; i < aula.length; i++) {
     if (cancelar) return;
@@ -1542,7 +1709,8 @@ async function tocarDeOndeParou() {
     const perfil = PERFIS[fala.papel];
 
     const pausaAntes = perfil.pausas[fala.tipo] || 0;
-    const ehPrimeiraFalaDoPlay = (i === indiceAtual);
+    // ✅ Compara com indiceInicial (não com indiceAtual mutável)
+    const ehPrimeiraFalaDoPlay = (i === indiceInicial);
     if (pausaAntes > 0 && !(isIOS && ehPrimeiraFalaDoPlay)) {
       await esperar(pausaAntes / velocidade);
     }
@@ -1564,7 +1732,7 @@ async function tocarDeOndeParou() {
     if (indiceCapitulo < getTotalCapitulos() - 1) {
       mostrarToast('✅ Fim do Bloco ' + (indiceCapitulo + 1) + ' — toque em ⇥');
     } else {
-      mostrarToast('✅ Fim do último bloco');
+      mostrarToast('✅ Fim do conteúdo');
     }
   }
 }
@@ -1591,6 +1759,7 @@ function iniciarArraste(e) {
   player.style.left = startLeft + 'px';
   player.style.top = startTop + 'px';
   player.style.transform = 'none';
+  player.style.bottom = 'auto';
   e.preventDefault();
 }
 
@@ -1618,6 +1787,83 @@ document.addEventListener('mouseup', soltarArraste);
 handle.addEventListener('touchstart', iniciarArraste, { passive: false });
 document.addEventListener('touchmove', moverArraste, { passive: false });
 document.addEventListener('touchend', soltarArraste);
+
+/* ═══════════════════════════════════════════════════
+   DEBUG (3 toques no handle do player)
+   ═══════════════════════════════════════════════════ */
+let toquesHandle = [];
+handle.addEventListener('touchend', function() {
+  if (moveu) return;
+  const agora = Date.now();
+  toquesHandle.push(agora);
+  toquesHandle = toquesHandle.filter(function(t) { return agora - t < 700; });
+
+  if (toquesHandle.length === 3) {
+    const dp = document.getElementById('debugPanel');
+    dp.classList.toggle('ativo');
+    if (dp.classList.contains('ativo')) atualizarDebug();
+    toquesHandle = [];
+  }
+});
+
+// Suporte a desktop (3 cliques rápidos)
+handle.addEventListener('click', function() {
+  if (moveu) return;
+  const agora = Date.now();
+  toquesHandle.push(agora);
+  toquesHandle = toquesHandle.filter(function(t) { return agora - t < 700; });
+
+  if (toquesHandle.length === 3) {
+    const dp = document.getElementById('debugPanel');
+    dp.classList.toggle('ativo');
+    if (dp.classList.contains('ativo')) atualizarDebug();
+    toquesHandle = [];
+  }
+});
+
+function atualizarDebug() {
+  const el = document.getElementById('debugElenco');
+  if (!el) return;
+  if (!elenco) { el.textContent = 'Elenco não montado.'; return; }
+
+  const linhas = Object.entries(elenco).map(function(par) {
+    const papel = par[0];
+    const voz = par[1];
+    const ativo = (getAulaAtual()[indiceAtual] && getAulaAtual()[indiceAtual].papel === papel) ? ' ativa' : '';
+    const perfil = PERFIS[papel];
+    const pitchTxt = perfil ? perfil.pitch.toFixed(2) : '—';
+    const rateTxt  = perfil ? perfil.rate.toFixed(2)  : '—';
+    return '<div class="linha' + ativo + '">' +
+      '<span>' + escapeHTML(papel) + '</span>' +
+      '<span class="voz">' + escapeHTML(voz.name) + ' · pitch ' + pitchTxt + ' · rate ' + rateTxt + '</span>' +
+      '</div>';
+  }).join('');
+
+  const unicas = new Set(Object.values(elenco).map(function(v) { return v.name; })).size;
+  const ptBR = vozesPtBR().length;
+
+  let aviso = '';
+  if (isIOS && !felipeEncontrado) {
+    aviso = '<div class="aviso">📱 iPhone sem Felipe! Baixe em: Ajustes → Acessibilidade → Conteúdo Falado → Vozes → Português (Brasil) → Felipe.</div>';
+  } else if (isIOS && felipeEncontrado) {
+    aviso = '<div class="sucesso">✅ iPhone com Felipe!</div>';
+  } else if (unicas < 3) {
+    aviso = '<div class="aviso">⚠️ Só ' + unicas + ' vozes distintas. Instale mais em Ajustes.</div>';
+  }
+
+  el.innerHTML = linhas +
+    '<div class="info">' +
+      'Vozes únicas: ' + unicas + ' · pt-BR disponíveis: ' + ptBR + '<br>' +
+      'Total exposto: ' + todasAsVozes.length + '<br>' +
+      'Modo: ' + (isIOS ? 'iPhone/Safari' : 'Desktop/Microsoft') + '<br>' +
+      'Felipe detectado: ' + (felipeEncontrado ? '✅ sim' : '❌ não') + '<br>' +
+      'iOS desbloqueado: ' + (iosDesbloqueado ? '✅ sim' : '⏳ aguardando gesto') +
+    '</div>' + aviso;
+}
+
+function fecharDebug() {
+  document.getElementById('debugPanel').classList.remove('ativo');
+}
 
 /* ═══════════════════════════════════════════════════
    ELENCO
@@ -1701,6 +1947,7 @@ function distribuirElenco(vozes) {
 function ajustarPerfilProfessor() {
   if (!isIOS) return;
   if (!felipeEncontrado) {
+    // iPhone sem voz masculina: pitch 0.70 (grave mas sem distorção)
     PERFIS.professor = {
       rate: 0.85, pitch: 0.70, volume: 1.0,
       microCurta: 200, microLonga: 350,
@@ -1737,13 +1984,15 @@ document.getElementById('btnCapAnterior').addEventListener('click', function() {
 document.getElementById('btnCapProximo').addEventListener('click', function() { pularCapitulo(1); });
 document.getElementById('btnVel').addEventListener('click', ciclarVelocidade);
 
-// Fecha menu com ESC (desktop)
+// Atalhos de teclado (desktop)
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') fecharMenu();
   if (e.key === ' ' && !e.target.matches('button, input, textarea')) {
     e.preventDefault();
     togglePlay();
   }
+  if (e.key === 'ArrowRight') pularFrase(1);
+  if (e.key === 'ArrowLeft') pularFrase(-1);
 });
 
 renderCapitulo();
