@@ -890,6 +890,9 @@
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
+// ✅ CORREÇÃO #1: synth declarado AQUI (antes de qualquer uso)
+const synth = window.speechSynthesis || null;
+
 /* ═══════════════════════════════════════════════════
    SEGURANÇA — escape HTML (blindagem contra XSS)
    ═══════════════════════════════════════════════════ */
@@ -1236,11 +1239,9 @@ const CAPITULOS = [
   }
 ];
 
-
 /* ═══════════════════════════════════════════════════
    ESTADO
    ═══════════════════════════════════════════════════ */
-let synth = window.speechSynthesis || null;
 let tocando = false;
 let pausado = false;
 let cancelar = false;
@@ -1252,11 +1253,12 @@ function getAulaAtual() { return CAPITULOS[indiceCapitulo].aula; }
 function getTotalCapitulos() { return CAPITULOS.length; }
 
 /* ═══════════════════════════════════════════════════
-   iOS UNLOCK — Reforçado
+   iOS UNLOCK — Reforçado (com guarda)
    ═══════════════════════════════════════════════════ */
 function desbloquearAudioIOS() {
   if (!isIOS) return;
   if (iosDesbloqueado) return;
+  if (!synth) return;
   try {
     const u = new SpeechSynthesisUtterance(' ');
     u.volume = 0.01;
@@ -1268,9 +1270,9 @@ function desbloquearAudioIOS() {
   } catch(e) {}
 }
 
-// Re-força o unlock em iOS (às vezes o Safari "esquece")
 function revalidarUnlockIOS() {
   if (!isIOS) return;
+  if (!synth) return;
   try {
     const u = new SpeechSynthesisUtterance(' ');
     u.volume = 0.01;
@@ -1287,15 +1289,9 @@ document.addEventListener('click', desbloquearAudioIOS, { once: true });
    RENDER
    ═══════════════════════════════════════════════════ */
 function renderTextoLegivel(texto) {
-  // 1. Remove marcadores | e || (viraram espaços no texto)
   let t = String(texto).replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
-
-  // 2. Escapa HTML primeiro (blindagem contra XSS)
   t = escapeHTML(t);
-
-  // 3. Aplica ênfase (*palavra*) já em texto escapado
   t = t.replace(/\*([^*]+)\*/g, '<span class="enfase">$1</span>');
-
   return t;
 }
 
@@ -1306,7 +1302,6 @@ function renderCapitulo() {
   setTimeout(function() {
     el.innerHTML = '';
 
-    // Cabeçalho
     const header = document.createElement('div');
     header.className = 'folha-header';
 
@@ -1325,7 +1320,6 @@ function renderCapitulo() {
     header.appendChild(bolinhas);
     el.appendChild(header);
 
-    // Falas
     const aula = getAulaAtual();
     aula.forEach(function(fala, i) {
       if (fala.tipo === 'pausa') {
@@ -1442,7 +1436,6 @@ function atualizarListaBlocos() {
     item.className = 'bloco-item' + (i === indiceCapitulo ? ' ativo' : '');
     item.type = 'button';
 
-    // Estrutura segura (sem innerHTML com dados dinâmicos)
     const num = document.createElement('div');
     num.className = 'bloco-num';
     num.textContent = String(i + 1);
@@ -1508,12 +1501,9 @@ function atualizarBotoesNavegacao() {
     const temAnterior = aula.slice(0, indiceAtual).some(function(f) { return f.tipo !== 'pausa'; });
     const temProximo  = aula.slice(indiceAtual + 1).some(function(f) { return f.tipo !== 'pausa'; });
 
-    // ✅ Bug #2 corrigido: se não tem próximo na página E é último capítulo,
-    // desabilita o botão de próxima fala
     btnA.disabled = !temAnterior && ehPrimeiroCap;
     btnP.disabled = !temProximo && ehUltimoCap;
 
-    // Se tem próximo capítulo, mantém o botão ativo
     if (!temProximo && !ehUltimoCap) btnP.disabled = false;
     if (!temAnterior && !ehPrimeiroCap) btnA.disabled = false;
   }
@@ -1556,7 +1546,6 @@ function togglePlay() {
     return;
   }
   desbloquearAudioIOS();
-  // Re-força o unlock no iOS a cada play (garantia extra)
   if (isIOS) revalidarUnlockIOS();
 
   if (tocando && !pausado) {
@@ -1577,7 +1566,7 @@ function togglePlay() {
 
 function pararSilencioso() {
   cancelar = true;
-  try { synth.cancel(); } catch(e) {}
+  if (synth) { try { synth.cancel(); } catch(e) {} }
   tocando = false;
   pausado = false;
   setBtnEstado(false);
@@ -1604,7 +1593,6 @@ function pularFrase(direcao) {
     if (indiceCapitulo < getTotalCapitulos() - 1) {
       pularCapitulo(1);
     } else {
-      // ✅ Bug #2: último bloco, última fala → não faz nada
       mostrarToast('✅ Fim do conteúdo');
     }
     return;
@@ -1656,6 +1644,8 @@ function falar(texto, rate, pitch, volume, voz) {
       if (!resolvido) { resolvido = true; resolve(); }
     };
 
+    if (!synth) { finalizar(); return; }
+
     const u = new SpeechSynthesisUtterance(texto);
     u.lang = (voz && voz.lang) || 'pt-BR';
     u.rate = Math.max(0.1, Math.min(2.0, rate * velocidade));
@@ -1694,7 +1684,7 @@ function esperar(ms) {
 }
 
 /* ═══════════════════════════════════════════════════
-   LOOP PRINCIPAL — Bug #1 corrigido
+   LOOP PRINCIPAL
    ═══════════════════════════════════════════════════ */
 async function tocarDeOndeParou() {
   if (!synth || typeof SpeechSynthesisUtterance === 'undefined') {
@@ -1712,7 +1702,6 @@ async function tocarDeOndeParou() {
   pausado = false;
   setBtnEstado(true);
 
-  // ✅ Bug #1: capturar índice inicial ANTES do loop
   const indiceInicial = indiceAtual;
 
   for (let i = indiceAtual; i < aula.length; i++) {
@@ -1729,7 +1718,6 @@ async function tocarDeOndeParou() {
     const perfil = PERFIS[fala.papel];
 
     const pausaAntes = perfil.pausas[fala.tipo] || 0;
-    // ✅ Compara com indiceInicial (não com indiceAtual mutável)
     const ehPrimeiraFalaDoPlay = (i === indiceInicial);
     if (pausaAntes > 0 && !(isIOS && ehPrimeiraFalaDoPlay)) {
       await esperar(pausaAntes / velocidade);
@@ -1826,7 +1814,6 @@ handle.addEventListener('touchend', function() {
   }
 });
 
-// Suporte a desktop (3 cliques rápidos)
 handle.addEventListener('click', function() {
   if (moveu) return;
   const agora = Date.now();
@@ -1967,7 +1954,6 @@ function distribuirElenco(vozes) {
 function ajustarPerfilProfessor() {
   if (!isIOS) return;
   if (!felipeEncontrado) {
-    // iPhone sem voz masculina: pitch 0.70 (grave mas sem distorção)
     PERFIS.professor = {
       rate: 0.85, pitch: 0.70, volume: 1.0,
       microCurta: 200, microLonga: 350,
@@ -2004,7 +1990,6 @@ document.getElementById('btnCapAnterior').addEventListener('click', function() {
 document.getElementById('btnCapProximo').addEventListener('click', function() { pularCapitulo(1); });
 document.getElementById('btnVel').addEventListener('click', ciclarVelocidade);
 
-// Atalhos de teclado (desktop)
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') fecharMenu();
   if (e.key === ' ' && !e.target.matches('button, input, textarea')) {
