@@ -127,6 +127,11 @@
   }
   #debugPanel .linha.ativa { color: #fbbf24; font-weight: 700; }
   #debugPanel .voz { color: #93c5fd; }
+  #debugPanel .status-troca {
+    margin-top: 8px; padding: 6px;
+    background: rgba(124, 58, 237, .15);
+    border-radius: 6px; color: #c4b5fd;
+  }
   #debugPanel .aviso {
     margin-top: 8px; padding: 6px;
     background: rgba(220, 38, 38, .15);
@@ -147,6 +152,7 @@
 <div id="debugPanel">
   <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
   <div id="debugElenco"></div>
+  <div class="status-troca" id="debugTroca">Aguardando…</div>
 </div>
 
 <div id="playerFlutuante" role="region" aria-label="Controles de áudio">
@@ -186,26 +192,47 @@ const isMicrosoft = /Windows|Win32|Win64/.test(navigator.userAgent);
    ===================================================== */
 let todasAsVozes = [];
 let elenco = null;
+let vozesCarregadas = false;
 let modoIOS = false;
 let felipeEncontrado = false;
+// O Safari pode repetir a primeira voz da fila se a voz não for atribuída
+// novamente a cada utterance.
+let ultimaVozUsada = null;
 
 function carregarVozes(callback) {
   let jaChamou = false;
+  let timerEstabilizacao = null;
   const finalizar = () => {
     if (jaChamou) return;
     jaChamou = true;
+    if (timerEstabilizacao) clearTimeout(timerEstabilizacao);
+    if (typeof handler !== 'undefined') {
+      speechSynthesis.removeEventListener('voiceschanged', handler);
+    }
+    vozesCarregadas = true;
     callback();
   };
 
+  // No iOS, getVoices() pode devolver primeiro apenas a voz padrão e
+  // acrescentar as vozes baixadas alguns instantes depois. Esperar o catálogo
+  // estabilizar evita montar o elenco com uma única voz.
+  const atualizar = (aguardar = isIOS ? 900 : 150) => {
+    const atuais = speechSynthesis.getVoices();
+    if (!atuais.length) return false;
+    todasAsVozes = atuais;
+    clearTimeout(timerEstabilizacao);
+    timerEstabilizacao = setTimeout(finalizar, aguardar);
+    return true;
+  };
+
   let vozes = speechSynthesis.getVoices();
-  if (vozes.length > 0) { todasAsVozes = vozes; finalizar(); return; }
+  if (vozes.length > 0) atualizar();
 
   const handler = () => {
-    vozes = speechSynthesis.getVoices();
-    if (vozes.length > 0) {
-      todasAsVozes = vozes;
-      speechSynthesis.removeEventListener('voiceschanged', handler);
-      finalizar();
+    if (atualizar()) {
+      // Um segundo evento ainda pode chegar no iOS; a leitura final abaixo
+      // garante que o catálogo mais recente seja usado.
+      setTimeout(() => { if (!jaChamou) atualizar(250); }, 250);
     }
   };
 
@@ -218,8 +245,7 @@ function carregarVozes(callback) {
   let tentativas = 0;
   const poll = () => {
     tentativas++;
-    vozes = speechSynthesis.getVoices();
-    if (vozes.length > 0) { todasAsVozes = vozes; finalizar(); return; }
+    if (atualizar()) return;
     if (tentativas < 30) setTimeout(poll, 200);
     else finalizar();
   };
@@ -244,6 +270,7 @@ const SIMBOLOS = {
 };
 
 const PERFIS = {
+  // 🎯 PROFESSOR MOTIVACIONAL MASCULINO
   professor: {
     rate: 1.05, pitch: 0.90, volume: 1.0,
     microCurta: 120, microLonga: 180,
@@ -453,17 +480,12 @@ function ciclarVelocidade() {
    ===================================================== */
 function togglePlay() {
   if (tocando && !pausado) {
-    pausado = true;
-    cancelar = true;
+    pausado = true; cancelar = true;
     try { synth.cancel(); } catch(e) {}
     setBtnEstado(false);
     return;
   }
-  if (tocando && pausado) {
-    pausado = false;
-    tocarDeOndeParou();
-    return;
-  }
+  if (tocando && pausado) { pausado = false; tocarDeOndeParou(); return; }
   indiceAtual = 0;
   tocarDeOndeParou();
 }
@@ -471,8 +493,7 @@ function togglePlay() {
 function pararSilencioso() {
   cancelar = true;
   try { synth.cancel(); } catch(e) {}
-  tocando = false;
-  pausado = false;
+  tocando = false; pausado = false;
   setBtnEstado(false);
 }
 
@@ -485,11 +506,11 @@ function pularFrase(direcao) {
   pararSilencioso();
   indiceAtual = novo;
 
-  destacarFala(indiceAtual);
-  atualizarBotoesNavegacao();
-
   if (estavaTocando) {
     setTimeout(() => tocarDeOndeParou(), 80);
+  } else {
+    destacarFala(indiceAtual);
+    atualizarBotoesNavegacao();
   }
 }
 
@@ -526,11 +547,16 @@ function falar(texto, rate, pitch, volume, voz) {
     const finalizar = () => { if (!resolvido) { resolvido = true; resolve(); } };
 
     const u = new SpeechSynthesisUtterance(texto);
-    u.lang = 'pt-BR';
+    u.lang = (voz && voz.lang) || 'pt-BR';
     u.rate = Math.max(0.1, Math.min(2.0, rate * velocidade));
     u.pitch = Math.max(0, Math.min(2.0, pitch));
     u.volume = volume ?? 1.0;
-    if (voz) u.voice = voz;
+    // Reatribuir sempre a voz, inclusive quando é igual à anterior. Isso
+    // evita que o Safari/iPhone mantenha a primeira voz da fila.
+    if (voz) {
+      u.voice = voz;
+      ultimaVozUsada = voz;
+    }
     u.onend = finalizar;
     u.onerror = finalizar;
 
@@ -570,6 +596,11 @@ async function tocarDeOndeParou() {
   pausado = false;
   setBtnEstado(true);
 
+  let ultimaVoz = null;
+  for (let k = indiceAtual - 1; k >= 0; k--) {
+    if (AULA[k].tipo !== 'pausa') { ultimaVoz = elenco[AULA[k].papel]; break; }
+  }
+
   for (let i = indiceAtual; i < AULA.length; i++) {
     if (cancelar) return;
     indiceAtual = i;
@@ -582,6 +613,7 @@ async function tocarDeOndeParou() {
 
     const voz = elenco[fala.papel];
     const perfil = PERFIS[fala.papel];
+    ultimaVoz = voz;
 
     const pausaAntes = perfil.pausas[fala.tipo] || 0;
     if (pausaAntes > 0) await esperar(pausaAntes / velocidade);
@@ -596,9 +628,7 @@ async function tocarDeOndeParou() {
   if (!cancelar) {
     resetDestaques();
     setBtnEstado(false);
-    tocando = false;
-    pausado = false;
-    atualizarBotoesNavegacao();
+    tocando = false; pausado = false; indiceAtual = 0;
   }
 }
 
@@ -627,15 +657,12 @@ let moveu = false;
 
 function iniciarArraste(e) {
   if (e.target !== handle && !handle.contains(e.target)) return;
-  arrastando = true;
-  moveu = false;
+  arrastando = true; moveu = false;
   player.classList.add('arrastando');
   const rect = player.getBoundingClientRect();
-  startLeft = rect.left;
-  startTop = rect.top;
+  startLeft = rect.left; startTop = rect.top;
   const ponto = e.touches ? e.touches[0] : e;
-  startX = ponto.clientX;
-  startY = ponto.clientY;
+  startX = ponto.clientX; startY = ponto.clientY;
   player.style.left = startLeft + 'px';
   player.style.top = startTop + 'px';
   player.style.right = 'auto';
@@ -840,9 +867,11 @@ function ajustarPerfilProfessor() {
   if (felipeEncontrado) return;
 
   PERFIS.professor = {
-    rate: 1.15, pitch: 1.0, volume: 1.0,
+    // Sem uma voz masculina instalada, uma diferença maior é mais audível
+    // no iPhone do que a configuração anterior (pitch 1.0).
+    rate: 0.92, pitch: 0.68, volume: 1.0,
     microCurta: 100, microLonga: 160,
-    rateEnfase: 1.10, pitchEnfase: 1.0,
+    rateEnfase: 0.88, pitchEnfase: 0.62,
     pausas: { abertura:600, definicao:320, pergunta:220, confirmacao:280, guarde:750, conclusao:600, pausa:500 }
   };
 }
@@ -855,6 +884,9 @@ function preAquecerVozes() {
   if (preAquecido) return;
   preAquecido = true;
   if (!elenco) return;
+  // Utterances vazias podem fazer o Safari fixar a primeira voz para toda a
+  // fila. No iPhone, o toque no botão Play já desbloqueia o áudio.
+  if (isIOS) return;
   const vozesUnicas = [...new Set(Object.values(elenco))];
   vozesUnicas.forEach((voz, i) => {
     setTimeout(() => {
