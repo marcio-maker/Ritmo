@@ -201,7 +201,7 @@
   </div>
   <div class="rodape">
     <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">1.0×</button>
-    <span class="status-mini" id="statusMini">Carregando vozes…</span>
+    <span class="status-mini" id="statusMini">Toque em ▶ para iniciar</span>
   </div>
   <div class="progresso-mini">
     <div class="progresso-mini-fill" id="progMini"></div>
@@ -220,32 +220,55 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
    ===================================================== */
 let todasAsVozes = [];
 let elenco = null;
+let vozesCarregadas = false;
 
-function carregarVozesComRetry(callback) {
-  let tentativas = 0;
+function carregarVozes(callback) {
   let jaChamou = false;
+  const finalizar = () => {
+    if (jaChamou) return;
+    jaChamou = true;
+    vozesCarregadas = true;
+    callback();
+  };
 
-  function tentar() {
-    tentativas++;
-    const vozes = window.speechSynthesis.getVoices();
+  // Tenta imediatamente
+  let vozes = speechSynthesis.getVoices();
+  if (vozes.length > 0) {
+    todasAsVozes = vozes;
+    finalizar();
+    return;
+  }
+
+  // Aguarda evento voiceschanged
+  const handler = () => {
+    vozes = speechSynthesis.getVoices();
     if (vozes.length > 0) {
       todasAsVozes = vozes;
-      if (!jaChamou) { jaChamou = true; callback(); }
-      if (tentativas < 20) setTimeout(tentar, 400);
-      return;
+      speechSynthesis.removeEventListener('voiceschanged', handler);
+      finalizar();
     }
-    if (tentativas < 40) setTimeout(tentar, 100);
-    else if (!jaChamou) { jaChamou = true; callback(); }
+  };
+
+  if (speechSynthesis.addEventListener) {
+    speechSynthesis.addEventListener('voiceschanged', handler);
+  } else {
+    speechSynthesis.onvoiceschanged = handler;
   }
 
-  if (window.speechSynthesis.addEventListener) {
-    window.speechSynthesis.addEventListener('voiceschanged', tentar);
-  } else {
-    window.speechSynthesis.onvoiceschanged = tentar;
-  }
-  tentar();
-  setTimeout(tentar, 1000);
-  setTimeout(tentar, 2500);
+  // Polling de segurança (Safari iOS às vezes não dispara o evento)
+  let tentativas = 0;
+  const poll = () => {
+    tentativas++;
+    vozes = speechSynthesis.getVoices();
+    if (vozes.length > 0) {
+      todasAsVozes = vozes;
+      finalizar();
+      return;
+    }
+    if (tentativas < 30) setTimeout(poll, 200);
+    else finalizar(); // desiste após 6s
+  };
+  setTimeout(poll, 200);
 }
 
 function vozesPtBR() {
@@ -377,10 +400,6 @@ let cancelar = false;
 let indiceAtual = 0;
 let velocidade = 1.0;
 
-/* Delays adaptativos — começam CURTOS e crescem se o iOS falhar */
-let delayFantasma = isIOS ? 300 : 80;
-let delayPosFantasma = isIOS ? 250 : 60;
-
 /* =====================================================
    RENDER
    ===================================================== */
@@ -496,7 +515,7 @@ function togglePlay() {
   if (tocando && !pausado) {
     pausado = true;
     cancelar = true;
-    synth.cancel();
+    try { synth.cancel(); } catch(e) {}
     setBtnEstado(false);
     setStatus('Pausado');
     return;
@@ -512,7 +531,7 @@ function togglePlay() {
 
 function pararSilencioso() {
   cancelar = true;
-  synth.cancel();
+  try { synth.cancel(); } catch(e) {}
   tocando = false;
   pausado = false;
   setBtnEstado(false);
@@ -580,10 +599,15 @@ function falar(texto, rate, pitch, volume, voz) {
     u.onend = finalizar;
     u.onerror = finalizar;
 
-    synth.speak(u);
+    try {
+      synth.speak(u);
+    } catch(e) {
+      finalizar();
+      return;
+    }
 
     // Watchdog: se onend nunca disparar, libera depois de tempo proporcional
-    const estimativa = Math.max(3000, texto.length * 120 / u.rate);
+    const estimativa = Math.max(3000, texto.length * 130 / u.rate);
     setTimeout(finalizar, estimativa);
   });
 }
@@ -609,58 +633,58 @@ function esperar(ms) {
 }
 
 /* =====================================================
-   TROCA DE VOZ — iOS usa hack, desktop não
+   TROCA DE VOZ
    ===================================================== */
 async function trocarVoz(vozAntiga, vozNova) {
   const debugEl = document.getElementById('debugTroca');
-  debugEl.textContent = `Trocando: ${vozAntiga ? vozAntiga.name : '—'} → ${vozNova.name}`;
+  if (debugEl) {
+    debugEl.textContent = `Trocando: ${vozAntiga ? vozAntiga.name : '—'} → ${vozNova.name}`;
+  }
 
-  // No desktop, o voice é respeitado diretamente — só cancela e segue
+  // No desktop, o voice é respeitado diretamente
   if (!isIOS) {
-    synth.cancel();
+    try { synth.cancel(); } catch(e) {}
     await esperar(50);
     mostrarBadge(`🎙️ ${vozNova.name}`);
     return;
   }
 
-  // iOS: precisa do ritual completo
-  if (vozAntiga) {
-    await new Promise(resolve => {
+  // iOS: ritual para forçar troca de voz
+  if (vozAntiga && vozAntiga !== vozNova) {
+    try {
       const u = new SpeechSynthesisUtterance(' ');
       u.voice = vozAntiga;
       u.volume = 0.01;
       u.rate = 2.5;
-      u.onend = resolve;
-      u.onerror = resolve;
       synth.speak(u);
-      setTimeout(resolve, 150);
-    });
+      await esperar(120);
+    } catch(e) {}
   }
 
-  synth.cancel();
-  await esperar(100);
+  try { synth.cancel(); } catch(e) {}
+  await esperar(80);
 
-  await new Promise(resolve => {
+  try {
     const u = new SpeechSynthesisUtterance('.');
     u.voice = vozNova;
     u.volume = 0.01;
-    u.rate = 1.0;
-    u.onend = resolve;
-    u.onerror = resolve;
+    u.rate = 1.5;
     synth.speak(u);
-    setTimeout(resolve, delayFantasma);
-  });
+    await esperar(180);
+  } catch(e) {}
 
-  await esperar(delayPosFantasma);
+  try { synth.cancel(); } catch(e) {}
+  await esperar(80);
+
   mostrarBadge(`🎙️ ${vozNova.name}`);
 }
 
 /* =====================================================
-   LOOP PRINCIPAL — com watchdog de travamento
+   LOOP PRINCIPAL
    ===================================================== */
 async function tocarDeOndeParou() {
   if (!elenco || !elenco.professor) {
-    setStatus('Sem vozes');
+    setStatus('Sem vozes pt-BR');
     return;
   }
 
@@ -798,7 +822,7 @@ function soltarArraste(e) {
       left: destinoX, top: parseInt(player.style.top)
     }));
   } catch(e) {}
-  e.preventDefault();
+  if (e && e.preventDefault) e.preventDefault();
 }
 
 handle.addEventListener('mousedown', iniciarArraste);
@@ -846,11 +870,12 @@ function atualizarDebug() {
 
   const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
   const aviso = unicas < 3
-    ? `<div class="aviso">⚠️ Só ${unicas} vozes distintas. Instale mais em Ajustes → Acessibilidade → Conteúdo Falado → Vozes → Português (Brasil).</div>`
+    ? `<div class="aviso">⚠️ Só ${unicas} vozes distintas. O Safari do iOS limita as vozes expostas. Tente instalar mais em Ajustes → Acessibilidade → Conteúdo Falado → Vozes → Português (Brasil).</div>`
     : '';
 
   el.innerHTML = linhas + `<div style="margin-top:8px;color:#94a3b8">
-    Vozes únicas: ${unicas} · pt-BR disponíveis: ${vozesPtBR().length}
+    Vozes únicas: ${unicas} · pt-BR disponíveis: ${vozesPtBR().length}<br>
+    Total de vozes expostas pelo navegador: ${todasAsVozes.length}
   </div>` + aviso;
 }
 
@@ -880,38 +905,58 @@ function distribuirElenco(vozes) {
 }
 
 /* =====================================================
+   PRÉ-AQUECIMENTO (dentro do gesto do usuário)
+   ===================================================== */
+let preAquecido = false;
+function preAquecerVozes() {
+  if (preAquecido) return;
+  preAquecido = true;
+  if (!elenco) return;
+  const vozesUnicas = [...new Set(Object.values(elenco))];
+  vozesUnicas.forEach((voz, i) => {
+    setTimeout(() => {
+      try {
+        const u = new SpeechSynthesisUtterance(' ');
+        u.voice = voz;
+        u.volume = 0.01;
+        u.rate = 2.0;
+        synth.speak(u);
+      } catch(e) {}
+    }, i * 100);
+  });
+}
+
+/* =====================================================
    INIT
    ===================================================== */
-carregarVozesComRetry(() => {
+setStatus('Carregando vozes…');
+
+carregarVozes(() => {
   const ptBR = vozesPtBR();
   if (ptBR.length === 0) {
     setStatus('Sem vozes pt-BR');
     mostrarBadge('⚠️ Nenhuma voz pt-BR');
+    if (todasAsVozes.length > 0) {
+      // Fallback: usa qualquer voz disponível
+      elenco = distribuirElenco(todasAsVozes);
+      setStatus(`${todasAsVozes.length} vozes (não pt-BR)`);
+    } else {
+      setStatus('Nenhuma voz disponível');
+    }
+    atualizarBotoesNavegacao();
     return;
   }
+
   elenco = distribuirElenco(ptBR);
   const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
-  setStatus(`${unicas} vozes · 1.0×`);
+  setStatus(`${unicas} vozes pt-BR · toque ▶`);
   atualizarBotoesNavegacao();
-
-  // Pré-aquecimento SÓ no iOS, e sem travar o app
-  if (isIOS) {
-    setTimeout(() => {
-      const vozesUnicas = [...new Set(Object.values(elenco))];
-      vozesUnicas.forEach((voz, i) => {
-        setTimeout(() => {
-          try {
-            const u = new SpeechSynthesisUtterance(' ');
-            u.voice = voz;
-            u.volume = 0.01;
-            u.rate = 2.0;
-            speechSynthesis.speak(u);
-          } catch(e) {}
-        }, i * 120);
-      });
-    }, 400);
-  }
+  atualizarDebug();
 });
+
+// Pré-aquece as vozes no primeiro toque em qualquer lugar (gesto do usuário)
+document.addEventListener('touchstart', preAquecerVozes, { once: true, passive: true });
+document.addEventListener('mousedown', preAquecerVozes, { once: true });
 </script>
 </body>
 </html>
