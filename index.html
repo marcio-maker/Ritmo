@@ -23,16 +23,8 @@
     font-size: 1.02rem; line-height: 1.85;
     color: #cbd5e1;
   }
-  .fala {
-    margin-bottom: 14px;
-    transition: opacity .25s, background .25s;
-  }
-  .simbolo {
-    font-weight: 700;
-    margin-right: 8px;
-    font-size: 1.1em;
-    opacity: .85;
-  }
+  .fala { margin-bottom: 14px; transition: opacity .25s, background .25s; }
+  .simbolo { font-weight: 700; margin-right: 8px; font-size: 1.1em; opacity: .85; }
   .fala.professor .simbolo { color: #a78bfa; }
   .fala.aluno1 .simbolo   { color: #60a5fa; }
   .fala.aluno2 .simbolo   { color: #fbbf24; }
@@ -45,30 +37,19 @@
     background: rgba(124, 58, 237, .18);
     border-left: 3px solid #7c3aed;
     border-radius: 4px;
-    padding: 6px 10px;
-    margin-left: -13px;
-    margin-right: -10px;
+    padding: 6px 10px; margin-left: -13px; margin-right: -10px;
     color: #f1f5f9;
   }
   .fala.falada { opacity: .4; }
   .fala.futura { opacity: .78; }
-  .enfase {
-    color: #fbbf24;
-    font-weight: 700;
-    letter-spacing: .01em;
-  }
+  .enfase { color: #fbbf24; font-weight: 700; letter-spacing: .01em; }
   .quebra { height: 14px; }
 
-  /* PLAYER FLUTUANTE */
   #playerFlutuante {
-    position: fixed;
-    z-index: 9999;
-    bottom: 24px;
-    right: 18px;
-    width: 240px;
+    position: fixed; z-index: 9999;
+    bottom: 24px; right: 18px; width: 240px;
     background: rgba(15, 23, 42, .97);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(148, 163, 184, .18);
     border-radius: 18px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, .5);
@@ -82,22 +63,15 @@
     opacity: .96;
   }
   .handle {
-    height: 18px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: grab; margin-bottom: 4px;
-    touch-action: none;
+    height: 18px; display: flex; align-items: center; justify-content: center;
+    cursor: grab; margin-bottom: 4px; touch-action: none;
   }
   .handle::before {
-    content: '';
-    width: 36px; height: 4px;
-    background: #475569; border-radius: 2px;
-    transition: background .15s;
+    content: ''; width: 36px; height: 4px;
+    background: #475569; border-radius: 2px; transition: background .15s;
   }
   #playerFlutuante.arrastando .handle::before { background: #7c3aed; }
-  .controles {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 6px;
-  }
+  .controles { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
   .btn-ctrl {
     border: none; background: #1e293b; color: #cbd5e1;
     font-family: inherit; font-weight: 700;
@@ -119,10 +93,7 @@
     background: linear-gradient(135deg, #dc2626, #b91c1c);
     box-shadow: 0 6px 18px rgba(220, 38, 38, .4);
   }
-  .rodape {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-top: 8px; gap: 6px;
-  }
+  .rodape { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 6px; }
   .btn-vel {
     padding: 6px 10px; font-size: .72rem;
     background: #1e293b; color: #93c5fd;
@@ -141,9 +112,7 @@
     height: 2px; background: rgba(148, 163, 184, .15);
     border-radius: 1px; overflow: hidden;
   }
-  .progresso-mini-fill {
-    height: 100%; background: #3b82f6; width: 0%; transition: width .3s;
-  }
+  .progresso-mini-fill { height: 100%; background: #3b82f6; width: 0%; transition: width .3s; }
   #playerFlutuante.minimizado .handle,
   #playerFlutuante.minimizado .controles .btn-sec,
   #playerFlutuante.minimizado .rodape,
@@ -151,22 +120,13 @@
   #playerFlutuante.minimizado { width: auto; padding: 6px; border-radius: 50%; }
   #playerFlutuante.minimizado .controles { gap: 0; }
 
-  /* DEBUG */
   #debugPanel {
-    position: fixed;
-    top: 12px; left: 12px; right: 12px;
-    background: rgba(0, 0, 0, .92);
-    border: 1px solid #334155;
-    border-radius: 12px;
-    padding: 12px;
-    color: #cbd5e1;
-    font-family: ui-monospace, Menlo, monospace;
-    font-size: .68rem;
-    line-height: 1.5;
-    z-index: 10000;
-    max-height: 60vh;
-    overflow-y: auto;
-    display: none;
+    position: fixed; top: 12px; left: 12px; right: 12px;
+    background: rgba(0, 0, 0, .92); border: 1px solid #334155;
+    border-radius: 12px; padding: 12px;
+    color: #cbd5e1; font-family: ui-monospace, Menlo, monospace;
+    font-size: .68rem; line-height: 1.5;
+    z-index: 10000; max-height: 60vh; overflow-y: auto; display: none;
   }
   #debugPanel.ativo { display: block; }
   #debugPanel h3 {
@@ -179,8 +139,7 @@
     font-size: .65rem; font-family: inherit; cursor: pointer;
   }
   #debugPanel .linha {
-    display: flex; justify-content: space-between;
-    padding: 2px 0;
+    display: flex; justify-content: space-between; padding: 2px 0;
     border-bottom: 1px solid rgba(148, 163, 184, .1);
   }
   #debugPanel .linha.ativa { color: #fbbf24; font-weight: 700; }
@@ -196,17 +155,13 @@
     border-radius: 6px; color: #fca5a5;
   }
   .badge-voz {
-    position: fixed;
-    top: 12px; left: 50%;
+    position: fixed; top: 12px; left: 50%;
     transform: translateX(-50%);
-    background: rgba(124, 58, 237, .9);
-    color: #fff;
+    background: rgba(124, 58, 237, .9); color: #fff;
     font-size: .7rem; font-weight: 700;
     padding: 5px 12px; border-radius: 99px;
-    z-index: 9998;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity .3s;
+    z-index: 9998; pointer-events: none;
+    opacity: 0; transition: opacity .3s;
     font-family: ui-monospace, Menlo, monospace;
   }
   .badge-voz.ativo { opacity: 1; }
@@ -220,10 +175,7 @@
 <div class="badge-voz" id="badgeVoz"></div>
 
 <div id="debugPanel">
-  <h3>
-    🎙️ Debug de Vozes
-    <button onclick="fecharDebug()">Fechar</button>
-  </h3>
+  <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
   <div id="debugElenco"></div>
   <div class="status-troca" id="debugTroca">Aguardando…</div>
 </div>
@@ -236,7 +188,7 @@
         <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
       </svg>
     </button>
-    <button class="btn-ctrl btn-play-flut" id="btnPlayFlut" onclick="togglePlay()" aria-label="Ouvir ou pausar" disabled>
+    <button class="btn-ctrl btn-play-flut" id="btnPlayFlut" onclick="togglePlay()" aria-label="Ouvir ou pausar">
       <svg id="iconePlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z"/>
       </svg>
@@ -249,7 +201,7 @@
   </div>
   <div class="rodape">
     <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">1.0×</button>
-    <span class="status-mini" id="statusMini">Pronto</span>
+    <span class="status-mini" id="statusMini">Carregando vozes…</span>
   </div>
   <div class="progresso-mini">
     <div class="progresso-mini-fill" id="progMini"></div>
@@ -258,7 +210,7 @@
 
 <script>
 /* =====================================================
-   DETECÇÃO DE AMBIENTE
+   AMBIENTE
    ===================================================== */
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -279,10 +231,10 @@ function carregarVozesComRetry(callback) {
     if (vozes.length > 0) {
       todasAsVozes = vozes;
       if (!jaChamou) { jaChamou = true; callback(); }
-      if (tentativas < 25) setTimeout(tentar, 400);
+      if (tentativas < 20) setTimeout(tentar, 400);
       return;
     }
-    if (tentativas < 50) setTimeout(tentar, 100);
+    if (tentativas < 40) setTimeout(tentar, 100);
     else if (!jaChamou) { jaChamou = true; callback(); }
   }
 
@@ -301,10 +253,6 @@ function vozesPtBR() {
     const lang = (v.lang || '').toLowerCase().replace('_', '-');
     return lang === 'pt-br' || lang.startsWith('pt-br');
   });
-}
-
-function filtrarVozes(ptBR) {
-  return ptBR;
 }
 
 /* =====================================================
@@ -428,42 +376,10 @@ let pausado = false;
 let cancelar = false;
 let indiceAtual = 0;
 let velocidade = 1.0;
-let aquecendo = false;
-let vozesAquecidas = false;
 
-/* Delays para iOS */
-let delayFantasma = 650;
-let delayPosFantasma = 550;
-
-/* =====================================================
-   PRÉ-AQUECIMENTO DE VOZES
-   ===================================================== */
-async function preAquecerVozes() {
-  if (vozesAquecidas || !elenco) return;
-  aquecendo = true;
-  const vozesUnicas = [...new Set(Object.values(elenco))];
-  mostrarBadge(`Carregando ${vozesUnicas.length} vozes…`);
-
-  for (const voz of vozesUnicas) {
-    try {
-      await new Promise(resolve => {
-        const u = new SpeechSynthesisUtterance(' ');
-        u.voice = voz;
-        u.volume = 0.01;   // iOS ignora volume 0
-        u.rate = 1.0;
-        u.pitch = 1.0;
-        u.onend = resolve;
-        u.onerror = resolve;
-        synth.speak(u);
-        setTimeout(resolve, 280);
-      });
-      await esperar(100);
-    } catch(e) {}
-  }
-  vozesAquecidas = true;
-  aquecendo = false;
-  mostrarBadge(`${vozesUnicas.length} vozes prontas`);
-}
+/* Delays adaptativos — começam CURTOS e crescem se o iOS falhar */
+let delayFantasma = isIOS ? 300 : 80;
+let delayPosFantasma = isIOS ? 250 : 60;
 
 /* =====================================================
    RENDER
@@ -504,7 +420,6 @@ function destacarFala(idx) {
   });
   const atual = document.getElementById('fala-' + idx);
   if (atual) {
-    // Só rola se estiver fora da viewport
     const rect = atual.getBoundingClientRect();
     if (rect.top < 80 || rect.bottom > window.innerHeight - 100) {
       atual.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -528,11 +443,11 @@ function mostrarBadge(txt) {
   el.textContent = txt;
   el.classList.add('ativo');
   clearTimeout(badgeTimer);
-  badgeTimer = setTimeout(() => el.classList.remove('ativo'), 1800);
+  badgeTimer = setTimeout(() => el.classList.remove('ativo'), 1600);
 }
 
 /* =====================================================
-   PLAYER UI
+   UI
    ===================================================== */
 function setBtnEstado(playing) {
   const btn = document.getElementById('btnPlayFlut');
@@ -546,13 +461,8 @@ function setBtnEstado(playing) {
   }
 }
 
-function setProgresso(pct) {
-  document.getElementById('progMini').style.width = pct + '%';
-}
-
-function setStatus(txt) {
-  document.getElementById('statusMini').textContent = txt;
-}
+function setProgresso(pct) { document.getElementById('progMini').style.width = pct + '%'; }
+function setStatus(txt)    { document.getElementById('statusMini').textContent = txt; }
 
 function atualizarBotoesNavegacao() {
   const temAnterior = AULA.slice(0, indiceAtual).some(f => f.tipo !== 'pausa');
@@ -572,12 +482,10 @@ function ciclarVelocidade() {
   const btn = document.getElementById('btnVel');
   btn.textContent = velocidade.toFixed(2).replace(/0$/, '') + '×';
   btn.classList.toggle('ativa', velocidade !== 1.0);
-  mostrarBadge(`Velocidade ${btn.textContent}`);
-  // Se estiver tocando, reinicia a fala atual para aplicar nova velocidade
   if (tocando && !pausado) {
     const idx = indiceAtual;
     pararSilencioso();
-    setTimeout(() => { indiceAtual = idx; tocarDeOndeParou(); }, 150);
+    setTimeout(() => { indiceAtual = idx; tocarDeOndeParou(); }, 100);
   }
 }
 
@@ -586,7 +494,6 @@ function ciclarVelocidade() {
    ===================================================== */
 function togglePlay() {
   if (tocando && !pausado) {
-    // Pausar
     pausado = true;
     cancelar = true;
     synth.cancel();
@@ -595,12 +502,10 @@ function togglePlay() {
     return;
   }
   if (tocando && pausado) {
-    // Retomar com delay (iOS precisa "esquentar" após cancel)
     pausado = false;
-    setTimeout(() => tocarDeOndeParou(), 200);
+    tocarDeOndeParou();
     return;
   }
-  // Iniciar
   indiceAtual = 0;
   tocarDeOndeParou();
 }
@@ -610,7 +515,7 @@ function pararSilencioso() {
   synth.cancel();
   tocando = false;
   pausado = false;
-  setBtnEstado(false);   // ← CORREÇÃO: reseta visual do botão
+  setBtnEstado(false);
 }
 
 function pularFrase(direcao) {
@@ -625,7 +530,7 @@ function pularFrase(direcao) {
   indiceAtual = novo;
 
   if (estavaTocando) {
-    setTimeout(() => tocarDeOndeParou(), 120);
+    setTimeout(() => tocarDeOndeParou(), 80);
   } else {
     destacarFala(indiceAtual);
     atualizarBotoesNavegacao();
@@ -663,15 +568,23 @@ function dividirComMicroPausas(texto) {
 
 function falar(texto, rate, pitch, volume, voz) {
   return new Promise(resolve => {
+    let resolvido = false;
+    const finalizar = () => { if (!resolvido) { resolvido = true; resolve(); } };
+
     const u = new SpeechSynthesisUtterance(texto);
     u.lang = 'pt-BR';
     u.rate = Math.max(0.1, Math.min(2.0, rate * velocidade));
     u.pitch = pitch;
     u.volume = volume ?? 1.0;
     if (voz) u.voice = voz;
-    u.onend = resolve;
-    u.onerror = resolve;
+    u.onend = finalizar;
+    u.onerror = finalizar;
+
     synth.speak(u);
+
+    // Watchdog: se onend nunca disparar, libera depois de tempo proporcional
+    const estimativa = Math.max(3000, texto.length * 120 / u.rate);
+    setTimeout(finalizar, estimativa);
   });
 }
 
@@ -696,78 +609,60 @@ function esperar(ms) {
 }
 
 /* =====================================================
-   TROCA DE VOZ — reforçada para iOS
+   TROCA DE VOZ — iOS usa hack, desktop não
    ===================================================== */
 async function trocarVoz(vozAntiga, vozNova) {
   const debugEl = document.getElementById('debugTroca');
-  const nomeAntigo = vozAntiga ? vozAntiga.name : '—';
-  const nomeNovo = vozNova.name;
-  debugEl.textContent = `Trocando: ${nomeAntigo} → ${nomeNovo}`;
+  debugEl.textContent = `Trocando: ${vozAntiga ? vozAntiga.name : '—'} → ${vozNova.name}`;
 
-  // 1. Solta a voz antiga
+  // No desktop, o voice é respeitado diretamente — só cancela e segue
+  if (!isIOS) {
+    synth.cancel();
+    await esperar(50);
+    mostrarBadge(`🎙️ ${vozNova.name}`);
+    return;
+  }
+
+  // iOS: precisa do ritual completo
   if (vozAntiga) {
     await new Promise(resolve => {
       const u = new SpeechSynthesisUtterance(' ');
       u.voice = vozAntiga;
       u.volume = 0.01;
       u.rate = 2.5;
-      u.pitch = 1.0;
       u.onend = resolve;
       u.onerror = resolve;
       synth.speak(u);
-      setTimeout(resolve, 180);
+      setTimeout(resolve, 150);
     });
   }
 
-  // 2. Cancelamento duplo
   synth.cancel();
-  await esperar(120);
-  synth.cancel();
-  await esperar(180);
+  await esperar(100);
 
-  // 3. Fantasma principal
   await new Promise(resolve => {
     const u = new SpeechSynthesisUtterance('.');
     u.voice = vozNova;
     u.volume = 0.01;
     u.rate = 1.0;
-    u.pitch = 1.0;
     u.onend = resolve;
     u.onerror = resolve;
     synth.speak(u);
     setTimeout(resolve, delayFantasma);
   });
 
-  // 4. Pausa crítica
   await esperar(delayPosFantasma);
-
-  // 5. Segundo fantasma
-  await new Promise(resolve => {
-    const u = new SpeechSynthesisUtterance(' ');
-    u.voice = vozNova;
-    u.volume = 0;
-    u.rate = 1.8;
-    u.onend = resolve;
-    u.onerror = resolve;
-    synth.speak(u);
-    setTimeout(resolve, 320);
-  });
-
-  await esperar(200);
-  mostrarBadge(`🎙️ ${nomeNovo}`);
+  mostrarBadge(`🎙️ ${vozNova.name}`);
 }
 
 /* =====================================================
-   LOOP PRINCIPAL
+   LOOP PRINCIPAL — com watchdog de travamento
    ===================================================== */
 async function tocarDeOndeParou() {
   if (!elenco || !elenco.professor) {
-    alert('Nenhuma voz pt-BR detectada no dispositivo.');
+    setStatus('Sem vozes');
     return;
   }
-
-  // Aguarda pré-aquecimento se estiver rodando
-  while (aquecendo) await esperar(100);
 
   cancelar = false;
   tocando = true;
@@ -913,7 +808,6 @@ handle.addEventListener('touchstart', iniciarArraste, { passive: false });
 document.addEventListener('touchmove', moverArraste, { passive: false });
 document.addEventListener('touchend', soltarArraste);
 
-/* Toques no handle: 2× minimiza, 3× abre debug */
 let toquesHandle = [];
 handle.addEventListener('touchend', () => {
   if (moveu) return;
@@ -965,54 +859,57 @@ function fecharDebug() {
 }
 
 /* =====================================================
-   DISTRIBUIÇÃO DE ELENCO
-   Professor NUNCA é Siri. Prioriza Felipe.
+   ELENCO
    ===================================================== */
 function distribuirElenco(vozes) {
   if (vozes.length === 0) return null;
-
   const normais = vozes.filter(v => !/siri/i.test(v.name));
   const siris   = vozes.filter(v => /siri/i.test(v.name));
   const ordenadas = [...normais, ...siris];
 
-  // Professor: Felipe > qualquer não-Siri > primeiro da lista
   let professor = ordenadas.find(v => /felipe/i.test(v.name))
               || ordenadas.find(v => !/siri/i.test(v.name))
               || ordenadas[0];
 
   const restantes = ordenadas.filter(v => v !== professor);
-
   const e = { professor };
   PAPEIS_ALUNO.forEach((papel, i) => {
-    e[papel] = restantes[i % restantes.length];
+    e[papel] = restantes[i % restantes.length] || professor;
   });
-
   return e;
 }
 
 /* =====================================================
    INIT
    ===================================================== */
-carregarVozesComRetry(async () => {
-  const ptBR = filtrarVozes(vozesPtBR());
+carregarVozesComRetry(() => {
+  const ptBR = vozesPtBR();
   if (ptBR.length === 0) {
     setStatus('Sem vozes pt-BR');
+    mostrarBadge('⚠️ Nenhuma voz pt-BR');
     return;
   }
-
   elenco = distribuirElenco(ptBR);
   const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
   setStatus(`${unicas} vozes · 1.0×`);
   atualizarBotoesNavegacao();
 
-  // Habilita botão de play agora que o elenco está pronto
-  document.getElementById('btnPlayFlut').disabled = false;
-
-  // Pré-aquece vozes
+  // Pré-aquecimento SÓ no iOS, e sem travar o app
   if (isIOS) {
-    setTimeout(() => preAquecerVozes(), 600);
-  } else {
-    vozesAquecidas = true;
+    setTimeout(() => {
+      const vozesUnicas = [...new Set(Object.values(elenco))];
+      vozesUnicas.forEach((voz, i) => {
+        setTimeout(() => {
+          try {
+            const u = new SpeechSynthesisUtterance(' ');
+            u.voice = voz;
+            u.volume = 0.01;
+            u.rate = 2.0;
+            speechSynthesis.speak(u);
+          } catch(e) {}
+        }, i * 120);
+      });
+    }, 400);
   }
 });
 </script>
