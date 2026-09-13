@@ -279,10 +279,11 @@ function vozesPtBR() {
 /* =====================================================
    PERFIS — VOZES DIFERENCIADAS POR PITCH/RATE
    =====================================================
-   Professor: autoridade + coach
-     - pitch baixo (0.75) → voz grave, impõe respeito
-     - rate baixo (0.78) → fala pausada, didática
-     - ênfase ainda mais grave e lenta
+   Professor: autoridade + coach (ritmo natural, sem arrastar)
+     - pitch 0.82 → grave com autoridade, sem caverna
+     - rate 0.92 → fala em ritmo natural, didática
+     - micro-pausas curtas (150/220) → não corta o fluxo
+     - ênfase levemente mais grave (0.78) e mais lenta (0.86)
    
    Alunos: variação EXTREMA de pitch para ficarem distintos
      - aluno1: agudo rápido (jovem ansioso)
@@ -302,10 +303,10 @@ const SIMBOLOS = {
 
 const PERFIS = {
   professor: {
-    rate: 0.78, pitch: 0.75, volume: 1.0,
-    microCurta: 300, microLonga: 460,
-    rateEnfase: 0.70, pitchEnfase: 0.72,
-    pausas: { abertura:1200, definicao:560, pergunta:380, confirmacao:520, guarde:1300, conclusao:1000, pausa:850 }
+    rate: 0.92, pitch: 0.82, volume: 1.0,
+    microCurta: 150, microLonga: 220,
+    rateEnfase: 0.86, pitchEnfase: 0.78,
+    pausas: { abertura:900, definicao:420, pergunta:300, confirmacao:380, guarde:1000, conclusao:800, pausa:650 }
   },
   // Agudo + rápido
   aluno1: { rate:1.18, pitch:1.55, volume:0.92, microCurta:70,  microLonga:140, rateEnfase:1.08, pitchEnfase:1.50,
