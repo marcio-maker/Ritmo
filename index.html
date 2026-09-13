@@ -1120,27 +1120,33 @@ const CAPITULOS = [
     titulo: 'Bloco 1',
     subtitulo: 'Fundamentos da gestão de pessoas',
     aula: [
-      { papel:'professor', tipo:'abertura', texto:"Bom dia, turma. Hoje vamos compreender a gestão de pessoas de forma mais completa. Não vamos tratá-la apenas como o setor que contrata ou resolve documentos. Vamos entender como ela influencia a experiência, o desenvolvimento e os resultados das pessoas dentro da organização." },
-      { papel:'aluno1', tipo:'pergunta', texto:"Professor, então gestão de pessoas é o mesmo que o departamento de recursos humanos?" },
-      { papel:'professor', tipo:'definicao', texto:"Os termos muitas vezes são usados para falar da mesma área, mas a expressão gestão de pessoas destaca uma ideia importante: as pessoas não são apenas recursos que a empresa utiliza. Elas são profissionais que pensam, aprendem, colaboram, tomam decisões e também influenciam os resultados." },
-      { papel:'aluno2', tipo:'confirmacao', texto:"Então o nome muda o modo de enxergar quem trabalha na organização." },
-      { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A mudança representa uma evolução de enfoque. A área continua cuidando de processos administrativos, mas também precisa criar condições para que as pessoas trabalhem com clareza, respeito, segurança e possibilidade de desenvolvimento." },
-      { papel:'aluno3', tipo:'pergunta', texto:"Quais são os principais processos de gestão de pessoas?" },
-      { papel:'professor', tipo:'definicao', texto:"Podemos pensar em um ciclo. Primeiro, a organização planeja de quantas pessoas precisa e quais competências serão necessárias. Depois, realiza recrutamento e seleção, integra os novos profissionais, oferece treinamento, acompanha o desempenho, cuida da remuneração e dos benefícios e promove saúde, segurança e qualidade de vida." },
+      { papel:'professor', tipo:'abertura', texto:"Bom dia, turma. Hoje vamos compreender a gestão de pessoas de forma mais completa. Muita gente ainda enxerga essa área só como o setor que contrata e resolve documentos. Vamos entender por que ela vai muito além disso e como influencia a experiência, o desenvolvimento e os resultados das pessoas dentro da organização." },
+
+      { papel:'aluno1', tipo:'pergunta', texto:"Professor, a gente usa RH e gestão de pessoas como se fosse a mesma coisa. Tem diferença mesmo?" },
+      { papel:'professor', tipo:'definicao', texto:"Os dois nomes costumam se referir à mesma área, mas a expressão *gestão de pessoas* carrega uma mudança de olhar. Quando falamos apenas em recursos humanos, ainda parece que a pessoa é um recurso que a empresa utiliza. Já a gestão de pessoas reforça que estamos falando de profissionais que pensam, aprendem, colaboram e influenciam resultados." },
+      { papel:'aluno2', tipo:'confirmacao', texto:"Então o nome muda a forma de enxergar quem trabalha na organização." },
+      { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A área continua cuidando de processos administrativos, mas passa a se preocupar também com condições de trabalho, desenvolvimento, respeito e segurança. Não é só administrar gente. É criar condições para que as pessoas trabalhem melhor." },
+
+      { papel:'aluno3', tipo:'pergunta', texto:"Quais são os principais processos dessa área?" },
+      { papel:'professor', tipo:'definicao', texto:"Podemos pensar em um ciclo. A organização planeja quantas pessoas precisa e quais competências serão necessárias. Depois recruta e seleciona, integra os novos profissionais, oferece treinamento, acompanha o desempenho, cuida da remuneração e dos benefícios, e promove saúde, segurança e qualidade de vida." },
       { papel:'aluno4', tipo:'pergunta', texto:"E esse ciclo termina quando a pessoa deixa a empresa?" },
-      { papel:'professor', tipo:'definicao', texto:"O desligamento também faz parte da gestão de pessoas. A organização precisa conduzir esse momento com respeito, cumprir suas obrigações e, quando possível, aprender com os motivos da saída. Uma rotatividade muito alta pode indicar problemas de liderança, remuneração, clima ou falta de oportunidades." },
-      { papel:'aluno5', tipo:'pergunta', texto:"Professor, qual é a diferença entre treinamento e desenvolvimento?" },
-      { papel:'professor', tipo:'definicao', texto:"Treinamento normalmente está ligado a uma necessidade mais imediata, como aprender um sistema, um procedimento ou uma técnica. Desenvolvimento é mais amplo e prepara a pessoa para desafios futuros, novas responsabilidades e crescimento profissional." },
-      { papel:'aluno1', tipo:'confirmacao', texto:"Então ensinar alguém a usar um sistema é treinamento, enquanto preparar essa pessoa para liderar uma equipe pode ser desenvolvimento." },
-      { papel:'professor', tipo:'confirmacao', texto:"Muito bem. Os dois são importantes, mas respondem a necessidades diferentes. Uma organização pode treinar para resolver uma deficiência atual e desenvolver para construir capacidades futuras." },
-      { papel:'aluno6', tipo:'pergunta', texto:"Quem é responsável por tudo isso? Apenas o RH?" },
-      { papel:'professor', tipo:'definicao', texto:"Não. O RH cria políticas, processos e apoio especializado, mas a liderança participa diretamente. É o gestor que orienta o trabalho, dá retorno, distribui responsabilidades, reconhece resultados e percebe dificuldades no dia a dia." },
-      { papel:'aluno2', tipo:'pergunta', texto:"E os próprios trabalhadores também têm responsabilidade?" },
-      { papel:'professor', tipo:'definicao', texto:"Sim. A gestão de pessoas é uma responsabilidade compartilhada. A organização deve oferecer condições justas e claras, a liderança deve conduzir a equipe e o profissional também precisa participar do próprio desenvolvimento, cumprir acordos e buscar melhorar seu trabalho." },
+      { papel:'professor', tipo:'definicao', texto:"O desligamento também faz parte. A empresa precisa conduzir esse momento com respeito, cumprir suas obrigações e, sempre que possível, aprender com os motivos da saída. Uma rotatividade muito alta costuma ser um sinal de alerta: pode indicar problemas de liderança, remuneração, clima ou falta de perspectivas." },
+
+      { papel:'aluno5', tipo:'pergunta', texto:"Qual é a diferença entre treinamento e desenvolvimento?" },
+      { papel:'professor', tipo:'definicao', texto:"Treinamento normalmente responde a uma necessidade mais imediata. Por exemplo: ensinar alguém a usar um sistema novo ou um procedimento específico. Já o desenvolvimento é mais amplo. Ele prepara a pessoa para desafios futuros, novas responsabilidades e crescimento profissional." },
+      { papel:'aluno1', tipo:'confirmacao', texto:"Então ensinar o sistema é treinamento. Preparar alguém para liderar uma equipe no futuro é desenvolvimento." },
+      { papel:'professor', tipo:'confirmacao', texto:"Muito bem. Os dois são importantes, mas respondem a momentos diferentes. Uma organização precisa treinar para resolver problemas atuais e desenvolver para construir capacidades futuras." },
+
+      { papel:'aluno6', tipo:'pergunta', texto:"Quem é responsável por tudo isso? Só o RH?" },
+      { papel:'professor', tipo:'definicao', texto:"Não. O RH cria políticas, processos e oferece suporte especializado. Mas a liderança participa diretamente. É o gestor quem orienta o trabalho no dia a dia, dá retorno, distribui responsabilidades e percebe dificuldades da equipe." },
+      { papel:'aluno2', tipo:'pergunta', texto:"E o próprio profissional também tem responsabilidade nisso?" },
+      { papel:'professor', tipo:'definicao', texto:"Sim. A gestão de pessoas é uma responsabilidade compartilhada. A organização precisa oferecer condições justas e claras. A liderança precisa conduzir bem a equipe. E o profissional também precisa participar do próprio desenvolvimento, cumprir acordos e buscar melhorar seu trabalho." },
+
       { papel:'aluno7', tipo:'pergunta', texto:"Como a empresa sabe se está fazendo uma boa gestão de pessoas?" },
-      { papel:'professor', tipo:'definicao', texto:"Ela precisa observar evidências. Pode acompanhar a rotatividade, o absenteísmo, a participação em treinamentos, o desempenho, a satisfação das equipes e a qualidade das contratações. Nenhum indicador explica tudo sozinho, mas vários sinais juntos ajudam a compreender a realidade." },
-      { papel:'aluno3', tipo:'pergunta', texto:"Uma empresa pode ter bons resultados e, mesmo assim, fazer uma gestão ruim?" },
+      { papel:'professor', tipo:'definicao', texto:"Ela precisa olhar evidências. Pode acompanhar rotatividade, absenteísmo, participação em treinamentos, desempenho das equipes, qualidade das contratações e a percepção das pessoas sobre o ambiente de trabalho. Nenhum indicador explica tudo sozinho, mas vários sinais juntos ajudam a compreender a realidade." },
+      { papel:'aluno3', tipo:'pergunta', texto:"Uma empresa pode ter bons resultados financeiros e, mesmo assim, fazer uma gestão ruim de pessoas?" },
       { papel:'professor', tipo:'definicao', texto:"Pode. Resultados imediatos não justificam desrespeito, discriminação, excesso de pressão ou falta de segurança. Uma gestão responsável precisa equilibrar desempenho, ética, sustentabilidade e cuidado com as pessoas." },
+
       { papel:'aluno4', tipo:'guarde', texto:"Então gestão de pessoas não é apenas colocar a pessoa certa na vaga. É acompanhar toda a relação dela com o trabalho." },
       { papel:'professor', tipo:'guarde', texto:"Guarde esta ideia: gestão de pessoas envolve planejar, atrair, integrar, desenvolver, reconhecer, proteger e, quando necessário, conduzir o desligamento das pessoas com responsabilidade." },
       { papel:'professor', tipo:'conclusao', texto:"Por isso, a área não deve ser vista apenas como operacional nem apenas como estratégica. Ela precisa fazer as duas coisas: garantir que os processos funcionem e contribuir para que a organização alcance seus objetivos sem esquecer que seus resultados dependem de pessoas. No próximo bloco, vamos dar um passo adiante e entender como essa visão se conecta ao planejamento do negócio." }
@@ -1151,27 +1157,33 @@ const CAPITULOS = [
     subtitulo: 'Gestão estratégica de pessoas',
     aula: [
       { papel:'professor', tipo:'abertura', texto:"Agora vamos aprofundar a gestão estratégica de pessoas. No bloco anterior, vimos os processos que acompanham a trajetória do profissional. A pergunta central agora é: como transformar os objetivos da organização em decisões concretas sobre pessoas, competências, liderança e trabalho?" },
+
       { papel:'aluno2', tipo:'pergunta', texto:"Professor, o que exatamente significa alinhar pessoas e negócio?" },
       { papel:'professor', tipo:'definicao', texto:"Significa compreender o que a organização pretende alcançar e verificar quais comportamentos, conhecimentos, estruturas e profissionais serão necessários para isso. Se a empresa quer crescer, precisa planejar equipes. Se quer inovar, precisa criar espaço para aprendizagem e novas ideias." },
-      { papel:'aluno5', tipo:'pergunta', texto:"Então a estratégia de pessoas começa depois que a estratégia da empresa está pronta?" },
+      { papel:'aluno5', tipo:'pergunta', texto:"Então a estratégia de pessoas só começa depois que a estratégia da empresa já está pronta?" },
       { papel:'professor', tipo:'definicao', texto:"Não necessariamente. A área de pessoas deve participar da construção e da execução da estratégia. Uma decisão de expansão, por exemplo, só será viável se houver profissionais em quantidade suficiente, com as competências certas e preparados no prazo necessário." },
+
       { papel:'aluno1', tipo:'pergunta', texto:"Como seria esse planejamento no caso de uma nova filial?" },
-      { papel:'professor', tipo:'definicao', texto:"Primeiro, a empresa analisa o projeto e identifica as funções necessárias. Depois, estima quantas pessoas serão contratadas, quais profissionais podem ser transferidos, que conhecimentos já existem e quais lacunas precisam ser preenchidas." },
-      { papel:'professor', tipo:'definicao', texto:"Em seguida, define prazos, orçamento, treinamento e responsáveis. Também precisa pensar na integração da nova equipe, na liderança da filial e na forma de acompanhar os resultados depois da abertura." },
+      { papel:'professor', tipo:'definicao', texto:"Primeiro, a empresa analisa o projeto e identifica as funções necessárias. Depois estima quantas pessoas serão contratadas, quais profissionais podem ser transferidos, que conhecimentos já existem e quais lacunas precisam ser preenchidas. Em seguida define prazos, orçamento, treinamento e responsáveis. Também precisa pensar na integração da nova equipe, na liderança da filial e na forma de acompanhar os resultados depois da abertura." },
+
       { papel:'aluno6', tipo:'pergunta', texto:"O que são competências nesse contexto?" },
       { papel:'professor', tipo:'definicao', texto:"Competências são a combinação de conhecimentos, habilidades e atitudes que permite realizar um trabalho com qualidade. Para uma função de atendimento, por exemplo, podem ser necessárias comunicação, escuta, conhecimento do produto e capacidade de resolver problemas." },
       { papel:'aluno3', tipo:'pergunta', texto:"E basta contratar pessoas que já tenham todas essas competências?" },
       { papel:'professor', tipo:'definicao', texto:"Nem sempre. A organização pode contratar algumas competências e desenvolver outras. Essa decisão depende do prazo, do orçamento, da disponibilidade no mercado e da capacidade de aprendizagem das pessoas. Uma boa estratégia não olha apenas para o que falta hoje, mas também para o potencial de desenvolvimento." },
+
       { papel:'aluno4', tipo:'pergunta', texto:"Qual é a relação entre estratégia de pessoas e cultura organizacional?" },
       { papel:'professor', tipo:'definicao', texto:"A cultura é formada pelos valores e comportamentos que se repetem e são reconhecidos dentro da organização. Se uma empresa diz que valoriza colaboração, mas recompensa apenas resultados individuais, existe uma contradição entre o discurso e a prática." },
       { papel:'aluno7', tipo:'confirmacao', texto:"Então uma política de pessoas pode fracassar se não combinar com a forma como a empresa realmente funciona." },
       { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A estratégia precisa ser coerente com a liderança, os processos, os incentivos e as decisões do cotidiano. Não adianta falar em desenvolvimento se ninguém recebe retorno ou tempo para aprender." },
+
       { papel:'aluno1', tipo:'pergunta', texto:"Como medir se a estratégia de pessoas está dando resultado?" },
       { papel:'professor', tipo:'definicao', texto:"A empresa pode acompanhar indicadores. O tempo para preencher uma vaga mostra a eficiência do recrutamento. A rotatividade indica quantas pessoas deixam a organização. O absenteísmo mostra faltas e afastamentos. Também podemos acompanhar desempenho, conclusão de treinamentos e percepção das equipes." },
       { papel:'aluno2', tipo:'pergunta', texto:"Um indicador alto ou baixo já mostra que existe um problema?" },
       { papel:'professor', tipo:'definicao', texto:"Não automaticamente. O indicador é um sinal que precisa ser interpretado. Uma rotatividade alta pode ocorrer por salários pouco competitivos, liderança inadequada, mercado aquecido ou uma mudança planejada. É preciso investigar as causas antes de decidir." },
+
       { papel:'aluno5', tipo:'pergunta', texto:"Qual seria a diferença entre o modelo tradicional e o estratégico em uma situação de crise?" },
       { papel:'professor', tipo:'definicao', texto:"No modelo tradicional, o setor pode apenas executar a decisão depois que ela foi tomada. No modelo estratégico, participa da análise: avalia competências críticas, alternativas de treinamento, reorganização do trabalho, comunicação com a equipe e impactos sobre a saúde e o desempenho." },
+
       { papel:'aluno6', tipo:'guarde', texto:"Então estratégia não é fazer um documento bonito. É tomar decisões de pessoas conectadas a um objetivo e acompanhar se funcionaram." },
       { papel:'professor', tipo:'guarde', texto:"Perfeito. O ciclo estratégico é diagnosticar, planejar, executar, medir e ajustar. Se a realidade mudar, o plano também precisa ser revisto." },
       { papel:'professor', tipo:'conclusao', texto:"Gestão estratégica de pessoas é, portanto, antecipar necessidades e transformar objetivos organizacionais em ações responsáveis sobre trabalho, competências e desenvolvimento. Ela aproxima a gestão de pessoas das decisões importantes sem reduzir o ser humano a um número ou indicador. No próximo bloco, vamos aplicar esse planejamento a uma etapa concreta: o recrutamento." }
@@ -1182,10 +1194,12 @@ const CAPITULOS = [
     subtitulo: 'Recrutamento e atração de talentos',
     aula: [
       { papel:'professor', tipo:'abertura', texto:"Neste bloco, vamos aplicar o que estudamos. No primeiro bloco, vimos que o recrutamento faz parte do ciclo de gestão de pessoas. No segundo, entendemos que ele precisa responder à estratégia da organização. Agora vamos aprofundar o processo inteiro, desde a identificação da necessidade até a chegada dos candidatos à etapa de seleção." },
+
       { papel:'aluno7', tipo:'pergunta', texto:"Professor, o recrutamento começa quando a empresa publica a vaga?" },
-      { papel:'professor', tipo:'definicao', texto:"Não. Antes de publicar, a empresa precisa confirmar que existe uma necessidade real, entender por que a vaga surgiu e analisar se o trabalho pode ser reorganizado ou desenvolvido internamente." },
+      { papel:'professor', tipo:'definicao', texto:"Não. Antes de publicar, a empresa precisa confirmar que existe uma necessidade real, entender por que a vaga surgiu e analisar se o trabalho pode ser reorganizado ou desenvolvido internamente. Publicar uma vaga sem esse cuidado é um dos erros mais comuns." },
       { papel:'aluno1', tipo:'pergunta', texto:"E depois dessa confirmação, qual é o próximo passo?" },
-      { papel:'professor', tipo:'definicao', texto:"É analisar o cargo. A empresa deve descrever as responsabilidades, as atividades principais, a quem a pessoa responderá, quais resultados serão esperados e quais condições de trabalho existirão." },
+      { papel:'professor', tipo:'definicao', texto:"É analisar o cargo. A empresa deve descrever as responsabilidades, as atividades principais, a quem a pessoa responderá, quais resultados serão esperados e quais condições de trabalho existirão. Sem essa clareza, a vaga fica confusa e atrai candidatos inadequados." },
+
       { papel:'aluno3', tipo:'pergunta', texto:"Qual é a diferença entre requisito e competência?" },
       { papel:'professor', tipo:'definicao', texto:"Requisito é uma condição necessária ou desejável para a vaga, como determinada formação ou experiência. Competência é a capacidade de aplicar conhecimentos, habilidades e atitudes no trabalho. Os dois devem estar relacionados às atividades reais do cargo." },
       { papel:'aluno5', tipo:'pergunta', texto:"E como a empresa decide se fará recrutamento interno ou externo?" },
@@ -1194,20 +1208,25 @@ const CAPITULOS = [
       { papel:'professor', tipo:'definicao', texto:"Quando a organização precisa de competências que não possui, quer ampliar a diversidade de experiências ou não encontrou um profissional adequado internamente. O processo externo pode alcançar mais candidatos, mas costuma exigir mais tempo de divulgação, análise e integração." },
       { papel:'aluno4', tipo:'confirmacao', texto:"Então o recrutamento misto permite olhar para dentro e para fora ao mesmo tempo." },
       { papel:'professor', tipo:'confirmacao', texto:"Sim. Ele combina as duas fontes. A escolha depende da urgência, da estratégia, do perfil da vaga, das possibilidades de desenvolvimento e das condições do mercado de trabalho." },
+
       { papel:'aluno6', tipo:'pergunta', texto:"Quais canais a empresa pode usar para encontrar candidatos?" },
       { papel:'professor', tipo:'definicao', texto:"Pode usar o próprio site, redes profissionais, sites de emprego, instituições de ensino, agências, banco de talentos, programas de indicação e ações voltadas a grupos específicos. O canal deve combinar com o perfil que a empresa precisa alcançar." },
       { papel:'aluno7', tipo:'pergunta', texto:"Uma boa divulgação é suficiente para garantir bons candidatos?" },
       { papel:'professor', tipo:'definicao', texto:"Não. A descrição da vaga precisa ser clara e realista. Deve informar atividades, requisitos, local ou modalidade de trabalho, faixa de horário quando necessário e etapas do processo. Uma divulgação vaga atrai pessoas sem o perfil adequado e pode afastar candidatos qualificados." },
+
       { papel:'aluno1', tipo:'pergunta', texto:"O que há de errado em pedir uma pessoa jovem, com boa aparência e dinâmica?" },
       { papel:'professor', tipo:'definicao', texto:"Esses critérios podem ser subjetivos, discriminatórios ou não ter relação com o trabalho. É melhor descrever a competência necessária. Por exemplo: capacidade de atender o público com clareza, organização para registrar informações e disponibilidade para o horário informado." },
       { papel:'aluno3', tipo:'pergunta', texto:"Como a empresa deve tratar os dados e as informações dos candidatos?" },
       { papel:'professor', tipo:'definicao', texto:"Deve coletar apenas informações necessárias, explicar a finalidade do uso, restringir o acesso e proteger os dados. Também precisa comunicar o processo com respeito, evitar promessas que não poderá cumprir e dar retorno sempre que possível." },
+
       { papel:'aluno5', tipo:'pergunta', texto:"Depois que os currículos chegam, a empresa já está fazendo seleção?" },
       { papel:'professor', tipo:'definicao', texto:"A triagem inicial começa a aproximar o recrutamento da seleção, mas os conceitos continuam diferentes. Recrutamento é o esforço para atrair e formar um conjunto de candidatos. Seleção é a comparação dos candidatos com critérios definidos para escolher quem melhor atende à vaga." },
       { papel:'aluno2', tipo:'confirmacao', texto:"Então recrutar é trazer pessoas qualificadas para o processo, e selecionar é avaliar e decidir." },
       { papel:'professor', tipo:'confirmacao', texto:"Exatamente. Uma seleção bem feita depende de um recrutamento bem planejado, porque não é possível escolher adequadamente se a empresa não atrai candidatos suficientes ou se divulga a vaga para o público errado." },
+
       { papel:'aluno4', tipo:'pergunta', texto:"Como saber se o recrutamento foi eficiente?" },
       { papel:'professor', tipo:'definicao', texto:"A empresa pode analisar quantos candidatos aderentes foram atraídos, quanto tempo levou para preencher a vaga, qual foi o custo, quais canais trouxeram melhores resultados e se as pessoas contratadas permaneceram e tiveram bom desempenho." },
+
       { papel:'aluno6', tipo:'guarde', texto:"Então o recrutamento não termina simplesmente quando alguém é contratado. A empresa também precisa avaliar a qualidade do processo." },
       { papel:'professor', tipo:'guarde', texto:"Isso mesmo. Guarde esta sequência: identificar a necessidade, analisar o cargo, definir o perfil, escolher os canais, divulgar, atrair candidatos e encaminhá-los para uma seleção justa e coerente." },
       { papel:'professor', tipo:'conclusao', texto:"Recrutar não é procurar qualquer pessoa para preencher rapidamente uma vaga. É construir uma ponte entre uma necessidade real da organização e profissionais que possam contribuir, aprendendo e trabalhando em condições claras, éticas e compatíveis com a função. Percebam a integração: a gestão de pessoas define o cuidado com a trajetória profissional; a estratégia mostra que as decisões precisam atender aos objetivos do negócio; e o recrutamento transforma essa necessidade em uma ação concreta." },
@@ -1216,6 +1235,7 @@ const CAPITULOS = [
     ]
   }
 ];
+
 
 /* ═══════════════════════════════════════════════════
    ESTADO
