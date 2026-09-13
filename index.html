@@ -7,23 +7,134 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Sala de Aula — RH Bloco 1</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  /* ═══════════════════════════════════════════════
+     RESET & BASE
+     ═══════════════════════════════════════════════ */
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
   html { -webkit-text-size-adjust: 100%; }
 
+  :root {
+    --bg: #0a0e1a;
+    --bg-elev: #131a2b;
+    --surface: rgba(148, 163, 184, .05);
+    --surface-hover: rgba(148, 163, 184, .09);
+    --border: rgba(148, 163, 184, .12);
+    --border-strong: rgba(148, 163, 184, .22);
+    --text: #cbd5e1;
+    --text-dim: #94a3b8;
+    --text-faint: #64748b;
+    --accent: #8b5cf6;
+    --accent-strong: #7c3aed;
+    --accent-soft: rgba(139, 92, 246, .15);
+    --accent-glow: rgba(139, 92, 246, .35);
+    --page-bg: rgba(148, 163, 184, .04);
+    --page-border: rgba(148, 163, 184, .14);
+    --page-text: #cbd5e1;
+    --page-text-strong: #e2e8f0;
+    --enfase: #fbbf24;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.15);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.2);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,.35);
+    --shadow-xl: 0 24px 64px rgba(0,0,0,.5);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+    --font-tamanho: 1.02rem;
+    --transition: cubic-bezier(.2, .8, .3, 1);
+  }
+
+  body[data-tema="claro"] {
+    --bg: #f1f5f9;
+    --bg-elev: #ffffff;
+    --surface: rgba(15, 23, 42, .03);
+    --surface-hover: rgba(15, 23, 42, .06);
+    --border: rgba(15, 23, 42, .08);
+    --border-strong: rgba(15, 23, 42, .15);
+    --text: #334155;
+    --text-dim: #64748b;
+    --text-faint: #94a3b8;
+    --accent: #7c3aed;
+    --accent-soft: rgba(124, 58, 237, .12);
+    --page-bg: #ffffff;
+    --page-border: rgba(15, 23, 42, .06);
+    --page-text: #1e293b;
+    --page-text-strong: #0f172a;
+    --enfase: #b45309;
+    --shadow-lg: 0 12px 32px rgba(15, 23, 42, .08);
+    --shadow-xl: 0 24px 64px rgba(15, 23, 42, .12);
+  }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Georgia, serif;
-    background: #0f172a;
-    color: #cbd5e1;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100dvh;
-    padding: env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 150px);
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    transition: background .4s var(--transition), color .4s var(--transition);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 140px);
+    -webkit-font-smoothing: antialiased;
   }
 
+  /* ═══════════════════════════════════════════════
+     HEADER COMPACTO (nome do app + menu)
+     ═══════════════════════════════════════════════ */
+  .app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: calc(env(safe-area-inset-top) + 12px) 18px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: linear-gradient(180deg, var(--bg) 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .app-titulo {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    opacity: .8;
+  }
+
+  .btn-menu {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .2s var(--transition), background .2s;
+    touch-action: manipulation;
+  }
+  .btn-menu:hover { background: var(--surface-hover); }
+  .btn-menu:active { transform: scale(.92); }
+
+  /* ═══════════════════════════════════════════════
+     CONTEÚDO / FOLHA
+     ═══════════════════════════════════════════════ */
   .conteudo {
     flex: 1;
-    padding: 24px 22px 0;
+    padding: 0 18px;
     display: flex;
     flex-direction: column;
     max-width: 720px;
@@ -31,114 +142,88 @@
     width: 100%;
   }
 
-  .texto-bloco {
-    font-size: 1.02rem;
-    line-height: 1.75;
-    color: #cbd5e1;
-    background: rgba(148, 163, 184, .06);
-    border: 1px solid rgba(148, 163, 184, .12);
-    border-radius: 14px;
-    padding: 16px 18px 20px;
+  .folha {
+    background: var(--page-bg);
+    border: 1px solid var(--page-border);
+    border-radius: var(--radius-lg);
+    padding: 22px 22px 26px;
     position: relative;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
-    min-height: 260px;
+    box-shadow: var(--shadow-lg);
+    transition: background .4s var(--transition), border-color .4s var(--transition), opacity .3s;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: var(--font-tamanho);
+    line-height: 1.75;
+    color: var(--page-text);
     text-align: justify;
     hyphens: auto;
     -webkit-hyphens: auto;
-    transition: background .3s, color .3s, opacity .25s;
+    animation: fadeInUp .5s var(--transition);
   }
 
-  body[data-tema="claro"] .texto-bloco {
-    background: #f8fafc;
-    color: #1e293b;
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  body[data-tema="claro"] .enfase { color: #b45309; }
-  body[data-tema="claro"] .fala.falando {
-    background: rgba(124, 58, 237, .12);
-    color: #0f172a;
-  }
-  body[data-tema="claro"] .titulo-capitulo {
-    color: #64748b;
-    border-bottom-color: rgba(100, 116, 139, .2);
-  }
-  body[data-tema="claro"] .aba { color: #64748b; }
-  body[data-tema="claro"] .aba.ativa {
-    color: #7c3aed;
-    border-bottom-color: #7c3aed;
-  }
-  body[data-tema="claro"] .bolinha-pagina { background: rgba(100, 116, 139, .3); }
 
-  .abas-capitulos {
-    display: flex;
-    gap: 4px;
-    margin: -8px -18px 12px -18px;
-    padding: 0 12px;
-    border-bottom: 1px solid rgba(148, 163, 184, .15);
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+  /* Filete decorativo no topo da folha */
+  .folha::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 28px;
+    right: 28px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), #2563eb);
+    border-radius: 0 0 3px 3px;
+    opacity: .9;
   }
-  .abas-capitulos::-webkit-scrollbar { display: none; }
-  .aba {
-    flex: 0 0 auto;
-    padding: 8px 10px;
-    font-size: .68rem;
-    font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: #64748b;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    font-family: inherit;
-    white-space: nowrap;
-    transition: color .2s, border-color .2s;
-    touch-action: manipulation;
-  }
-  .aba.ativa {
-    color: #a78bfa;
-    border-bottom-color: #7c3aed;
-  }
-  .aba:active { opacity: .7; }
 
-  .titulo-capitulo {
-    display: block;
+  /* Cabeçalho da folha (título + bolinhas) */
+  .folha-header {
     text-align: center;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--page-border);
+  }
+
+  .folha-titulo {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: .62rem;
-    letter-spacing: .22em;
+    letter-spacing: .24em;
     text-transform: uppercase;
-    color: #94a3b8;
-    margin: 0 0 10px 0;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(148, 163, 184, .2);
+    color: var(--text-dim);
+    font-weight: 700;
+    margin-bottom: 10px;
   }
 
-  .bolinhas-pagina {
+  .folha-bolinhas {
     display: flex;
     justify-content: center;
     gap: 6px;
-    margin: 0 0 14px 0;
   }
-  .bolinha-pagina {
+  .bolinha {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: rgba(148, 163, 184, .3);
-    transition: background .3s, transform .3s;
+    background: var(--border-strong);
+    transition: background .3s var(--transition), transform .3s var(--transition);
   }
-  .bolinha-pagina.ativa {
-    background: #7c3aed;
-    transform: scale(1.4);
+  .bolinha.ativa {
+    background: var(--accent);
+    transform: scale(1.5);
+    box-shadow: 0 0 8px var(--accent-glow);
   }
 
+  /* ═══════════════════════════════════════════════
+     FALAS — TEXTO CORRIDO
+     ═══════════════════════════════════════════════ */
   .fala {
     display: inline;
     margin: 0;
     padding: 0;
-    transition: background .25s, color .25s;
+    transition: background .3s, color .3s;
     cursor: pointer;
+    border-radius: 3px;
   }
   .fala::after { content: ' '; }
 
@@ -146,8 +231,8 @@
     font-weight: 700;
     margin-right: 3px;
     font-size: 1em;
-    opacity: .9;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    opacity: .9;
   }
   .fala.professor .simbolo { color: #a78bfa; font-size: 1.1em; letter-spacing: .04em; }
   .fala.aluno1 .simbolo   { color: #60a5fa; }
@@ -159,351 +244,596 @@
   .fala.aluno7 .simbolo   { color: #c084fc; }
 
   .fala.falando {
-    background: rgba(124, 58, 237, .22);
-    border-radius: 3px;
+    background: var(--accent-soft);
     padding: 1px 4px;
     margin: 0 -4px;
-    color: #f1f5f9;
+    color: var(--page-text-strong);
     font-weight: 500;
   }
-  .fala.falando .simbolo { font-size: 1.1em; opacity: 1; }
+  .fala.falando .simbolo { opacity: 1; }
 
-  .fala.falada { opacity: .42; }
+  .fala.falada { opacity: .35; }
   .fala.futura { opacity: .92; }
-  .fala:hover { background: rgba(124, 58, 237, .1); border-radius: 3px; }
+
+  .fala:hover {
+    background: var(--accent-soft);
+  }
 
   .enfase {
-    color: #fbbf24;
+    color: var(--enfase);
     font-weight: 700;
     font-style: italic;
     letter-spacing: .01em;
   }
 
-  .quebra { display: block; height: 12px; }
+  .quebra { display: block; height: 14px; }
 
-  .toolbar {
+  /* ═══════════════════════════════════════════════
+     MENU DRAWER
+     ═══════════════════════════════════════════════ */
+  .overlay {
     position: fixed;
-    top: calc(env(safe-area-inset-top) + 10px);
-    right: 12px;
-    display: flex;
-    gap: 5px;
+    inset: 0;
+    background: rgba(0, 0, 0, .55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s var(--transition);
     z-index: 9998;
   }
-  .toolbar button {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 1px solid rgba(148, 163, 184, .2);
-    background: rgba(15, 23, 42, .92);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #cbd5e1;
-    font-size: .82rem;
+  .overlay.ativo {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(340px, 88vw);
+    background: var(--bg-elev);
+    border-left: 1px solid var(--border);
+    box-shadow: var(--shadow-xl);
+    z-index: 9999;
+    transform: translateX(100%);
+    transition: transform .4s var(--transition);
+    display: flex;
+    flex-direction: column;
+    padding: calc(env(safe-area-inset-top) + 20px) 22px calc(env(safe-area-inset-bottom) + 24px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .drawer.ativo {
+    transform: translateX(0);
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .drawer-titulo {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: .72rem;
     font-weight: 700;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .btn-fechar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform .1s, background .2s;
-    font-family: inherit;
+    transition: transform .2s, background .2s;
     touch-action: manipulation;
   }
-  .toolbar button:active { transform: scale(.9); }
-  .toolbar button:disabled { opacity: .35; cursor: not-allowed; }
+  .btn-fechar:hover { background: var(--surface-hover); }
+  .btn-fechar:active { transform: scale(.9); }
 
-  #playerFlutuante {
+  .secao {
+    margin-bottom: 26px;
+  }
+  .secao-titulo {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: .58rem;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 12px;
+    padding-left: 2px;
+  }
+
+  /* Toggle de tema */
+  .toggle-linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .toggle-linha:hover { background: var(--surface-hover); }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: .86rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .toggle-label .emoji { font-size: 1.1rem; }
+
+  .switch {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    background: var(--border-strong);
+    border-radius: 13px;
+    transition: background .3s var(--transition);
+    flex-shrink: 0;
+  }
+  .switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform .3s var(--transition);
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  }
+  .switch.ativo { background: var(--accent); }
+  .switch.ativo::after { transform: translateX(18px); }
+
+  /* Controle de fonte */
+  .fonte-controle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .btn-fonte {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg-elev);
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: .82rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s, transform .15s, border-color .2s;
+    touch-action: manipulation;
+    flex-shrink: 0;
+  }
+  .btn-fonte:hover { background: var(--surface-hover); border-color: var(--border-strong); }
+  .btn-fonte:active { transform: scale(.9); }
+  .btn-fonte:disabled { opacity: .3; cursor: not-allowed; }
+
+  .fonte-barra {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .fonte-barra-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, var(--accent), #2563eb);
+    border-radius: 2px;
+    transition: width .3s var(--transition);
+  }
+
+  /* Lista de blocos */
+  .blocos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .bloco-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background .2s, border-color .2s, transform .15s;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    text-align: left;
+    color: var(--text);
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .bloco-item:hover { background: var(--surface-hover); }
+  .bloco-item:active { transform: scale(.98); }
+
+  .bloco-item.ativo {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+
+  .bloco-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .82rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: background .2s, color .2s;
+  }
+  .bloco-item.ativo .bloco-num {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .bloco-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .bloco-nome {
+    font-size: .86rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .bloco-item.ativo .bloco-nome {
+    color: var(--accent);
+  }
+  .bloco-desc {
+    font-size: .68rem;
+    color: var(--text-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bloco-check {
+    color: var(--accent);
+    font-size: 1rem;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .bloco-item.ativo .bloco-check {
+    opacity: 1;
+  }
+
+  /* ═══════════════════════════════════════════════
+     PLAYER
+     ═══════════════════════════════════════════════ */
+  #player {
     position: fixed;
-    z-index: 9999;
-    bottom: 24px;
+    bottom: calc(env(safe-area-inset-bottom) + 20px);
     left: 50%;
     transform: translateX(-50%);
-    width: 300px;
-    background: rgba(15, 23, 42, .97);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(148, 163, 184, .18);
-    border-radius: 18px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, .5);
-    padding: 10px 10px 12px;
+    width: min(340px, calc(100vw - 32px));
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    padding: 8px 8px 10px;
+    z-index: 500;
     user-select: none;
     -webkit-user-select: none;
     touch-action: none;
-    transition: box-shadow .2s, opacity .2s;
+    animation: fadeInUp .5s var(--transition);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
-  #playerFlutuante.arrastando {
-    box-shadow: 0 20px 48px rgba(0, 0, 0, .7), 0 0 0 2px rgba(124, 58, 237, .5);
-    opacity: .96;
-  }
-  .handle {
-    height: 16px;
+
+  .player-handle {
+    height: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: grab;
-    margin-bottom: 4px;
-    touch-action: none;
+    margin-bottom: 2px;
   }
-  .handle::before {
+  .player-handle::before {
     content: '';
-    width: 36px;
-    height: 4px;
-    background: #475569;
+    width: 32px;
+    height: 3px;
+    background: var(--border-strong);
     border-radius: 2px;
-    transition: background .15s;
   }
-  #playerFlutuante.arrastando .handle::before { background: #7c3aed; }
-  .controles {
+
+  .player-controles {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 4px;
+    padding: 0 4px;
   }
+
   .btn-ctrl {
     border: none;
-    background: #1e293b;
-    color: #cbd5e1;
-    font-family: inherit;
-    font-weight: 700;
-    border-radius: 12px;
+    background: transparent;
+    color: var(--text);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background .15s, transform .1s, color .15s;
-    touch-action: manipulation;
-  }
-  .btn-ctrl:active { transform: scale(.92); }
-  .btn-ctrl:disabled { opacity: .3; }
-  .btn-sec { width: 38px; height: 38px; font-size: .9rem; }
-  .btn-pagina { background: #312e81; color: #c7d2fe; }
-  .btn-pagina:not(:disabled):hover { background: #3730a3; }
-  .btn-play-flut {
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
-    color: #fff;
-    font-size: 1.3rem;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, .4);
-  }
-  .btn-play-flut.tocando {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-    box-shadow: 0 6px 18px rgba(220, 38, 38, .4);
-  }
-  .rodape {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 8px;
-    padding: 0 4px;
-    gap: 6px;
-  }
-  .btn-vel {
-    padding: 6px 10px;
-    font-size: .72rem;
-    background: #1e293b;
-    color: #93c5fd;
-    border-radius: 8px;
-    letter-spacing: .02em;
-    min-width: 52px;
-    border: none;
-    font-family: inherit;
-    font-weight: 700;
-    cursor: pointer;
-    touch-action: manipulation;
-  }
-  .btn-vel.ativa { background: #1e3a8a; color: #fff; }
-  .contador-pagina {
-    font-size: .68rem;
-    color: #94a3b8;
-    font-weight: 600;
-    letter-spacing: .05em;
-    text-align: right;
-    flex: 1;
-    font-family: ui-monospace, Menlo, monospace;
-  }
-  #playerFlutuante.minimizado .handle,
-  #playerFlutuante.minimizado .controles .btn-sec,
-  #playerFlutuante.minimizado .controles .btn-pagina,
-  #playerFlutuante.minimizado .rodape { display: none; }
-  #playerFlutuante.minimizado { width: auto; padding: 6px; border-radius: 50%; }
-  #playerFlutuante.minimizado .controles { gap: 0; }
-
-  #debugPanel {
-    position: fixed;
-    top: 12px;
-    left: 12px;
-    right: 12px;
-    background: rgba(0, 0, 0, .92);
-    border: 1px solid #334155;
     border-radius: 12px;
-    padding: 12px;
-    color: #cbd5e1;
-    font-family: ui-monospace, Menlo, monospace;
-    font-size: .68rem;
-    line-height: 1.5;
-    z-index: 10000;
-    max-height: 60vh;
-    overflow-y: auto;
-    display: none;
-  }
-  #debugPanel.ativo { display: block; }
-  #debugPanel h3 {
-    font-size: .72rem;
-    color: #fbbf24;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  #debugPanel h3 button {
-    background: #7c3aed;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 3px 8px;
-    font-size: .65rem;
+    transition: background .2s, transform .15s, color .2s;
+    touch-action: manipulation;
     font-family: inherit;
-    cursor: pointer;
   }
-  #debugPanel .linha {
-    display: flex;
-    justify-content: space-between;
-    padding: 2px 0;
-    border-bottom: 1px solid rgba(148, 163, 184, .1);
+  .btn-ctrl:hover:not(:disabled) {
+    background: var(--surface-hover);
   }
-  #debugPanel .linha.ativa { color: #fbbf24; font-weight: 700; }
-  #debugPanel .voz { color: #93c5fd; }
-  #debugPanel .aviso {
-    margin-top: 8px;
-    padding: 6px;
-    background: rgba(220, 38, 38, .15);
-    border-radius: 6px;
-    color: #fca5a5;
-  }
-  #debugPanel .sucesso {
-    margin-top: 8px;
-    padding: 6px;
-    background: rgba(34, 197, 94, .15);
-    border-radius: 6px;
-    color: #86efac;
+  .btn-ctrl:active:not(:disabled) { transform: scale(.9); }
+  .btn-ctrl:disabled { opacity: .25; cursor: not-allowed; }
+
+  .btn-sec {
+    width: 40px;
+    height: 40px;
   }
 
+  .btn-play {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #6366f1);
+    color: #fff;
+    box-shadow: 0 6px 20px var(--accent-glow);
+    transition: transform .2s var(--transition), background .3s, box-shadow .3s;
+  }
+  .btn-play:hover { transform: scale(1.05); }
+  .btn-play:active { transform: scale(.95); }
+  .btn-play.tocando {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, .4);
+  }
+
+  .player-rodape {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px 0;
+    gap: 8px;
+  }
+
+  .btn-vel {
+    padding: 5px 10px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s;
+    touch-action: manipulation;
+    letter-spacing: .02em;
+  }
+  .btn-vel:hover { background: var(--surface-hover); }
+  .btn-vel.ativa {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .player-progresso {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .66rem;
+    font-weight: 600;
+    color: var(--text-faint);
+    letter-spacing: .05em;
+  }
+
+  /* ═══════════════════════════════════════════════
+     TOAST
+     ═══════════════════════════════════════════════ */
   .toast {
     position: fixed;
-    bottom: 130px;
+    bottom: calc(env(safe-area-inset-bottom) + 120px);
     left: 50%;
     transform: translateX(-50%) translateY(20px);
-    background: rgba(124, 58, 237, .95);
-    color: #fff;
-    padding: 8px 16px;
+    background: var(--bg-elev);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 18px;
     border-radius: 99px;
-    font-size: .75rem;
-    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
     opacity: 0;
     pointer-events: none;
-    transition: opacity .25s, transform .25s;
+    transition: opacity .3s var(--transition), transform .3s var(--transition);
     z-index: 9997;
     white-space: nowrap;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    max-width: calc(100vw - 32px);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .toast.ativo {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
 
-  @media (max-width: 390px) {
-    .texto-bloco { padding: 13px 13px 16px; font-size: .95rem; }
-    #playerFlutuante { width: 290px; padding: 8px 8px 10px; }
-    .btn-play-flut { width: 48px; height: 48px; font-size: 1.2rem; }
-    .btn-sec { width: 34px; height: 34px; font-size: .82rem; }
-    .btn-vel { font-size: .68rem; padding: 5px 8px; min-width: 46px; }
-    .toolbar button { width: 38px; height: 38px; font-size: .78rem; }
-    .conteudo { padding: 20px 16px 0; }
-    .contador-pagina { font-size: .62rem; }
-    .aba { font-size: .62rem; padding: 7px 8px; }
-  }
-
-  @media (max-width: 340px) {
-    #playerFlutuante { width: 270px; }
-    .btn-play-flut { width: 42px; height: 42px; font-size: 1.05rem; }
-    .btn-sec { width: 30px; height: 30px; font-size: .75rem; }
-    .btn-vel { font-size: .62rem; padding: 4px 7px; min-width: 40px; }
+  /* ═══════════════════════════════════════════════
+     RESPONSIVO
+     ═══════════════════════════════════════════════ */
+  @media (max-width: 380px) {
+    .folha { padding: 18px 16px 22px; font-size: .95rem; }
+    .conteudo { padding: 0 14px; }
+    #player { width: calc(100vw - 24px); }
+    .btn-sec { width: 36px; height: 36px; }
+    .btn-play { width: 50px; height: 50px; }
   }
 
   @media (min-width: 600px) {
-    .conteudo { padding: 32px 32px 0; }
-    #playerFlutuante { width: 340px; }
-    .btn-play-flut { width: 58px; height: 58px; font-size: 1.4rem; }
-    .btn-sec { width: 42px; height: 42px; font-size: .95rem; }
+    .conteudo { padding: 0 32px; }
+    .folha { padding: 28px 32px 32px; }
+    #player { width: 360px; }
+  }
+
+  @media (min-width: 900px) {
+    .folha { padding: 32px 40px 36px; }
   }
 </style>
 </head>
 <body data-tema="escuro">
 
-<div class="toolbar">
-  <button id="btnTema" type="button" aria-label="Alternar tema">☀️</button>
-  <button id="btnFonteMenos" type="button" aria-label="Diminuir fonte">A−</button>
-  <button id="btnFonteMais" type="button" aria-label="Aumentar fonte">A+</button>
-</div>
+<!-- HEADER -->
+<header class="app-header">
+  <div class="app-titulo">Sala de Aula · RH</div>
+  <button class="btn-menu" id="btnMenu" aria-label="Abrir menu" aria-expanded="false">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+      <line x1="4" y1="7" x2="20" y2="7"/>
+      <line x1="4" y1="12" x2="20" y2="12"/>
+      <line x1="4" y1="17" x2="20" y2="17"/>
+    </svg>
+  </button>
+</header>
 
+<!-- CONTEÚDO -->
 <div class="conteudo">
-  <div class="texto-bloco" id="texto"></div>
+  <article class="folha" id="folha"></article>
 </div>
 
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
+
+<!-- DRAWER -->
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-header">
+    <span class="drawer-titulo">Menu</span>
+    <button class="btn-fechar" id="btnFechar" aria-label="Fechar menu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <line x1="6" y1="6" x2="18" y2="18"/>
+        <line x1="18" y1="6" x2="6" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- APARÊNCIA -->
+  <section class="secao">
+    <div class="secao-titulo">Aparência</div>
+    <div class="toggle-linha" id="toggleTema">
+      <div class="toggle-label">
+        <span class="emoji" id="temaEmoji">🌙</span>
+        <span id="temaLabel">Modo escuro</span>
+      </div>
+      <div class="switch" id="temaSwitch"></div>
+    </div>
+  </section>
+
+  <!-- TAMANHO DO TEXTO -->
+  <section class="secao">
+    <div class="secao-titulo">Tamanho do texto</div>
+    <div class="fonte-controle">
+      <button class="btn-fonte" id="btnFonteMenos" aria-label="Diminuir fonte">A−</button>
+      <div class="fonte-barra">
+        <div class="fonte-barra-fill" id="fonteBarraFill"></div>
+      </div>
+      <button class="btn-fonte" id="btnFonteMais" aria-label="Aumentar fonte">A+</button>
+    </div>
+  </section>
+
+  <!-- BLOCOS -->
+  <section class="secao">
+    <div class="secao-titulo">Blocos</div>
+    <div class="blocos-lista" id="blocosLista"></div>
+  </section>
+</aside>
+
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<div id="debugPanel">
-  <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
-  <div id="debugElenco"></div>
-</div>
-
-<div id="playerFlutuante" role="region" aria-label="Controles de áudio">
-  <div class="handle" id="handle" aria-label="Arraste para mover"></div>
-  <div class="controles">
-    <button class="btn-ctrl btn-pagina btn-sec" id="btnPaginaAnterior" onclick="pularCapitulo(-1)" aria-label="Capítulo anterior" title="Capítulo anterior">
+<!-- PLAYER -->
+<div id="player" role="region" aria-label="Controles de áudio">
+  <div class="player-handle" id="handle"></div>
+  <div class="player-controles">
+    <button class="btn-ctrl btn-sec" id="btnCapAnterior" aria-label="Bloco anterior">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/>
       </svg>
     </button>
-    <button class="btn-ctrl btn-sec" id="btnAnterior" onclick="pularFrase(-1)" aria-label="Frase anterior" title="Frase anterior">
+    <button class="btn-ctrl btn-sec" id="btnAnterior" aria-label="Fala anterior">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
       </svg>
     </button>
-    <button class="btn-ctrl btn-play-flut" id="btnPlayFlut" onclick="togglePlay()" aria-label="Ouvir ou pausar">
+    <button class="btn-ctrl btn-play" id="btnPlay" aria-label="Ouvir ou pausar">
       <svg id="iconePlay" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z"/>
       </svg>
     </button>
-    <button class="btn-ctrl btn-sec" id="btnProximo" onclick="pularFrase(1)" aria-label="Próxima frase" title="Próxima frase">
+    <button class="btn-ctrl btn-sec" id="btnProximo" aria-label="Próxima fala">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
       </svg>
     </button>
-    <button class="btn-ctrl btn-pagina btn-sec" id="btnPaginaProxima" onclick="pularCapitulo(1)" aria-label="Próximo capítulo" title="Próximo capítulo">
+    <button class="btn-ctrl btn-sec" id="btnCapProximo" aria-label="Próximo bloco">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"/>
       </svg>
     </button>
   </div>
-  <div class="rodape">
-    <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">1.0×</button>
-    <span class="contador-pagina" id="contadorPagina">Bloco 1 / 3</span>
+  <div class="player-rodape">
+    <button class="btn-vel" id="btnVel" aria-label="Velocidade">1.0×</button>
+    <span class="player-progresso" id="playerProgresso">Bloco 1 / 3</span>
   </div>
 </div>
 
 <script>
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    AMBIENTE
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const isMicrosoft = /Windows|Win32|Win64/.test(navigator.userAgent);
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    PREFERÊNCIAS
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 const FONTES = [0.80, 0.88, 0.95, 1.02, 1.10, 1.20, 1.30, 1.45];
 
 let prefTema = 'escuro';
@@ -529,25 +859,28 @@ function salvarPrefs() {
   } catch(e) {}
 }
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    TEMA
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 function aplicarTema() {
-  const btn = document.getElementById('btnTema');
   document.body.setAttribute('data-tema', prefTema);
-  if (btn) btn.textContent = (prefTema === 'claro') ? '🌙' : '☀️';
+  const emoji = document.getElementById('temaEmoji');
+  const label = document.getElementById('temaLabel');
+  const sw = document.getElementById('temaSwitch');
+  if (emoji) emoji.textContent = prefTema === 'claro' ? '☀️' : '🌙';
+  if (label) label.textContent = prefTema === 'claro' ? 'Modo claro' : 'Modo escuro';
+  if (sw) sw.classList.toggle('ativo', prefTema === 'claro');
 }
 
 function alternarTema() {
-  prefTema = (prefTema === 'claro') ? 'escuro' : 'claro';
+  prefTema = prefTema === 'claro' ? 'escuro' : 'claro';
   salvarPrefs();
   aplicarTema();
-  mostrarToast(prefTema === 'claro' ? '☀️ Modo claro' : '🌙 Modo escuro');
 }
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    FONTE
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 function acharIndiceFonte() {
   let melhor = 0;
   let menorDist = Math.abs(FONTES[0] - prefTamanho);
@@ -560,11 +893,13 @@ function acharIndiceFonte() {
 
 function aplicarFonte() {
   const tam = (isFinite(prefTamanho) && prefTamanho > 0.3 && prefTamanho < 2.5) ? prefTamanho : 1.02;
-  document.documentElement.style.setProperty('--tamanho-fonte', tam + 'rem');
-  const card = document.getElementById('texto');
-  if (card) card.style.fontSize = tam + 'rem';
+  document.documentElement.style.setProperty('--font-tamanho', tam + 'rem');
 
   const i = acharIndiceFonte();
+  const pct = ((i + 1) / FONTES.length) * 100;
+  const fill = document.getElementById('fonteBarraFill');
+  if (fill) fill.style.width = pct + '%';
+
   const btnM = document.getElementById('btnFonteMenos');
   const btnP = document.getElementById('btnFonteMais');
   if (btnM) btnM.disabled = (i <= 0);
@@ -578,12 +913,11 @@ function ajustarFonte(direcao) {
   prefTamanho = FONTES[novo];
   salvarPrefs();
   aplicarFonte();
-  mostrarToast('🔤 Fonte: ' + Math.round(prefTamanho * 100) + '%');
 }
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    TOAST
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 let toastTimer = null;
 function mostrarToast(txt) {
   const el = document.getElementById('toast');
@@ -591,16 +925,30 @@ function mostrarToast(txt) {
   el.textContent = txt;
   el.classList.add('ativo');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('ativo'), 1400);
+  toastTimer = setTimeout(() => el.classList.remove('ativo'), 1800);
 }
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
+   MENU DRAWER
+   ═══════════════════════════════════════════════════ */
+function abrirMenu() {
+  document.getElementById('drawer').classList.add('ativo');
+  document.getElementById('overlay').classList.add('ativo');
+  document.getElementById('btnMenu').setAttribute('aria-expanded', 'true');
+}
+function fecharMenu() {
+  document.getElementById('drawer').classList.remove('ativo');
+  document.getElementById('overlay').classList.remove('ativo');
+  document.getElementById('btnMenu').setAttribute('aria-expanded', 'false');
+}
+
+/* ═══════════════════════════════════════════════════
    VOZES
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 let todasAsVozes = [];
 let elenco = null;
-let modoIOS = false;
 let felipeEncontrado = false;
+let iosDesbloqueado = false;
 
 function carregarVozes(callback) {
   let jaChamou = false;
@@ -612,11 +960,7 @@ function carregarVozes(callback) {
 
   try {
     let vozes = speechSynthesis.getVoices();
-    if (vozes.length > 0) {
-      todasAsVozes = vozes;
-      finalizar();
-      return;
-    }
+    if (vozes.length > 0) { todasAsVozes = vozes; finalizar(); return; }
 
     const handler = () => {
       try {
@@ -640,19 +984,13 @@ function carregarVozes(callback) {
       try {
         tentativas++;
         vozes = speechSynthesis.getVoices();
-        if (vozes.length > 0) {
-          todasAsVozes = vozes;
-          finalizar();
-          return;
-        }
+        if (vozes.length > 0) { todasAsVozes = vozes; finalizar(); return; }
         if (tentativas < 30) setTimeout(poll, 200);
         else finalizar();
       } catch(e) { finalizar(); }
     };
     setTimeout(poll, 200);
-  } catch(e) {
-    finalizar();
-  }
+  } catch(e) { finalizar(); }
 }
 
 function vozesPtBR() {
@@ -662,9 +1000,9 @@ function vozesPtBR() {
   });
 }
 
-/* =====================================================
-   PERFIS
-   ===================================================== */
+/* ═══════════════════════════════════════════════════
+   PERFIS DE VOZ
+   ═══════════════════════════════════════════════════ */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
 const SIMBOLOS = {
   professor: '§',
@@ -700,158 +1038,97 @@ const PERFIS = {
     pausas:{ abertura:300, definicao:260, pergunta:280, confirmacao:240, guarde:320, conclusao:300, pausa:450 } }
 };
 
-/* =====================================================
-   CONTEÚDO — 3 CAPÍTULOS (1 página cada)
-   ===================================================== */
+/* ═══════════════════════════════════════════════════
+   CONTEÚDO — 3 BLOCOS
+   ═══════════════════════════════════════════════════ */
 const CAPITULOS = [
   {
-    titulo: 'Bloco 1 — O que é gestão de pessoas',
+    titulo: 'Bloco 1',
+    subtitulo: 'O que é gestão de pessoas',
     aula: [
-      { papel:'professor', tipo:'abertura',
-        texto:"Bom dia, turma. Hoje vamos entender o que é *gestão de pessoas*." },
-      { papel:'aluno1', tipo:'pergunta',
-        texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"Boa pergunta. Gestão de pessoas é a área responsável por tudo que envolve o *ser humano* no trabalho." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Isso inclui atrair, desenvolver, motivar | e *manter* as pessoas dentro da empresa." },
-      { papel:'aluno2', tipo:'confirmacao',
-        texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
-      { papel:'professor', tipo:'definicao',
-        texto:"*Exatamente.* Durante muito tempo, essa área foi vista apenas como operacional." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Cuidava de folha de pagamento, ponto, férias | e documentação." },
-      { papel:'aluno1', tipo:'confirmacao',
-        texto:"Ah, o famoso setor que resolvia papelada." },
-      { papel:'professor', tipo:'confirmacao',
-        texto:"Isso mesmo. Era o setor da *papelada*." },
-      { papel:'aluno5', tipo:'pergunta',
-        texto:"E o que fez o cenário mudar?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"Hoje o cenário mudou. A gestão de pessoas passou a ser *estratégica*." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Ela participa das *decisões importantes* da organização. Ajuda a definir rumos, preparar equipes e garantir que a empresa tenha as *pessoas certas* nos lugares certos." },
-      { papel:'aluno3', tipo:'pergunta',
-        texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"Tem. E é uma diferença *importante*." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Gestão de recursos humanos é o nome mais antigo, ligado à ideia de que pessoas são *recursos*, como máquinas ou dinheiro." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Gestão de pessoas é o nome mais *moderno*, que enxerga o ser humano como *parceiro* da organização, e não como simples recurso." },
-      { papel:'aluno4', tipo:'confirmacao',
-        texto:"Então essa mudança de nome reflete uma mudança de mentalidade." },
-      { papel:'professor', tipo:'confirmacao',
-        texto:"*Exatamente.* Antes, a pessoa era vista como custo. Agora, é vista como *diferencial competitivo*." },
-      { papel:'professor', tipo:'guarde',
-        texto:"*Guarde isto.*" },
-      { papel:'professor', tipo:'guarde',
-        texto:"Gestão de pessoas é a área que cuida do *ser humano* no trabalho." },
-      { papel:'aluno2', tipo:'guarde',
-        texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
-      { papel:'professor', tipo:'conclusao',
-        texto:"E passa a *construir resultados*. Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
+      { papel:'professor', tipo:'abertura', texto:"Bom dia, turma. Hoje vamos entender o que é *gestão de pessoas*." },
+      { papel:'aluno1', tipo:'pergunta', texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
+      { papel:'professor', tipo:'definicao', texto:"Boa pergunta. Gestão de pessoas é a área responsável por tudo que envolve o *ser humano* no trabalho." },
+      { papel:'professor', tipo:'definicao', texto:"Isso inclui atrair, desenvolver, motivar | e *manter* as pessoas dentro da empresa." },
+      { papel:'aluno2', tipo:'confirmacao', texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
+      { papel:'professor', tipo:'definicao', texto:"*Exatamente.* Durante muito tempo, essa área foi vista apenas como operacional." },
+      { papel:'professor', tipo:'definicao', texto:"Cuidava de folha de pagamento, ponto, férias | e documentação." },
+      { papel:'aluno1', tipo:'confirmacao', texto:"Ah, o famoso setor que resolvia papelada." },
+      { papel:'professor', tipo:'confirmacao', texto:"Isso mesmo. Era o setor da *papelada*." },
+      { papel:'aluno5', tipo:'pergunta', texto:"E o que fez o cenário mudar?" },
+      { papel:'professor', tipo:'definicao', texto:"Hoje o cenário mudou. A gestão de pessoas passou a ser *estratégica*." },
+      { papel:'professor', tipo:'definicao', texto:"Ela participa das *decisões importantes* da organização. Ajuda a definir rumos, preparar equipes e garantir que a empresa tenha as *pessoas certas* nos lugares certos." },
+      { papel:'aluno3', tipo:'pergunta', texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
+      { papel:'professor', tipo:'definicao', texto:"Tem. E é uma diferença *importante*." },
+      { papel:'professor', tipo:'definicao', texto:"Gestão de recursos humanos é o nome mais antigo, ligado à ideia de que pessoas são *recursos*, como máquinas ou dinheiro." },
+      { papel:'professor', tipo:'definicao', texto:"Gestão de pessoas é o nome mais *moderno*, que enxerga o ser humano como *parceiro* da organização, e não como simples recurso." },
+      { papel:'aluno4', tipo:'confirmacao', texto:"Então essa mudança de nome reflete uma mudança de mentalidade." },
+      { papel:'professor', tipo:'confirmacao', texto:"*Exatamente.* Antes, a pessoa era vista como custo. Agora, é vista como *diferencial competitivo*." },
+      { papel:'professor', tipo:'guarde', texto:"*Guarde isto.*" },
+      { papel:'professor', tipo:'guarde', texto:"Gestão de pessoas é a área que cuida do *ser humano* no trabalho." },
+      { papel:'aluno2', tipo:'guarde', texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
+      { papel:'professor', tipo:'conclusao', texto:"E passa a *construir resultados*. Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
     ]
   },
   {
-    titulo: 'Bloco 2 — Gestão estratégica de pessoas',
+    titulo: 'Bloco 2',
+    subtitulo: 'Gestão estratégica de pessoas',
     aula: [
-      { papel:'professor', tipo:'abertura',
-        texto:"Vamos agora entender o que é *gestão estratégica de pessoas*." },
-      { papel:'aluno2', tipo:'pergunta',
-        texto:"Professor, o que muda quando ela passa a ser estratégica?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"É quando a área de recursos humanos deixa de agir só no *operacional* | e passa a participar do *planejamento* da organização." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Na prática, significa *alinhar* as políticas de pessoas aos objetivos do negócio." },
-      { papel:'aluno5', tipo:'pergunta',
-        texto:"Pode dar um exemplo?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"Se a empresa quer *crescer*, o setor de pessoas precisa preparar a equipe para esse crescimento." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Se quer *inovar*, precisa contratar e desenvolver pessoas com esse perfil." },
-      { papel:'aluno1', tipo:'pergunta',
-        texto:"E quais são as frentes de trabalho?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"São *quatro*. Primeiro, *atrai* talentos. Segundo, *desenvolve* esses talentos." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Terceiro, *mantém* as pessoas boas na empresa. Quarto, garante que tudo isso esteja ligado à *estratégia*." },
-      { papel:'aluno6', tipo:'pergunta',
-        texto:"E qual a diferença do modelo tradicional para o estratégico?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"No modelo *tradicional*, o setor de pessoal só *executa*. Paga, registra, controla." },
-      { papel:'professor', tipo:'definicao',
-        texto:"No modelo *estratégico*, o setor de pessoal *participa das decisões*. Antecipa necessidades. Propõe soluções." },
-      { papel:'aluno4', tipo:'confirmacao',
-        texto:"Então ele deixa de ser só operacional." },
-      { papel:'professor', tipo:'confirmacao',
-        texto:"*Exatamente.* Um exemplo ajuda a entender." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Imagine uma empresa que decidiu abrir uma filial em outra cidade." },
-      { papel:'professor', tipo:'definicao',
-        texto:"No modelo tradicional, o setor de pessoal só vai agir quando a filial já estiver montada, contratando quem aparecer." },
-      { papel:'professor', tipo:'definicao',
-        texto:"No modelo estratégico, participa *desde o começo*. Planeja quantas pessoas serão necessárias, que perfis, que treinamento, em que prazo." },
-      { papel:'professor', tipo:'guarde',
-        texto:"*Guarde isto:* gestão estratégica de pessoas é *alinhar gente e negócio*." },
-      { papel:'professor', tipo:'conclusao',
-        texto:"Não é só contratar e pagar. É *pensar no presente e no futuro* da organização." }
+      { papel:'professor', tipo:'abertura', texto:"Vamos agora entender o que é *gestão estratégica de pessoas*." },
+      { papel:'aluno2', tipo:'pergunta', texto:"Professor, o que muda quando ela passa a ser estratégica?" },
+      { papel:'professor', tipo:'definicao', texto:"É quando a área de recursos humanos deixa de agir só no *operacional* | e passa a participar do *planejamento* da organização." },
+      { papel:'professor', tipo:'definicao', texto:"Na prática, significa *alinhar* as políticas de pessoas aos objetivos do negócio." },
+      { papel:'aluno5', tipo:'pergunta', texto:"Pode dar um exemplo?" },
+      { papel:'professor', tipo:'definicao', texto:"Se a empresa quer *crescer*, o setor de pessoas precisa preparar a equipe para esse crescimento." },
+      { papel:'professor', tipo:'definicao', texto:"Se quer *inovar*, precisa contratar e desenvolver pessoas com esse perfil." },
+      { papel:'aluno1', tipo:'pergunta', texto:"E quais são as frentes de trabalho?" },
+      { papel:'professor', tipo:'definicao', texto:"São *quatro*. Primeiro, *atrai* talentos. Segundo, *desenvolve* esses talentos." },
+      { papel:'professor', tipo:'definicao', texto:"Terceiro, *mantém* as pessoas boas na empresa. Quarto, garante que tudo isso esteja ligado à *estratégia*." },
+      { papel:'aluno6', tipo:'pergunta', texto:"E qual a diferença do modelo tradicional para o estratégico?" },
+      { papel:'professor', tipo:'definicao', texto:"No modelo *tradicional*, o setor de pessoal só *executa*. Paga, registra, controla." },
+      { papel:'professor', tipo:'definicao', texto:"No modelo *estratégico*, o setor de pessoal *participa das decisões*. Antecipa necessidades. Propõe soluções." },
+      { papel:'aluno4', tipo:'confirmacao', texto:"Então ele deixa de ser só operacional." },
+      { papel:'professor', tipo:'confirmacao', texto:"*Exatamente.* Um exemplo ajuda a entender." },
+      { papel:'professor', tipo:'definicao', texto:"Imagine uma empresa que decidiu abrir uma filial em outra cidade." },
+      { papel:'professor', tipo:'definicao', texto:"No modelo tradicional, o setor de pessoal só vai agir quando a filial já estiver montada, contratando quem aparecer." },
+      { papel:'professor', tipo:'definicao', texto:"No modelo estratégico, participa *desde o começo*. Planeja quantas pessoas serão necessárias, que perfis, que treinamento, em que prazo." },
+      { papel:'professor', tipo:'guarde', texto:"*Guarde isto:* gestão estratégica de pessoas é *alinhar gente e negócio*." },
+      { papel:'professor', tipo:'conclusao', texto:"Não é só contratar e pagar. É *pensar no presente e no futuro* da organização." }
     ]
   },
   {
-    titulo: 'Bloco 3 — Recrutamento',
+    titulo: 'Bloco 3',
+    subtitulo: 'Recrutamento',
     aula: [
-      { papel:'professor', tipo:'abertura',
-        texto:"Agora vamos falar sobre *recrutamento*." },
-      { papel:'aluno7', tipo:'pergunta',
-        texto:"Professor, o que é recrutamento?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"Recrutamento é o processo de *atrair candidatos* para uma vaga. É a etapa em que a empresa vai ao mercado buscar pessoas com potencial para ocupar determinada função." },
-      { papel:'aluno1', tipo:'pergunta',
-        texto:"E é a mesma coisa que seleção?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"*Não.* Muita gente confunde. *Recrutamento atrai. Seleção escolhe.*" },
-      { papel:'professor', tipo:'definicao',
-        texto:"São duas etapas *diferentes*, uma depois da outra." },
-      { papel:'aluno3', tipo:'pergunta',
-        texto:"E quais são os tipos de recrutamento?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"Existem *dois tipos principais*: o recrutamento *interno* e o recrutamento *externo*." },
-      { papel:'professor', tipo:'definicao',
-        texto:"O *interno* busca candidatos dentro da própria empresa. Pode ser por promoção, transferência ou remanejamento." },
-      { papel:'aluno5', tipo:'pergunta',
-        texto:"Quais são as vantagens do interno?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"*Motiva* quem já trabalha ali, aproveita quem já *conhece a cultura*, *custa menos* e é *mais rápido*." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Mas tem desvantagens. Pode gerar *acomodação*, porque as pessoas sabem que a vaga vai ser preenchida por alguém de dentro." },
-      { papel:'professor', tipo:'definicao',
-        texto:"E *fecha a porta* para ideias novas de fora." },
-      { papel:'aluno2', tipo:'pergunta',
-        texto:"E o recrutamento externo?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"Busca candidatos *no mercado*. Anúncios, redes sociais, indicações, sites de emprego, agências." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Tem vantagens. Traz *sangue novo*, *novas ideias*, *novas experiências*." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Tem desvantagens. *Custa mais*, *demora mais*, e a pessoa precisa de tempo para se adaptar à cultura da empresa." },
-      { papel:'aluno4', tipo:'pergunta',
-        texto:"E existe um que mistura os dois?" },
-      { papel:'professor', tipo:'confirmacao',
-        texto:"Existe. O recrutamento *misto*, que combina os dois. É o *mais comum* nas organizações bem estruturadas." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Primeiro, olham para dentro. Se não encontram, vão para fora." },
-      { papel:'professor', tipo:'guarde',
-        texto:"*Guarde isto:* recrutamento é *atrair*." },
-      { papel:'professor', tipo:'conclusao',
-        texto:"E a escolha entre interno e externo depende do *momento da empresa* e do *tipo de vaga*." }
+      { papel:'professor', tipo:'abertura', texto:"Agora vamos falar sobre *recrutamento*." },
+      { papel:'aluno7', tipo:'pergunta', texto:"Professor, o que é recrutamento?" },
+      { papel:'professor', tipo:'definicao', texto:"Recrutamento é o processo de *atrair candidatos* para uma vaga. É a etapa em que a empresa vai ao mercado buscar pessoas com potencial para ocupar determinada função." },
+      { papel:'aluno1', tipo:'pergunta', texto:"E é a mesma coisa que seleção?" },
+      { papel:'professor', tipo:'definicao', texto:"*Não.* Muita gente confunde. *Recrutamento atrai. Seleção escolhe.*" },
+      { papel:'professor', tipo:'definicao', texto:"São duas etapas *diferentes*, uma depois da outra." },
+      { papel:'aluno3', tipo:'pergunta', texto:"E quais são os tipos de recrutamento?" },
+      { papel:'professor', tipo:'definicao', texto:"Existem *dois tipos principais*: o recrutamento *interno* e o recrutamento *externo*." },
+      { papel:'professor', tipo:'definicao', texto:"O *interno* busca candidatos dentro da própria empresa. Pode ser por promoção, transferência ou remanejamento." },
+      { papel:'aluno5', tipo:'pergunta', texto:"Quais são as vantagens do interno?" },
+      { papel:'professor', tipo:'definicao', texto:"*Motiva* quem já trabalha ali, aproveita quem já *conhece a cultura*, *custa menos* e é *mais rápido*." },
+      { papel:'professor', tipo:'definicao', texto:"Mas tem desvantagens. Pode gerar *acomodação*, porque as pessoas sabem que a vaga vai ser preenchida por alguém de dentro." },
+      { papel:'professor', tipo:'definicao', texto:"E *fecha a porta* para ideias novas de fora." },
+      { papel:'aluno2', tipo:'pergunta', texto:"E o recrutamento externo?" },
+      { papel:'professor', tipo:'definicao', texto:"Busca candidatos *no mercado*. Anúncios, redes sociais, indicações, sites de emprego, agências." },
+      { papel:'professor', tipo:'definicao', texto:"Tem vantagens. Traz *sangue novo*, *novas ideias*, *novas experiências*." },
+      { papel:'professor', tipo:'definicao', texto:"Tem desvantagens. *Custa mais*, *demora mais*, e a pessoa precisa de tempo para se adaptar à cultura da empresa." },
+      { papel:'aluno4', tipo:'pergunta', texto:"E existe um que mistura os dois?" },
+      { papel:'professor', tipo:'confirmacao', texto:"Existe. O recrutamento *misto*, que combina os dois. É o *mais comum* nas organizações bem estruturadas." },
+      { papel:'professor', tipo:'definicao', texto:"Primeiro, olham para dentro. Se não encontram, vão para fora." },
+      { papel:'professor', tipo:'guarde', texto:"*Guarde isto:* recrutamento é *atrair*." },
+      { papel:'professor', tipo:'conclusao', texto:"E a escolha entre interno e externo depende do *momento da empresa* e do *tipo de vaga*." }
     ]
   }
 ];
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    ESTADO
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 let synth = window.speechSynthesis;
 let tocando = false;
 let pausado = false;
@@ -863,15 +1140,9 @@ let velocidade = prefVelocidade;
 function getAulaAtual() { return CAPITULOS[indiceCapitulo].aula; }
 function getTotalCapitulos() { return CAPITULOS.length; }
 
-/* =====================================================
-   🔑 UNLOCK DO iOS
-   =====================================================
-   O Safari do iPhone bloqueia speechSynthesis até o usuário
-   interagir. Disparar uma utterance vazia no MESMO gesto
-   (touch/click) destrava o motor para o resto da sessão.
-   ===================================================== */
-let iosDesbloqueado = false;
-
+/* ═══════════════════════════════════════════════════
+   iOS UNLOCK
+   ═══════════════════════════════════════════════════ */
 function desbloquearAudioIOS() {
   if (!isIOS) return;
   if (iosDesbloqueado) return;
@@ -886,13 +1157,12 @@ function desbloquearAudioIOS() {
   } catch(e) {}
 }
 
-// Desbloqueia em qualquer gesto do usuário (touch/click)
 document.addEventListener('touchstart', desbloquearAudioIOS, { once: true, passive: true });
 document.addEventListener('click', desbloquearAudioIOS, { once: true });
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    RENDER
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 function renderTextoLegivel(texto) {
   let t = texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
   t = t.replace(/\*([^*]+)\*/g, '<span class="enfase">$1</span>');
@@ -900,41 +1170,32 @@ function renderTextoLegivel(texto) {
 }
 
 function renderCapitulo() {
-  const el = document.getElementById('texto');
+  const el = document.getElementById('folha');
   if (!el) return;
   el.style.opacity = 0;
   setTimeout(function() {
     el.innerHTML = '';
 
-    const abas = document.createElement('div');
-    abas.className = 'abas-capitulos';
-    CAPITULOS.forEach(function(cap, i) {
-      const btn = document.createElement('button');
-      btn.className = 'aba' + (i === indiceCapitulo ? ' ativa' : '');
-      btn.type = 'button';
-      btn.textContent = 'Bloco ' + (i + 1);
-      btn.addEventListener('click', function() {
-        if (i === indiceCapitulo) return;
-        irParaCapitulo(i);
-      });
-      abas.appendChild(btn);
-    });
-    el.appendChild(abas);
+    // Cabeçalho
+    const header = document.createElement('div');
+    header.className = 'folha-header';
 
     const titulo = document.createElement('div');
-    titulo.className = 'titulo-capitulo';
-    titulo.textContent = CAPITULOS[indiceCapitulo].titulo;
-    el.appendChild(titulo);
+    titulo.className = 'folha-titulo';
+    titulo.textContent = CAPITULOS[indiceCapitulo].subtitulo;
+    header.appendChild(titulo);
 
     const bolinhas = document.createElement('div');
-    bolinhas.className = 'bolinhas-pagina';
+    bolinhas.className = 'folha-bolinhas';
     for (let p = 0; p < getTotalCapitulos(); p++) {
       const b = document.createElement('div');
-      b.className = 'bolinha-pagina' + (p === indiceCapitulo ? ' ativa' : '');
+      b.className = 'bolinha' + (p === indiceCapitulo ? ' ativa' : '');
       bolinhas.appendChild(b);
     }
-    el.appendChild(bolinhas);
+    header.appendChild(bolinhas);
+    el.appendChild(header);
 
+    // Falas
     const aula = getAulaAtual();
     aula.forEach(function(fala, i) {
       if (fala.tipo === 'pausa') {
@@ -953,9 +1214,9 @@ function renderCapitulo() {
     });
 
     el.style.opacity = 1;
-    atualizarContadorPagina();
+    atualizarProgresso();
     atualizarBotoesNavegacao();
-  }, 180);
+  }, 150);
 }
 
 function irParaFala(idx) {
@@ -998,7 +1259,7 @@ function destacarFala(idx) {
   const atual = document.getElementById('fala-' + idx);
   if (atual) {
     const rect = atual.getBoundingClientRect();
-    if (rect.top < 100 || rect.bottom > window.innerHeight - 200) {
+    if (rect.top < 100 || rect.bottom > window.innerHeight - 220) {
       atual.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
@@ -1011,9 +1272,9 @@ function resetDestaques() {
   });
 }
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    NAVEGAÇÃO DE CAPÍTULO
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 function irParaCapitulo(novo) {
   if (novo < 0 || novo >= getTotalCapitulos()) return;
   if (novo === indiceCapitulo) return;
@@ -1025,10 +1286,11 @@ function irParaCapitulo(novo) {
   indiceAtual = 0;
 
   renderCapitulo();
-  mostrarToast('📖 ' + CAPITULOS[indiceCapitulo].titulo);
+  atualizarListaBlocos();
+  mostrarToast('📖 ' + CAPITULOS[indiceCapitulo].subtitulo);
 
   if (estavaTocando) {
-    setTimeout(function() { tocarDeOndeParou(); }, 350);
+    setTimeout(function() { tocarDeOndeParou(); }, 400);
   }
 }
 
@@ -1036,16 +1298,40 @@ function pularCapitulo(direcao) {
   irParaCapitulo(indiceCapitulo + direcao);
 }
 
-function atualizarContadorPagina() {
-  const el = document.getElementById('contadorPagina');
+function atualizarProgresso() {
+  const el = document.getElementById('playerProgresso');
   if (el) el.textContent = 'Bloco ' + (indiceCapitulo + 1) + ' / ' + getTotalCapitulos();
 }
 
-/* =====================================================
+function atualizarListaBlocos() {
+  const el = document.getElementById('blocosLista');
+  if (!el) return;
+  el.innerHTML = '';
+  CAPITULOS.forEach(function(cap, i) {
+    const item = document.createElement('button');
+    item.className = 'bloco-item' + (i === indiceCapitulo ? ' ativo' : '');
+    item.type = 'button';
+    item.innerHTML =
+      '<div class="bloco-num">' + (i + 1) + '</div>' +
+      '<div class="bloco-info">' +
+        '<div class="bloco-nome">' + cap.titulo + '</div>' +
+        '<div class="bloco-desc">' + cap.subtitulo + '</div>' +
+      '</div>' +
+      '<div class="bloco-check">✓</div>';
+    item.addEventListener('click', function() {
+      if (i === indiceCapitulo) return;
+      irParaCapitulo(i);
+      setTimeout(fecharMenu, 200);
+    });
+    el.appendChild(item);
+  });
+}
+
+/* ═══════════════════════════════════════════════════
    UI
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 function setBtnEstado(playing) {
-  const btn = document.getElementById('btnPlayFlut');
+  const btn = document.getElementById('btnPlay');
   const icone = document.getElementById('iconePlay');
   if (!btn || !icone) return;
   if (playing) {
@@ -1061,8 +1347,8 @@ function atualizarBotoesNavegacao() {
   const aula = getAulaAtual();
   const btnA = document.getElementById('btnAnterior');
   const btnP = document.getElementById('btnProximo');
-  const btnCA = document.getElementById('btnPaginaAnterior');
-  const btnCP = document.getElementById('btnPaginaProxima');
+  const btnCA = document.getElementById('btnCapAnterior');
+  const btnCP = document.getElementById('btnCapProximo');
 
   if (btnA && btnP) {
     const temAnterior = aula.slice(0, indiceAtual).some(function(f) { return f.tipo !== 'pausa'; });
@@ -1074,9 +1360,9 @@ function atualizarBotoesNavegacao() {
   if (btnCP) btnCP.disabled = (indiceCapitulo === getTotalCapitulos() - 1);
 }
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    VELOCIDADE
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 const VELOCIDADES = [0.75, 1.0, 1.25, 1.5, 2.0];
 
 function atualizarBtnVel() {
@@ -1100,11 +1386,10 @@ function ciclarVelocidade() {
   }
 }
 
-/* =====================================================
-   🔑 PLAY / PAUSE CORRIGIDO PARA iOS
-   ===================================================== */
+/* ═══════════════════════════════════════════════════
+   PLAY / PAUSE / PULAR
+   ═══════════════════════════════════════════════════ */
 function togglePlay() {
-  // 🔑 SEMPRE tenta desbloquear no gesto do usuário
   desbloquearAudioIOS();
 
   if (tocando && !pausado) {
@@ -1116,13 +1401,10 @@ function togglePlay() {
   }
   if (tocando && pausado) {
     pausado = false;
-    // 🔑 No iOS, o cancel() do pause pode ter travado a fila
-    // Um pequeno delay ajuda a não atropelar
     setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 120 : 60);
     return;
   }
   indiceAtual = 0;
-  // 🔑 Delay maior no iOS para o unlock terminar
   setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 150 : 80);
 }
 
@@ -1160,9 +1442,9 @@ function pularFrase(direcao) {
   }
 }
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    FALA
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 function dividirComMicroPausas(texto) {
   const partesLongas = texto.split(/\s*\|\|\s*/);
   const segmentos = [];
@@ -1231,9 +1513,9 @@ function esperar(ms) {
   return new Promise(function(resolve) { setTimeout(resolve, ms); });
 }
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    LOOP PRINCIPAL
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 async function tocarDeOndeParou() {
   if (!elenco || !elenco.professor) {
     mostrarToast('⚠️ Sem vozes pt-BR');
@@ -1260,9 +1542,6 @@ async function tocarDeOndeParou() {
     const perfil = PERFIS[fala.papel];
 
     const pausaAntes = perfil.pausas[fala.tipo] || 0;
-
-    // 🔑 No iOS, NÃO faz pausa antes da PRIMEIRA fala do play,
-    // senão o Safari entende que não houve gesto do usuário e bloqueia
     const ehPrimeiraFalaDoPlay = (i === indiceAtual);
     if (pausaAntes > 0 && !(isIOS && ehPrimeiraFalaDoPlay)) {
       await esperar(pausaAntes / velocidade);
@@ -1283,17 +1562,17 @@ async function tocarDeOndeParou() {
     atualizarBotoesNavegacao();
 
     if (indiceCapitulo < getTotalCapitulos() - 1) {
-      mostrarToast('✅ Fim do Bloco ' + (indiceCapitulo + 1) + ' — toque em ⇥ para o próximo');
+      mostrarToast('✅ Fim do Bloco ' + (indiceCapitulo + 1) + ' — toque em ⇥');
     } else {
       mostrarToast('✅ Fim do último bloco');
     }
   }
 }
 
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    PLAYER ARRASTÁVEL
-   ===================================================== */
-const player = document.getElementById('playerFlutuante');
+   ═══════════════════════════════════════════════════ */
+const player = document.getElementById('player');
 const handle = document.getElementById('handle');
 let arrastando = false;
 let startX = 0, startY = 0, startLeft = 0, startTop = 0;
@@ -1303,7 +1582,6 @@ function iniciarArraste(e) {
   if (e.target !== handle && !handle.contains(e.target)) return;
   arrastando = true;
   moveu = false;
-  player.classList.add('arrastando');
   const rect = player.getBoundingClientRect();
   startLeft = rect.left;
   startTop = rect.top;
@@ -1313,8 +1591,6 @@ function iniciarArraste(e) {
   player.style.left = startLeft + 'px';
   player.style.top = startTop + 'px';
   player.style.transform = 'none';
-  player.style.right = 'auto';
-  player.style.bottom = 'auto';
   e.preventDefault();
 }
 
@@ -1333,7 +1609,6 @@ function moverArraste(e) {
 function soltarArraste(e) {
   if (!arrastando) return;
   arrastando = false;
-  player.classList.remove('arrastando');
   if (e && e.preventDefault) e.preventDefault();
 }
 
@@ -1344,74 +1619,9 @@ handle.addEventListener('touchstart', iniciarArraste, { passive: false });
 document.addEventListener('touchmove', moverArraste, { passive: false });
 document.addEventListener('touchend', soltarArraste);
 
-let toquesHandle = [];
-handle.addEventListener('touchend', function() {
-  if (moveu) return;
-  const agora = Date.now();
-  toquesHandle.push(agora);
-  toquesHandle = toquesHandle.filter(function(t) { return agora - t < 600; });
-
-  if (toquesHandle.length === 3) {
-    document.getElementById('debugPanel').classList.toggle('ativo');
-    atualizarDebug();
-    toquesHandle = [];
-  } else if (toquesHandle.length === 2) {
-    setTimeout(function() {
-      if (toquesHandle.length === 2) {
-        player.classList.toggle('minimizado');
-        toquesHandle = [];
-      }
-    }, 620);
-  }
-});
-
-/* =====================================================
-   DEBUG
-   ===================================================== */
-function atualizarDebug() {
-  const el = document.getElementById('debugElenco');
-  if (!el) return;
-  if (!elenco) { el.textContent = 'Elenco não montado.'; return; }
-
-  const linhas = Object.entries(elenco).map(function(par) {
-    const papel = par[0];
-    const voz = par[1];
-    const ativo = (getAulaAtual()[indiceAtual] && getAulaAtual()[indiceAtual].papel === papel) ? ' ativa' : '';
-    const perfil = PERFIS[papel];
-    const pitchTxt = perfil ? perfil.pitch.toFixed(2) : '—';
-    const rateTxt  = perfil ? perfil.rate.toFixed(2)  : '—';
-    return '<div class="linha' + ativo + '">' +
-      '<span>' + papel + '</span>' +
-      '<span class="voz">' + voz.name + ' · pitch ' + pitchTxt + ' · rate ' + rateTxt + '</span>' +
-      '</div>';
-  }).join('');
-
-  const unicas = new Set(Object.values(elenco).map(function(v) { return v.name; })).size;
-
-  let aviso = '';
-  if (modoIOS && !felipeEncontrado) {
-    aviso = '<div class="aviso">📱 iPhone sem Felipe! Baixe em: Ajustes → Acessibilidade → Conteúdo Falado → Vozes → Português (Brasil) → Felipe.</div>';
-  } else if (modoIOS && felipeEncontrado) {
-    aviso = '<div class="sucesso">✅ iPhone com Felipe!</div>';
-  }
-
-  el.innerHTML = linhas + '<div style="margin-top:8px;color:#94a3b8">' +
-    'Vozes únicas: ' + unicas + ' · pt-BR disponíveis: ' + vozesPtBR().length + '<br>' +
-    'Total exposto pelo navegador: ' + todasAsVozes.length + '<br>' +
-    'Modo: ' + (isIOS ? 'iPhone/Safari' : (isMicrosoft ? 'Microsoft' : 'Desktop')) + '<br>' +
-    'Felipe detectado: ' + (felipeEncontrado ? '✅ sim' : '❌ não') + '<br>' +
-    'iOS desbloqueado: ' + (iosDesbloqueado ? '✅ sim' : '⏳ aguardando gesto') +
-    '</div>' + aviso;
-}
-
-function fecharDebug() {
-  const el = document.getElementById('debugPanel');
-  if (el) el.classList.remove('ativo');
-}
-
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    ELENCO
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 function embaralhar(lista) {
   const a = lista.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -1485,7 +1695,6 @@ function distribuirElenco(vozes) {
     }
   });
 
-  modoIOS = isIOS;
   return e;
 }
 
@@ -1506,64 +1715,50 @@ function ajustarPerfilProfessor() {
   }
 }
 
-/* =====================================================
-   PRÉ-AQUECIMENTO
-   ===================================================== */
-let preAquecido = false;
-function preAquecerVozes() {
-  if (preAquecido) return;
-  preAquecido = true;
-  if (!elenco) return;
-  // No iOS NÃO faz pré-aquecimento (utterance vazia pode travar a fila)
-  if (isIOS) return;
-  const vozesUnicas = Array.from(new Set(Object.values(elenco)));
-  vozesUnicas.forEach(function(voz, i) {
-    setTimeout(function() {
-      try {
-        const u = new SpeechSynthesisUtterance(' ');
-        u.voice = voz;
-        u.volume = 0.01;
-        u.rate = 2.0;
-        synth.speak(u);
-      } catch(e) {}
-    }, i * 100);
-  });
-}
-
-/* =====================================================
+/* ═══════════════════════════════════════════════════
    INIT
-   ===================================================== */
+   ═══════════════════════════════════════════════════ */
 aplicarTema();
 aplicarFonte();
 atualizarBtnVel();
+atualizarListaBlocos();
 
-const btnTema = document.getElementById('btnTema');
-const btnMenos = document.getElementById('btnFonteMenos');
-const btnMais = document.getElementById('btnFonteMais');
+document.getElementById('btnMenu').addEventListener('click', abrirMenu);
+document.getElementById('btnFechar').addEventListener('click', fecharMenu);
+document.getElementById('overlay').addEventListener('click', fecharMenu);
+document.getElementById('toggleTema').addEventListener('click', alternarTema);
+document.getElementById('btnFonteMenos').addEventListener('click', function() { ajustarFonte(-1); });
+document.getElementById('btnFonteMais').addEventListener('click', function() { ajustarFonte(1); });
 
-if (btnTema)  btnTema.addEventListener('click', alternarTema);
-if (btnMenos) btnMenos.addEventListener('click', function() { ajustarFonte(-1); });
-if (btnMais)  btnMais.addEventListener('click', function() { ajustarFonte(1); });
+document.getElementById('btnPlay').addEventListener('click', togglePlay);
+document.getElementById('btnAnterior').addEventListener('click', function() { pularFrase(-1); });
+document.getElementById('btnProximo').addEventListener('click', function() { pularFrase(1); });
+document.getElementById('btnCapAnterior').addEventListener('click', function() { pularCapitulo(-1); });
+document.getElementById('btnCapProximo').addEventListener('click', function() { pularCapitulo(1); });
+document.getElementById('btnVel').addEventListener('click', ciclarVelocidade);
+
+// Fecha menu com ESC (desktop)
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') fecharMenu();
+  if (e.key === ' ' && !e.target.matches('button, input, textarea')) {
+    e.preventDefault();
+    togglePlay();
+  }
+});
 
 renderCapitulo();
 
 carregarVozes(function() {
   const ptBR = vozesPtBR();
   if (ptBR.length === 0) {
-    if (todasAsVozes.length > 0) {
-      elenco = distribuirElenco(todasAsVozes);
-    }
+    if (todasAsVozes.length > 0) elenco = distribuirElenco(todasAsVozes);
     atualizarBotoesNavegacao();
     return;
   }
   elenco = distribuirElenco(ptBR);
   ajustarPerfilProfessor();
   atualizarBotoesNavegacao();
-  atualizarDebug();
 });
-
-document.addEventListener('touchstart', preAquecerVozes, { once: true, passive: true });
-document.addEventListener('mousedown', preAquecerVozes, { once: true });
 </script>
 </body>
 </html>
