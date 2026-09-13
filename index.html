@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>3 Vozes — Ritmo V6b</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f172a; color: #e2e8f0;
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    display: flex; flex-direction: column;
+  }
+  header { padding: 16px 18px 0; text-align: center; }
+  header h1 {
+    font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+    color: #64748b; text-transform: uppercase; margin-bottom: 4px;
+  }
+  header p { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+
+  .tabs {
+    display: flex; gap: 6px; padding: 14px 18px 0; overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1; min-width: 68px; padding: 9px 5px;
+    border: none; border-radius: 9px;
+    font-size: .72rem; font-weight: 700; font-family: inherit;
+    cursor: pointer; background: #1e293b; color: #64748b;
+    transition: background .15s, color .15s; white-space: nowrap;
+  }
+  .tab.ativa { background: #1e3a8a; color: #fff; }
+
+  .paineis { flex: 1; padding: 12px 18px 0; overflow: hidden; position: relative; }
+  .painel { display: none; flex-direction: column; gap: 8px; height: 100%; }
+  .painel.ativo { display: flex; }
+
+  .label-versao {
+    font-size: .66rem; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: #475569; padding-left: 2px;
+  }
+  .descricao {
+    font-size: .7rem; color: #64748b; padding-left: 2px; line-height: 1.4;
+  }
+  .descricao b { color: #93c5fd; }
+  .voz-info {
+    font-size: .68rem; color: #fbbf24; padding-left: 2px; line-height: 1.4;
+    font-weight: 600;
+  }
+
+  .texto-bloco {
+    background: #1e293b; border-radius: 12px; padding: 12px;
+    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  .frase {
+    font-size: .9rem; line-height: 1.55; color: #cbd5e1;
+    padding: 4px 7px; border-radius: 6px; margin-bottom: 1px;
+    transition: background .15s, color .15s, transform .15s;
+  }
+  .frase.falando { background: rgba(59,130,246,.2); color: #fff; transform: translateX(2px); }
+  .frase.falada { color: #475569; }
+  .quebra { height: 8px; }
+
+  .player { padding: 10px 0 0; }
+  .btn-play {
+    width: 100%; min-height: 50px; border: none; border-radius: 12px;
+    font-size: .92rem; font-weight: 800; font-family: inherit; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn-play:active { opacity: .8; transform: scale(.97); }
+  .btn-play.parado  { background: #2563eb; color: #fff; }
+  .btn-play.tocando { background: #dc2626; color: #fff; }
+
+  .progresso-wrap {
+    margin-top: 7px; height: 4px; background: #1e293b;
+    border-radius: 2px; overflow: hidden;
+  }
+  .progresso-fill {
+    height: 100%; background: #2563eb; border-radius: 2px;
+    width: 0%; transition: width .3s;
+  }
+
+  .dica {
+    margin-top: 7px; font-size: .7rem; color: #475569;
+    text-align: center; line-height: 1.5; padding-bottom: 6px;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #0f3460; color: #93c5fd; font-size: .64rem;
+    font-weight: 700; padding: 3px 8px; border-radius: 99px;
+    margin-left: 6px; vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>👥 RH · Bloco 1 · 3 Vozes</h1>
+  <p>Ritmo V6b <span class="badge">Palestrante</span></p>
+</header>
+
+<div class="tabs">
+  <button class="tab ativa" data-v="luciana" onclick="trocarTab('luciana')">Luciana</button>
+  <button class="tab" data-v="felipe" onclick="trocarTab('felipe')">Felipe</button>
+  <button class="tab" data-v="joana" onclick="trocarTab('joana')">Joana</button>
+</div>
+
+<div class="paineis" id="paineis"></div>
+
+<script>
+/* =====================================================
+   CONTEÚDO — Bloco 1 RH (cadenciado, com micro-pausas)
+   ===================================================== */
+const UNIDADES = [
+  { tipo:"abertura",  texto:"Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
+  { tipo:"definicao", texto:"Ela atrai, desenvolve, motiva | e mantém as pessoas na empresa." },
+  { tipo:"pausa" },
+  { tipo:"definicao", texto:"Durante muito tempo, essa área foi vista apenas como operacional." },
+  { tipo:"definicao", texto:"Cuidava de folha de pagamento, ponto, férias e documentação. || Era o setor que resolvia papelada." },
+  { tipo:"pausa" },
+  { tipo:"definicao", texto:"Hoje o cenário mudou. || A gestão de pessoas passou a ser estratégica." },
+  { tipo:"definicao", texto:"Ela participa das decisões importantes da organização." },
+  { tipo:"pausa" },
+  { tipo:"definicao", texto:"Existe uma diferença importante entre gestão de pessoas | e gestão de recursos humanos." },
+  { tipo:"definicao", texto:"Gestão de recursos humanos é o nome mais antigo, ligado à ideia de que pessoas são recursos, como máquinas ou dinheiro." },
+  { tipo:"definicao", texto:"Gestão de pessoas é o nome mais moderno, que enxerga o ser humano como parceiro da organização." },
+  { tipo:"pausa" },
+  { tipo:"definicao", texto:"Essa mudança de nome reflete uma mudança de mentalidade." },
+  { tipo:"definicao", texto:"Antes, a pessoa era vista como custo. || Agora, é vista como diferencial competitivo." },
+  { tipo:"pausa" },
+  { tipo:"guarde",    texto:"Guarde isto." },
+  { tipo:"guarde",    texto:"Gestão de pessoas é a área que cuida do ser humano no trabalho." },
+  { tipo:"guarde",    texto:"Quando ela é estratégica, deixa de apenas resolver problemas | e passa a construir resultados." }
+];
+
+/* =====================================================
+   PERFIL V6b — Palestrante inspirador (travado)
+   ===================================================== */
+const V6B = {
+  base: { rate: 0.88, pitch: 0.96, volume: 1.0 },
+  pausas: {
+    abertura:700, definicao:400, lista:180, exemplo:220,
+    conclusao:500, guarde:800, pausa:650
+  },
+  ratePorTipo: {
+    abertura:0.86, definicao:0.90, lista:0.92,
+    exemplo:0.90, conclusao:0.84, guarde:0.80
+  },
+  pitchPorTipo: {
+    abertura:0.98, definicao:0.96, lista:0.96,
+    exemplo:0.98, conclusao:0.92, guarde:0.90
+  },
+  volumePorTipo: {
+    abertura:1.0, definicao:1.0, lista:0.98,
+    exemplo:0.96, conclusao:1.0, guarde:0.90
+  },
+  microCurta: 120, microLonga: 220
+};
+
+/* =====================================================
+   DEFINIÇÃO DAS 3 VOZES
+   Cada perfil busca a melhor versão disponível:
+   Premium > Enhanced > padrão
+   ===================================================== */
+const VOZES = {
+  luciana: {
+    nome: "Luciana",
+    descricao: "Voz feminina neutra (pt-BR). <b>A mais natural do iOS.</b>",
+    dica: "Neutra, clara, padrão de podcast",
+    busca: ["Luciana (Premium)", "Luciana (Enhanced)", "Luciana"],
+    fallbackLang: "pt-BR"
+  },
+  felipe: {
+    nome: "Felipe",
+    descricao: "Voz masculina neutra (pt-BR). <b>Mais grave, combina com palestrante.</b>",
+    dica: "Grave, madura, ritmo de palestra",
+    busca: ["Felipe (Premium)", "Felipe (Enhanced)", "Felipe"],
+    fallbackLang: "pt-BR"
+  },
+  joana: {
+    nome: "Joana",
+    descricao: "Voz de Portugal (pt-PT). <b>Sotaque europeu, para contraste.</b>",
+    dica: "Sotaque de Portugal, diferente do neutro",
+    busca: ["Joana (Enhanced)", "Joana"],
+    fallbackLang: "pt-PT"
+  }
+};
+
+let synth = window.speechSynthesis;
+let tocando = null;
+let cancelar = false;
+let vozesDisponiveis = [];
+
+/* ── Carrega vozes ── */
+function carregarVozes() {
+  vozesDisponiveis = synth.getVoices();
+}
+
+/* ── Encontra a melhor voz para um perfil ── */
+function encontrarVoz(perfil) {
+  carregarVozes();
+  // tenta cada nome na ordem de prioridade
+  for (const nome of perfil.busca) {
+    const exata = vozesDisponiveis.find(v => v.name === nome);
+    if (exata) return exata;
+  }
+  // tenta match parcial (ex: "Luciana" dentro de "Luciana (Enhanced)")
+  for (const nome of perfil.busca) {
+    const parcial = vozesDisponiveis.find(v => v.name.includes(nome));
+    if (parcial) return parcial;
+  }
+  // fallback: qualquer voz do idioma
+  const lang = vozesDisponiveis.filter(v =>
+    v.lang === perfil.fallbackLang || v.lang.replace('_','-') === perfil.fallbackLang
+  );
+  return lang[0] || null;
+}
+
+/* ── Descrição da voz realmente usada ── */
+function descreverVoz(voz) {
+  if (!voz) return "⚠️ Nenhuma voz encontrada — usando padrão do sistema";
+  return `🎙 Voz em uso: ${voz.name} (${voz.lang})`;
+}
+
+if (synth.onvoiceschanged !== undefined) {
+  synth.onvoiceschanged = () => { carregarVozes(); };
+}
+
+/* ── Render ── */
+const paineisEl = document.getElementById('paineis');
+
+function renderTextoLegivel(texto) {
+  return texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
+}
+
+function renderTodos() {
+  paineisEl.innerHTML = '';
+  Object.keys(VOZES).forEach((v, idx) => {
+    const cfg = VOZES[v];
+    const painel = document.createElement('div');
+    painel.className = 'painel' + (idx === 0 ? ' ativo' : '');
+    painel.id = 'painel-' + v;
+
+    const label = document.createElement('div');
+    label.className = 'label-versao';
+    label.textContent = cfg.nome;
+    painel.appendChild(label);
+
+    const desc = document.createElement('div');
+    desc.className = 'descricao';
+    desc.innerHTML = cfg.descricao;
+    painel.appendChild(desc);
+
+    const vozInfo = document.createElement('div');
+    vozInfo.className = 'voz-info';
+    vozInfo.id = 'vozinfo-' + v;
+    vozInfo.textContent = '🎙 Detectando voz...';
+    painel.appendChild(vozInfo);
+
+    const texto = document.createElement('div');
+    texto.className = 'texto-bloco';
+    texto.id = 'texto-' + v;
+    UNIDADES.forEach((u, i) => {
+      if (u.tipo === 'pausa') {
+        const br = document.createElement('div');
+        br.className = 'quebra';
+        br.dataset.idx = i;
+        texto.appendChild(br);
+      } else {
+        const el = document.createElement('div');
+        el.className = 'frase';
+        el.id = v + '-f-' + i;
+        el.textContent = renderTextoLegivel(u.texto);
+        texto.appendChild(el);
+      }
+    });
+    painel.appendChild(texto);
+
+    const player = document.createElement('div');
+    player.className = 'player';
+    player.innerHTML = `
+      <button class="btn-play parado" id="btn-${v}" onclick="togglePlay('${v}')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Ouvir ${cfg.nome}
+      </button>
+      <div class="progresso-wrap"><div class="progresso-fill" id="prog-${v}"></div></div>
+      <p class="dica">${cfg.dica}</p>
+    `;
+    painel.appendChild(player);
+
+    paineisEl.appendChild(painel);
+  });
+
+  // atualiza o rótulo da voz depois de um tempo (vozes carregam assíncrono)
+  setTimeout(atualizarInfoVozes, 300);
+  setTimeout(atualizarInfoVozes, 1500);
+}
+
+function atualizarInfoVozes() {
+  Object.keys(VOZES).forEach(v => {
+    const voz = encontrarVoz(VOZES[v]);
+    const el = document.getElementById('vozinfo-' + v);
+    if (el) el.textContent = descreverVoz(voz);
+  });
+}
+renderTodos();
+
+/* ── Tabs ── */
+function trocarTab(v) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('ativa', t.dataset.v === v));
+  document.querySelectorAll('.painel').forEach(p => p.classList.toggle('ativo', p.id === 'painel-' + v));
+  if (tocando && tocando !== v) pararTudo();
+}
+
+/* ── Player ── */
+function togglePlay(v) {
+  if (tocando === v) { pararTudo(); return; }
+  if (tocando) pararTudo();
+  tocarVersao(v);
+}
+
+function pararTudo() {
+  cancelar = true;
+  synth.cancel();
+  if (tocando) {
+    setBtnEstado(tocando, false);
+    resetHighlights(tocando);
+    setProgresso(tocando, 0);
+  }
+  tocando = null;
+}
+
+function setBtnEstado(v, playing) {
+  const btn = document.getElementById('btn-' + v);
+  const cfg = VOZES[v];
+  if (playing) {
+    btn.className = 'btn-play tocando';
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Parar`;
+  } else {
+    btn.className = 'btn-play parado';
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M8 5v14l11-7z"/></svg> Ouvir ${cfg.nome}`;
+  }
+}
+
+function setProgresso(v, pct) {
+  document.getElementById('prog-' + v).style.width = pct + '%';
+}
+
+function resetHighlights(v) {
+  document.querySelectorAll('#texto-' + v + ' .frase').forEach(el => {
+    el.classList.remove('falando', 'falada');
+  });
+}
+
+function highlightFrase(v, idx) {
+  document.querySelectorAll('#texto-' + v + ' .frase').forEach(el => {
+    el.classList.remove('falando');
+    if (parseInt(el.id.split('-f-')[1]) < idx) el.classList.add('falada');
+  });
+  const el = document.getElementById(v + '-f-' + idx);
+  if (el) {
+    el.classList.add('falando');
+    el.classList.remove('falada');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+/* ── Micro-pausas ── */
+function dividirComMicroPausas(texto) {
+  const partesLongas = texto.split(/\s*\|\|\s*/);
+  const segmentos = [];
+  partesLongas.forEach((parte, iLonga) => {
+    if (iLonga > 0) segmentos.push({ tipo:'pausaLonga' });
+    const partesCurtas = parte.split(/\s*\|\s*/);
+    partesCurtas.forEach((p, iCurta) => {
+      if (iCurta > 0) segmentos.push({ tipo:'pausaCurta' });
+      if (p.trim()) segmentos.push({ tipo:'fala', texto:p.trim() });
+    });
+  });
+  return segmentos;
+}
+
+async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz) {
+  const segmentos = dividirComMicroPausas(textoOriginal);
+  for (const seg of segmentos) {
+    if (cancelar) return;
+    if (seg.tipo === 'pausaCurta') {
+      await esperar(V6B.microCurta);
+    } else if (seg.tipo === 'pausaLonga') {
+      await esperar(V6B.microLonga);
+    } else if (seg.tipo === 'fala') {
+      await falar(seg.texto, rate, pitch, volume, voz);
+    }
+  }
+}
+
+async function tocarVersao(v) {
+  const voz = encontrarVoz(VOZES[v]);
+  cancelar = false;
+  tocando = v;
+  setBtnEstado(v, true);
+  resetHighlights(v);
+
+  const total = UNIDADES.filter(u => u.tipo !== 'pausa').length;
+  let faladas = 0;
+
+  for (let i = 0; i < UNIDADES.length; i++) {
+    if (cancelar) break;
+    const u = UNIDADES[i];
+
+    if (u.tipo === 'pausa') {
+      await esperar(V6B.pausas.pausa);
+      continue;
+    }
+
+    const pausaAntes = V6B.pausas[u.tipo] || 0;
+    if (pausaAntes > 0) await esperar(pausaAntes);
+
+    const rate   = V6B.ratePorTipo[u.tipo]   ?? V6B.base.rate;
+    const pitch  = V6B.pitchPorTipo[u.tipo]  ?? V6B.base.pitch;
+    const volume = V6B.volumePorTipo[u.tipo] ?? V6B.base.volume;
+
+    highlightFrase(v, i);
+    faladas++;
+    setProgresso(v, Math.round((faladas / total) * 100));
+
+    await falarComMicroPausas(u.texto, rate, pitch, volume, voz);
+    if (cancelar) break;
+  }
+
+  if (!cancelar) {
+    resetHighlights(v);
+    setProgresso(v, 100);
+    setTimeout(() => {
+      setBtnEstado(v, false);
+      setProgresso(v, 0);
+      if (tocando === v) tocando = null;
+    }, 700);
+  }
+}
+
+function falar(texto, rate, pitch, volume, voz) {
+  return new Promise(resolve => {
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = voz ? voz.lang : 'pt-BR';
+    u.rate = rate;
+    u.pitch = pitch;
+    u.volume = volume ?? 1.0;
+    if (voz) u.voice = voz;
+    u.onend = resolve;
+    u.onerror = resolve;
+    synth.speak(u);
+  });
+}
+
+function esperar(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+carregarVozes();
+</script>
+</body>
+</html>
