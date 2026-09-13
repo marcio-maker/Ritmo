@@ -2,483 +2,85 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0f172a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>Teste 3 Vozes — RH</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Diagnóstico de Vozes</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html { -webkit-text-size-adjust: 100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0f172a; color: #e2e8f0;
-    min-height: 100dvh;
-    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-    display: flex; flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0f172a; color: #e2e8f0; padding: 20px;
+    line-height: 1.6; font-size: 14px;
   }
-  header { padding: 16px 18px 0; text-align: center; }
-  header h1 {
-    font-size: .68rem; font-weight: 700; letter-spacing: .08em;
-    color: #64748b; text-transform: uppercase; margin-bottom: 4px;
+  h1 { font-size: 1rem; color: #93c5fd; margin-bottom: 12px; }
+  h2 { font-size: .85rem; color: #fbbf24; margin: 16px 0 8px; }
+  .voz {
+    background: #1e293b; border-radius: 8px; padding: 10px;
+    margin-bottom: 6px; font-size: .8rem;
   }
-  header p { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
-
-  .tabs {
-    display: flex; gap: 6px; padding: 14px 18px 0; overflow-x: auto;
-  }
-  .tab {
-    flex: 1; min-width: 68px; padding: 9px 5px;
-    border: none; border-radius: 9px;
-    font-size: .72rem; font-weight: 700; font-family: inherit;
-    cursor: pointer; background: #1e293b; color: #64748b;
-    transition: background .15s, color .15s; white-space: nowrap;
-  }
-  .tab.ativa { background: #1e3a8a; color: #fff; }
-
-  .paineis { flex: 1; padding: 12px 18px 0; overflow: hidden; position: relative; }
-  .painel { display: none; flex-direction: column; gap: 8px; height: 100%; }
-  .painel.ativo { display: flex; }
-
-  .label-versao {
-    font-size: .66rem; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: #475569; padding-left: 2px;
-  }
-  .voz-info {
-    font-size: .68rem; color: #fbbf24; padding-left: 2px; line-height: 1.4;
-    font-weight: 600;
-  }
-
-  .texto-bloco {
-    background: #1e293b; border-radius: 12px; padding: 12px;
-    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-  }
-  .frase {
-    font-size: .9rem; line-height: 1.55; color: #cbd5e1;
-    padding: 4px 7px; border-radius: 6px; margin-bottom: 1px;
-    transition: background .15s, color .15s, transform .15s;
-  }
-  .frase.falando { background: rgba(59,130,246,.2); color: #fff; transform: translateX(2px); }
-  .frase.falada { color: #475569; }
-  .quebra { height: 8px; }
-
-  .player { padding: 10px 0 0; }
-  .btn-play {
-    width: 100%; min-height: 50px; border: none; border-radius: 12px;
-    font-size: .92rem; font-weight: 800; font-family: inherit; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 9px;
-    transition: opacity .15s, transform .1s;
-  }
-  .btn-play:active { opacity: .8; transform: scale(.97); }
-  .btn-play.parado  { background: #2563eb; color: #fff; }
-  .btn-play.tocando { background: #dc2626; color: #fff; }
-
-  .progresso-wrap {
-    margin-top: 7px; height: 4px; background: #1e293b;
-    border-radius: 2px; overflow: hidden;
-  }
-  .progresso-fill {
-    height: 100%; background: #2563eb; border-radius: 2px;
-    width: 0%; transition: width .3s;
+  .voz b { color: #22d3ee; }
+  .voz small { color: #64748b; display: block; margin-top: 2px; }
+  .aviso { color: #f87171; font-weight: 700; }
+  .ok { color: #22d3ee; font-weight: 700; }
+  button {
+    width: 100%; padding: 14px; margin-top: 16px; border: none;
+    border-radius: 10px; background: #2563eb; color: #fff;
+    font-size: 1rem; font-weight: 700; font-family: inherit;
   }
 </style>
 </head>
 <body>
-
-<header>
-  <h1>👥 RH · 3 Blocos · 3 Vozes</h1>
-  <p>Rotação automática <span class="badge" style="display:inline-flex;align-items:center;gap:4px;background:#0f3460;color:#93c5fd;font-size:.64rem;font-weight:700;padding:3px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;">Felipe → Fernanda → Luciana</span></p>
-</header>
-
-<div class="tabs">
-  <button class="tab ativa" data-v="b1" onclick="trocarTab('b1')">Bloco 1</button>
-  <button class="tab" data-v="b2" onclick="trocarTab('b2')">Bloco 2</button>
-  <button class="tab" data-v="b3" onclick="trocarTab('b3')">Bloco 3</button>
-</div>
-
-<div class="paineis" id="paineis"></div>
+<h1>🔍 Diagnóstico de Vozes — Safari iOS</h1>
+<p>Este arquivo só lista as vozes. Não toca nada.</p>
+<div id="saida">Carregando...</div>
+<button onclick="location.reload()">🔄 Recarregar</button>
 
 <script>
-/* =====================================================
-   CONTEÚDO — 3 Blocos de RH
-   Marcadores:
-     " | "  → micro-pausa curta (120ms)
-     " || " → micro-pausa longa (220ms)
-   ===================================================== */
-const BLOCOS = [
-  {
-    id: "b1",
-    titulo: "Bloco 1",
-    heading: "O que é gestão de pessoas",
-    vozIndex: 0,
-    unidades: [
-      { tipo:"abertura",  texto:"Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
-      { tipo:"definicao", texto:"Ela atrai, desenvolve, motiva | e mantém as pessoas na empresa." },
-      { tipo:"pausa" },
-      { tipo:"definicao", texto:"Durante muito tempo, essa área foi vista apenas como operacional." },
-      { tipo:"definicao", texto:"Cuidava de folha de pagamento, ponto, férias e documentação. || Era o setor que resolvia papelada." },
-      { tipo:"pausa" },
-      { tipo:"definicao", texto:"Hoje o cenário mudou. || A gestão de pessoas passou a ser estratégica." },
-      { tipo:"definicao", texto:"Ela participa das decisões importantes da organização." },
-      { tipo:"pausa" },
-      { tipo:"guarde",    texto:"Guarde isto." },
-      { tipo:"guarde",    texto:"Gestão de pessoas é a área que cuida do ser humano no trabalho." }
-    ]
-  },
-  {
-    id: "b2",
-    titulo: "Bloco 2",
-    heading: "Gestão estratégica de pessoas",
-    vozIndex: 1,
-    unidades: [
-      { tipo:"abertura",  texto:"A gestão estratégica de pessoas é quando a área de recursos humanos deixa de agir só no operacional | e passa a participar do planejamento da organização." },
-      { tipo:"pausa" },
-      { tipo:"definicao", texto:"Na prática, significa alinhar as políticas de pessoas aos objetivos do negócio." },
-      { tipo:"definicao", texto:"Se a empresa quer crescer, o setor de pessoas precisa preparar a equipe para esse crescimento." },
-      { tipo:"definicao", texto:"Se a empresa quer inovar, precisa contratar e desenvolver pessoas com esse perfil." },
-      { tipo:"pausa" },
-      { tipo:"definicao", texto:"Uma gestão estratégica de pessoas trabalha em quatro frentes principais." },
-      { tipo:"definicao", texto:"Primeiro, atrai talentos. Segundo, desenvolve esses talentos." },
-      { tipo:"definicao", texto:"Terceiro, mantém as pessoas boas na empresa. || Quarto, garante que tudo isso esteja ligado à estratégia." },
-      { tipo:"pausa" },
-      { tipo:"guarde",    texto:"Guarde isto." },
-      { tipo:"guarde",    texto:"Gestão estratégica de pessoas é alinhar gente e negócio." }
-    ]
-  },
-  {
-    id: "b3",
-    titulo: "Bloco 3",
-    heading: "Recrutamento",
-    vozIndex: 2,
-    unidades: [
-      { tipo:"abertura",  texto:"Recrutamento é o processo de atrair candidatos para uma vaga." },
-      { tipo:"definicao", texto:"É a etapa em que a empresa vai ao mercado buscar pessoas com potencial para ocupar determinada função." },
-      { tipo:"pausa" },
-      { tipo:"definicao", texto:"Recrutamento não é a mesma coisa que seleção. || Muita gente confunde." },
-      { tipo:"definicao", texto:"Recrutamento atrai. Seleção escolhe. || São duas etapas diferentes, uma depois da outra." },
-      { tipo:"pausa" },
-      { tipo:"definicao", texto:"Existem dois tipos principais de recrutamento. || O recrutamento interno | e o recrutamento externo." },
-      { tipo:"pausa" },
-      { tipo:"guarde",    texto:"Guarde isto." },
-      { tipo:"guarde",    texto:"Recrutamento é atrair. E a escolha entre interno e externo depende do momento da empresa e do tipo de vaga." }
-    ]
-  }
-];
+let tentativas = 0;
 
-/* =====================================================
-   PERFIL V6b — Palestrante inspirador (travado)
-   ===================================================== */
-const V6B = {
-  base: { rate: 0.88, pitch: 0.96, volume: 1.0 },
-  pausas: {
-    abertura:700, definicao:400, lista:180, exemplo:220,
-    conclusao:500, guarde:800, pausa:650
-  },
-  ratePorTipo: {
-    abertura:0.86, definicao:0.90, lista:0.92,
-    exemplo:0.90, conclusao:0.84, guarde:0.80
-  },
-  pitchPorTipo: {
-    abertura:0.98, definicao:0.96, lista:0.96,
-    exemplo:0.98, conclusao:0.92, guarde:0.90
-  },
-  volumePorTipo: {
-    abertura:1.0, definicao:1.0, lista:0.98,
-    exemplo:0.96, conclusao:1.0, guarde:0.90
-  },
-  microCurta: 120, microLonga: 220
-};
+function listar() {
+  const todas = window.speechSynthesis.getVoices();
+  const pt = todas.filter(v => v.lang === 'pt-BR' || v.lang === 'pt_BR' || v.lang.startsWith('pt'));
+  const saida = document.getElementById('saida');
 
-/* =====================================================
-   VOZES DESEJADAS
-   ===================================================== */
-const VOZES_DESEJADAS = [
-  { nome: "Felipe",   busca: ["Felipe (Aprimorada)", "Felipe"] },
-  { nome: "Fernanda", busca: ["Fernanda (Aprimorada)", "Fernanda"] },
-  { nome: "Luciana",  busca: ["Luciana (Aprimorada)", "Luciana"] }
-];
+  let html = '';
+  html += `<h2>Total de vozes no iPhone: ${todas.length}</h2>`;
+  html += `<h2>Vozes pt-BR / pt: ${pt.length}</h2>`;
 
-let synth = window.speechSynthesis;
-let tocando = null;
-let cancelar = false;
-let vozesDisponiveis = [];
-let vozesResolvidas = [];
-
-function carregarVozes() {
-  vozesDisponiveis = synth.getVoices();
-}
-
-function resolverVozes() {
-  carregarVozes();
-  vozesResolvidas = VOZES_DESEJADAS.map(desejada => {
-    for (const nome of desejada.busca) {
-      const exata = vozesDisponiveis.find(v => v.name === nome);
-      if (exata) return { ...desejada, voz: exata, aviso: null };
-    }
-    for (const nome of desejada.busca) {
-      const parcial = vozesDisponiveis.find(v => v.name.includes(nome));
-      if (parcial) return { ...desejada, voz: parcial, aviso: null };
-    }
-    const pt = vozesDisponiveis.find(v =>
-      v.lang === 'pt-BR' || v.lang === 'pt_BR' || v.lang.startsWith('pt')
-    );
-    return {
-      ...desejada,
-      voz: pt || null,
-      aviso: pt ? `${desejada.nome} não encontrada — usando ${pt.name}` : `Nenhuma voz pt-BR`
-    };
-  });
-}
-
-if (synth.onvoiceschanged !== undefined) {
-  synth.onvoiceschanged = () => { resolverVozes(); atualizarInfoVozes(); };
-}
-
-/* ── Render ── */
-const paineisEl = document.getElementById('paineis');
-
-function renderTextoLegivel(texto) {
-  return texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
-}
-
-function renderTodos() {
-  paineisEl.innerHTML = '';
-  BLOCOS.forEach((bloco, idx) => {
-    const painel = document.createElement('div');
-    painel.className = 'painel' + (idx === 0 ? ' ativo' : '');
-    painel.id = 'painel-' + bloco.id;
-
-    const label = document.createElement('div');
-    label.className = 'label-versao';
-    label.textContent = `${bloco.titulo} — ${bloco.heading}`;
-    painel.appendChild(label);
-
-    const vozInfo = document.createElement('div');
-    vozInfo.className = 'voz-info';
-    vozInfo.id = 'vozinfo-' + bloco.id;
-    vozInfo.textContent = '🎙 Detectando voz...';
-    painel.appendChild(vozInfo);
-
-    const texto = document.createElement('div');
-    texto.className = 'texto-bloco';
-    texto.id = 'texto-' + bloco.id;
-    bloco.unidades.forEach((u, i) => {
-      if (u.tipo === 'pausa') {
-        const br = document.createElement('div');
-        br.className = 'quebra';
-        br.dataset.idx = i;
-        texto.appendChild(br);
-      } else {
-        const el = document.createElement('div');
-        el.className = 'frase';
-        el.id = bloco.id + '-f-' + i;
-        el.textContent = renderTextoLegivel(u.texto);
-        texto.appendChild(el);
-      }
-    });
-    painel.appendChild(texto);
-
-    const player = document.createElement('div');
-    player.className = 'player';
-    player.innerHTML = `
-      <button class="btn-play parado" id="btn-${bloco.id}" onclick="togglePlay('${bloco.id}')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        Ouvir ${bloco.titulo}
-      </button>
-      <div class="progresso-wrap"><div class="progresso-fill" id="prog-${bloco.id}"></div></div>
-    `;
-    painel.appendChild(player);
-
-    paineisEl.appendChild(painel);
-  });
-
-  setTimeout(atualizarInfoVozes, 300);
-  setTimeout(atualizarInfoVozes, 1500);
-}
-
-function atualizarInfoVozes() {
-  resolverVozes();
-  BLOCOS.forEach(bloco => {
-    const resolvida = vozesResolvidas[bloco.vozIndex];
-    const el = document.getElementById('vozinfo-' + bloco.id);
-    if (!el) return;
-    if (resolvida && resolvida.voz) {
-      const aviso = resolvida.aviso ? ` — ⚠️ ${resolvida.aviso}` : '';
-      el.textContent = `🎙 ${resolvida.nome}: ${resolvida.voz.name}${aviso}`;
-      el.style.color = resolvida.aviso ? '#f87171' : '#fbbf24';
-    } else {
-      el.textContent = '🎙 Nenhuma voz pt-BR encontrada';
-      el.style.color = '#f87171';
-    }
-  });
-}
-renderTodos();
-
-/* ── Tabs ── */
-function trocarTab(v) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('ativa', t.dataset.v === v));
-  document.querySelectorAll('.painel').forEach(p => p.classList.toggle('ativo', p.id === 'painel-' + v));
-  if (tocando && tocando !== v) pararTudo();
-}
-
-/* ── Player ── */
-function togglePlay(id) {
-  if (tocando === id) { pararTudo(); return; }
-  if (tocando) pararTudo();
-  tocarBloco(id);
-}
-
-function pararTudo() {
-  cancelar = true;
-  synth.cancel();
-  if (tocando) {
-    setBtnEstado(tocando, false);
-    resetHighlights(tocando);
-    setProgresso(tocando, 0);
-  }
-  tocando = null;
-}
-
-function setBtnEstado(id, playing) {
-  const btn = document.getElementById('btn-' + id);
-  const bloco = BLOCOS.find(b => b.id === id);
-  if (playing) {
-    btn.className = 'btn-play tocando';
-    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Parar`;
+  if (pt.length === 0) {
+    html += `<p class="aviso">⚠️ Nenhuma voz pt-BR encontrada ainda. Tentativa ${tentativas}. Aguardando voiceschanged...</p>`;
   } else {
-    btn.className = 'btn-play parado';
-    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M8 5v14l11-7z"/></svg> Ouvir ${bloco.titulo}`;
-  }
-}
-
-function setProgresso(id, pct) {
-  document.getElementById('prog-' + id).style.width = pct + '%';
-}
-
-function resetHighlights(id) {
-  document.querySelectorAll('#texto-' + id + ' .frase').forEach(el => {
-    el.classList.remove('falando', 'falada');
-  });
-}
-
-function highlightFrase(id, idx) {
-  document.querySelectorAll('#texto-' + id + ' .frase').forEach(el => {
-    el.classList.remove('falando');
-    if (parseInt(el.id.split('-f-')[1]) < idx) el.classList.add('falada');
-  });
-  const el = document.getElementById(id + '-f-' + idx);
-  if (el) {
-    el.classList.add('falando');
-    el.classList.remove('falada');
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-}
-
-function dividirComMicroPausas(texto) {
-  const partesLongas = texto.split(/\s*\|\|\s*/);
-  const segmentos = [];
-  partesLongas.forEach((parte, iLonga) => {
-    if (iLonga > 0) segmentos.push({ tipo:'pausaLonga' });
-    const partesCurtas = parte.split(/\s*\|\s*/);
-    partesCurtas.forEach((p, iCurta) => {
-      if (iCurta > 0) segmentos.push({ tipo:'pausaCurta' });
-      if (p.trim()) segmentos.push({ tipo:'fala', texto:p.trim() });
+    pt.forEach(v => {
+      const aprimorada = v.name.includes('Aprimorada') ? ' <span class="ok">✓ APRIMORADA</span>' : '';
+      html += `
+        <div class="voz">
+          <b>${v.name}</b>${aprimorada}
+          <small>lang: ${v.lang} | local: ${v.localService} | default: ${v.default}</small>
+        </div>
+      `;
     });
+  }
+
+  // Procura especificamente as 3 que queremos
+  html += `<h2>Busca específica</h2>`;
+  ['Felipe (Aprimorada)', 'Felipe', 'Fernanda (Aprimorada)', 'Fernanda', 'Luciana (Aprimorada)', 'Luciana'].forEach(nome => {
+    const achou = todas.find(v => v.name === nome);
+    html += `<div class="voz">${achou ? '✓' : '✗'} <b>${nome}</b> ${achou ? '<span class="ok">ENCONTRADA</span>' : '<span class="aviso">NÃO ENCONTRADA</span>'}</div>`;
   });
-  return segmentos;
+
+  saida.innerHTML = html;
 }
 
-async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz) {
-  const segmentos = dividirComMicroPausas(textoOriginal);
-  for (const seg of segmentos) {
-    if (cancelar) return;
-    if (seg.tipo === 'pausaCurta') {
-      await esperar(V6B.microCurta);
-    } else if (seg.tipo === 'pausaLonga') {
-      await esperar(V6B.microLonga);
-    } else if (seg.tipo === 'fala') {
-      await falar(seg.texto, rate, pitch, volume, voz);
-    }
-  }
+function tentar() {
+  tentativas++;
+  listar();
+  if (tentativas < 20) setTimeout(tentar, 300);
 }
 
-async function tocarBloco(id) {
-  const bloco = BLOCOS.find(b => b.id === id);
-  if (!bloco) return;
-  resolverVozes();
-  const resolvida = vozesResolvidas[bloco.vozIndex];
-  const voz = resolvida ? resolvida.voz : null;
-
-  cancelar = false;
-  tocando = id;
-  setBtnEstado(id, true);
-  resetHighlights(id);
-
-  const infoEl = document.getElementById('vozinfo-' + id);
-  if (infoEl && voz) {
-    infoEl.textContent = `🎙 Tocando agora: ${voz.name}`;
-    infoEl.style.color = '#22d3ee';
-  }
-
-  const total = bloco.unidades.filter(u => u.tipo !== 'pausa').length;
-  let faladas = 0;
-
-  for (let i = 0; i < bloco.unidades.length; i++) {
-    if (cancelar) break;
-    const u = bloco.unidades[i];
-
-    if (u.tipo === 'pausa') {
-      await esperar(V6B.pausas.pausa);
-      continue;
-    }
-
-    const pausaAntes = V6B.pausas[u.tipo] || 0;
-    if (pausaAntes > 0) await esperar(pausaAntes);
-
-    const rate   = V6B.ratePorTipo[u.tipo]   ?? V6B.base.rate;
-    const pitch  = V6B.pitchPorTipo[u.tipo]  ?? V6B.base.pitch;
-    const volume = V6B.volumePorTipo[u.tipo] ?? V6B.base.volume;
-
-    highlightFrase(id, i);
-    faladas++;
-    setProgresso(id, Math.round((faladas / total) * 100));
-
-    await falarComMicroPausas(u.texto, rate, pitch, volume, voz);
-    if (cancelar) break;
-  }
-
-  if (!cancelar) {
-    resetHighlights(id);
-    setProgresso(id, 100);
-    setTimeout(() => {
-      setBtnEstado(id, false);
-      setProgresso(id, 0);
-      if (tocando === id) tocando = null;
-      atualizarInfoVozes();
-    }, 700);
-  }
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => { tentar(); };
+  tentar();
+} else {
+  document.getElementById('saida').innerHTML = '<p class="aviso">speechSynthesis não disponível neste navegador.</p>';
 }
-
-function falar(texto, rate, pitch, volume, voz) {
-  return new Promise(resolve => {
-    const u = new SpeechSynthesisUtterance(texto);
-    u.lang = voz ? voz.lang : 'pt-BR';
-    u.rate = rate;
-    u.pitch = pitch;
-    u.volume = volume ?? 1.0;
-    if (voz) u.voice = voz;
-    u.onend = resolve;
-    u.onerror = resolve;
-    synth.speak(u);
-  });
-}
-
-function esperar(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-resolverVozes();
 </script>
 </body>
 </html>
