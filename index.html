@@ -88,7 +88,7 @@
     background: linear-gradient(135deg, #dc2626, #b91c1c);
     box-shadow: 0 6px 18px rgba(220, 38, 38, .4);
   }
-  .rodape { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 6px; }
+  .rodape { display: flex; align-items: center; justify-content: center; margin-top: 8px; }
   .btn-vel {
     padding: 6px 10px; font-size: .72rem;
     background: #1e293b; color: #93c5fd;
@@ -97,21 +97,9 @@
     cursor: pointer; touch-action: manipulation;
   }
   .btn-vel.ativa { background: #1e3a8a; color: #fff; }
-  .status-mini {
-    font-size: .62rem; color: #64748b;
-    text-align: right; flex: 1;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .progresso-mini {
-    position: absolute; left: 12px; right: 12px; bottom: 5px;
-    height: 2px; background: rgba(148, 163, 184, .15);
-    border-radius: 1px; overflow: hidden;
-  }
-  .progresso-mini-fill { height: 100%; background: #3b82f6; width: 0%; transition: width .3s; }
   #playerFlutuante.minimizado .handle,
   #playerFlutuante.minimizado .controles .btn-sec,
-  #playerFlutuante.minimizado .rodape,
-  #playerFlutuante.minimizado .progresso-mini { display: none; }
+  #playerFlutuante.minimizado .rodape { display: none; }
   #playerFlutuante.minimizado { width: auto; padding: 6px; border-radius: 50%; }
   #playerFlutuante.minimizado .controles { gap: 0; }
 
@@ -154,25 +142,12 @@
     background: rgba(34, 197, 94, .15);
     border-radius: 6px; color: #86efac;
   }
-  .badge-voz {
-    position: fixed; top: 12px; left: 50%;
-    transform: translateX(-50%);
-    background: rgba(124, 58, 237, .9); color: #fff;
-    font-size: .7rem; font-weight: 700;
-    padding: 5px 12px; border-radius: 99px;
-    z-index: 9998; pointer-events: none;
-    opacity: 0; transition: opacity .3s;
-    font-family: ui-monospace, Menlo, monospace;
-  }
-  .badge-voz.ativo { opacity: 1; }
 </style>
 </head>
 <body>
 <div class="conteudo">
   <div class="texto-bloco" id="texto"></div>
 </div>
-
-<div class="badge-voz" id="badgeVoz"></div>
 
 <div id="debugPanel">
   <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
@@ -201,10 +176,6 @@
   </div>
   <div class="rodape">
     <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">1.0×</button>
-    <span class="status-mini" id="statusMini">Toque em ▶ para iniciar</span>
-  </div>
-  <div class="progresso-mini">
-    <div class="progresso-mini-fill" id="progMini"></div>
   </div>
 </div>
 
@@ -272,13 +243,6 @@ function vozesPtBR() {
 
 /* =====================================================
    PERFIS — PROFESSOR MELHORADO
-   =====================================================
-   DESKTOP (Daniel/Felipe/Antonio/Ricardo):
-     pitch 0.90 → mais grave (autoridade motivacional)
-     rate 1.05  → ritmo de coach (mais rápido que o anterior)
-     Ênfase 0.88/1.00 → marca bem as palavras-chave
-     Pausas curtas → sensação de energia
-   ALUNOS: mantidos animados (inalterados)
    ===================================================== */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
 const SIMBOLOS = {
@@ -288,7 +252,7 @@ const SIMBOLOS = {
 };
 
 const PERFIS = {
-  // 🎯 PROFESSOR MOTIVACIONAL MASCULINO — VERSÃO MELHORADA
+  // 🎯 PROFESSOR MOTIVACIONAL MASCULINO
   professor: {
     rate: 1.05, pitch: 0.90, volume: 1.0,
     microCurta: 120, microLonga: 180,
@@ -454,18 +418,6 @@ function resetDestaques() {
 }
 
 /* =====================================================
-   BADGE
-   ===================================================== */
-let badgeTimer = null;
-function mostrarBadge(txt) {
-  const el = document.getElementById('badgeVoz');
-  el.textContent = txt;
-  el.classList.add('ativo');
-  clearTimeout(badgeTimer);
-  badgeTimer = setTimeout(() => el.classList.remove('ativo'), 1600);
-}
-
-/* =====================================================
    UI
    ===================================================== */
 function setBtnEstado(playing) {
@@ -479,9 +431,6 @@ function setBtnEstado(playing) {
     icone.innerHTML = '<path d="M8 5v14l11-7z"/>';
   }
 }
-
-function setProgresso(pct) { document.getElementById('progMini').style.width = pct + '%'; }
-function setStatus(txt)    { document.getElementById('statusMini').textContent = txt; }
 
 function atualizarBotoesNavegacao() {
   const temAnterior = AULA.slice(0, indiceAtual).some(f => f.tipo !== 'pausa');
@@ -515,7 +464,7 @@ function togglePlay() {
   if (tocando && !pausado) {
     pausado = true; cancelar = true;
     try { synth.cancel(); } catch(e) {}
-    setBtnEstado(false); setStatus('Pausado');
+    setBtnEstado(false);
     return;
   }
   if (tocando && pausado) { pausado = false; tocarDeOndeParou(); return; }
@@ -544,8 +493,6 @@ function pularFrase(direcao) {
   } else {
     destacarFala(indiceAtual);
     atualizarBotoesNavegacao();
-    const f = AULA[indiceAtual];
-    setStatus(f.papel === 'professor' ? 'Professor' : 'Aluno');
   }
 }
 
@@ -616,32 +563,15 @@ async function falarComMicroPausas(textoOriginal, perfil, voz) {
 function esperar(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 /* =====================================================
-   TROCA DE VOZ
-   ===================================================== */
-async function trocarVoz(vozAntiga, vozNova) {
-  const debugEl = document.getElementById('debugTroca');
-  if (!vozNova) return;
-  if (debugEl) debugEl.textContent = `Próxima voz: ${vozNova.name}`;
-  mostrarBadge(`🎙️ ${vozNova.name}`);
-}
-
-/* =====================================================
    LOOP PRINCIPAL
    ===================================================== */
 async function tocarDeOndeParou() {
-  if (!elenco || !elenco.professor) {
-    setStatus('Sem vozes pt-BR');
-    return;
-  }
+  if (!elenco || !elenco.professor) return;
 
   cancelar = false;
   tocando = true;
   pausado = false;
   setBtnEstado(true);
-
-  const total = AULA.filter(d => d.tipo !== 'pausa').length;
-  const jaFaladas = AULA.slice(0, indiceAtual).filter(d => d.tipo !== 'pausa').length;
-  let faladas = jaFaladas;
 
   let ultimaVoz = null;
   for (let k = indiceAtual - 1; k >= 0; k--) {
@@ -660,12 +590,7 @@ async function tocarDeOndeParou() {
 
     const voz = elenco[fala.papel];
     const perfil = PERFIS[fala.papel];
-
-    if (voz !== ultimaVoz) {
-      await trocarVoz(ultimaVoz, voz);
-      if (cancelar) return;
-      ultimaVoz = voz;
-    }
+    ultimaVoz = voz;
 
     const pausaAntes = perfil.pausas[fala.tipo] || 0;
     if (pausaAntes > 0) await esperar(pausaAntes / velocidade);
@@ -673,28 +598,14 @@ async function tocarDeOndeParou() {
     destacarFala(i);
     atualizarBotoesNavegacao();
 
-    const label = fala.papel === 'professor'
-      ? `Professor · pitch ${perfil.pitch.toFixed(2)} · rate ${perfil.rate.toFixed(2)}`
-      : `Aluno · pitch ${perfil.pitch.toFixed(2)}`;
-    setStatus(label);
-
-    faladas++;
-    setProgresso(Math.round((faladas / total) * 100));
-
     await falarComMicroPausas(fala.texto, perfil, voz);
     if (cancelar) return;
   }
 
   if (!cancelar) {
     resetDestaques();
-    setProgresso(100);
-    setStatus('Fim');
-    setTimeout(() => {
-      setBtnEstado(false);
-      setProgresso(0);
-      setStatus('Pronto');
-      tocando = false; pausado = false; indiceAtual = 0;
-    }, 800);
+    setBtnEstado(false);
+    tocando = false; pausado = false; indiceAtual = 0;
   }
 }
 
@@ -822,9 +733,7 @@ function atualizarDebug() {
       <b>Para ficar incrível:</b> Ajustes → Acessibilidade → Conteúdo Falado → Vozes → Português (Brasil) → baixe <b>Felipe</b>. Depois feche o Safari (arraste pra cima) e abra de novo.
     </div>`;
   } else if (modoIOS && felipeEncontrado) {
-    aviso = `<div class="sucesso">✅ iPhone com Felipe! Professor usando voz masculina real — igual ao desktop.</div>`;
-  } else if (unicas < 3) {
-    aviso = `<div class="aviso">⚠️ Só ${unicas} vozes distintas. Instale mais em Ajustes → Acessibilidade → Conteúdo Falado → Vozes.</div>`;
+    aviso = `<div class="sucesso">✅ iPhone com Felipe! Professor usando voz masculina real.</div>`;
   }
 
   el.innerHTML = linhas + `<div style="margin-top:8px;color:#94a3b8">
@@ -851,12 +760,6 @@ function embaralhar(lista) {
   return a;
 }
 
-/* Prioridade do PROFESSOR:
-   1. Felipe (funciona no iPhone E no desktop) ← NOVO
-   2. Daniel (desktop Microsoft)
-   3. Antonio / Ricardo / Lucas / Thiago / Paulo
-   4. Google português
-*/
 const PRIORIDADE_PROFESSOR = [
   /felipe/i,
   /daniel/i,
@@ -935,16 +838,11 @@ function distribuirElenco(vozes) {
 
 /* =====================================================
    AJUSTE DO PROFESSOR POR DISPOSITIVO
-   =====================================================
-   Desktop: perfil original (pitch 0.90) — incrível
-   iPhone COM Felipe: perfil original também (Felipe masculino real)
-   iPhone SEM Felipe: pitch 1.0 + rate 1.15 (não fica rouco)
    ===================================================== */
 function ajustarPerfilProfessor() {
   if (!isIOS) return;
-  if (felipeEncontrado) return; // tem Felipe, mantém pitch 0.90
+  if (felipeEncontrado) return;
 
-  // iPhone sem Felipe → salva a voz original e aplica perfil suave
   PERFIS.professor = {
     rate: 1.15, pitch: 1.0, volume: 1.0,
     microCurta: 100, microLonga: 160,
@@ -978,37 +876,18 @@ function preAquecerVozes() {
 /* =====================================================
    INIT
    ===================================================== */
-setStatus('Carregando vozes…');
-
 carregarVozes(() => {
   const ptBR = vozesPtBR();
   if (ptBR.length === 0) {
-    setStatus('Sem vozes pt-BR');
-    mostrarBadge('⚠️ Nenhuma voz pt-BR');
     if (todasAsVozes.length > 0) {
       elenco = distribuirElenco(todasAsVozes);
-      setStatus(`${todasAsVozes.length} vozes (não pt-BR)`);
-    } else {
-      setStatus('Nenhuma voz disponível');
     }
     atualizarBotoesNavegacao();
     return;
   }
 
   elenco = distribuirElenco(ptBR);
-  ajustarPerfilProfessor();   // ← aplica ajuste iPhone após escolher vozes
-
-  const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
-
-  if (modoIOS) {
-    if (felipeEncontrado) {
-      setStatus(`📱 iOS · Felipe ✓`);
-    } else {
-      setStatus(`📱 iOS · baixe o Felipe (⚙️)`);
-    }
-  } else {
-    setStatus(`${unicas} vozes pt-BR · toque ▶`);
-  }
+  ajustarPerfilProfessor();
 
   atualizarBotoesNavegacao();
   atualizarDebug();
