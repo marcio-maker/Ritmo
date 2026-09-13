@@ -63,7 +63,7 @@
   .btn-play.tocando { background: #dc2626; color: #fff; }
 
   .voz-atual {
-    font-size: .68rem; color: #475569; text-align: center;
+    font-size: .7rem; color: #64748b; text-align: center;
     padding: 8px 0 10px; font-weight: 600;
   }
 
@@ -120,26 +120,16 @@ function carregarVozesComRetry(callback) {
   tentar();
 }
 
-/* Monta o ciclo: filtra pt-BR, prioriza Aprimoradas/Natural,
-   e embaralha para ordem aleatória. */
 function montarCicloVozes() {
-  // Filtra pt-BR (inclui pt_BR e pt-BR)
-  const ptBR = todasAsVozes.filter(v => {
-    const lang = (v.lang || '').toLowerCase().replace('_', '-');
-    return lang === 'pt-br' || lang.startsWith('pt-br');
-  });
-
-  // Classifica por qualidade
-  const boas = ptBR.filter(v =>
-    v.name.includes('Aprimorada') ||
-    v.name.includes('Enhanced') ||
-    v.name.includes('Premium') ||
-    v.name.includes('Natural') ||
-    v.name.includes('Online')
+  const ptBR = todasAsVozes.filter(v =>
+    v.lang === 'pt-BR' || v.lang === 'pt_BR' || v.lang.startsWith('pt-BR')
   );
-  const comuns = ptBR.filter(v => !boas.includes(v));
-
-  // Embaralha cada grupo
+  const aprimoradas = ptBR.filter(v =>
+    v.name.includes('Aprimorada') || v.name.includes('Enhanced') || v.name.includes('Premium') || v.name.includes('Natural')
+  );
+  const padrao = ptBR.filter(v =>
+    !v.name.includes('Aprimorada') && !v.name.includes('Enhanced') && !v.name.includes('Premium') && !v.name.includes('Natural')
+  );
   const embaralhar = (arr) => {
     const copia = [...arr];
     for (let i = copia.length - 1; i > 0; i--) {
@@ -148,10 +138,8 @@ function montarCicloVozes() {
     }
     return copia;
   };
-
-  cicloVozes = [...embaralhar(boas), ...embaralhar(comuns)];
-
-  console.log('Ciclo de vozes:', cicloVozes.map(v => v.name));
+  cicloVozes = [...embaralhar(aprimoradas), ...embaralhar(padrao)];
+  console.log('Ciclo:', cicloVozes.map(v => v.name));
 }
 
 function proximaVoz() {
@@ -441,6 +429,7 @@ async function tocarBloco(id, vozForcada) {
   setBtnEstado(id, true);
   resetHighlights(id);
 
+  // Atualiza linha discreta da voz
   const vozEl = document.getElementById('voz-' + id);
   if (vozEl) vozEl.textContent = `🎙 ${voz.name}`;
 
@@ -482,7 +471,7 @@ async function tocarBloco(id, vozForcada) {
 
   await esperar(600);
 
-  // MODO CONTÍNUO: emenda no próximo bloco com a próxima voz
+  // MODO CONTÍNUO
   if (modoContinuo) {
     const idxAtual = BLOCOS.findIndex(b => b.id === id);
     const proximoIdx = idxAtual + 1;
