@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Loop de Vozes — RH</title>
+<title>Estudo em Áudio — RH</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
@@ -16,70 +16,45 @@
     padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
     display: flex; flex-direction: column;
   }
-  header { padding: 14px 18px 0; text-align: center; }
-  header h1 {
-    font-size: .68rem; font-weight: 700; letter-spacing: .08em;
-    color: #64748b; text-transform: uppercase; margin-bottom: 4px;
-  }
-  header p { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
-
-  .diagnostico {
-    margin: 10px 18px 0;
-    background: #1e293b;
-    border-radius: 10px;
-    padding: 10px 12px;
-    font-size: .72rem;
-    line-height: 1.5;
-    color: #94a3b8;
-  }
-  .diagnostico b { color: #22d3ee; }
-  .diagnostico .ok { color: #22d3ee; }
-  .diagnostico .aviso { color: #f87171; }
 
   .tabs {
-    display: flex; gap: 6px; padding: 12px 18px 0; overflow-x: auto;
+    display: flex; gap: 6px; padding: 16px 18px 0; overflow-x: auto;
   }
   .tab {
-    flex: 1; min-width: 68px; padding: 9px 5px;
+    flex: 1; min-width: 68px; padding: 10px 6px;
     border: none; border-radius: 9px;
-    font-size: .72rem; font-weight: 700; font-family: inherit;
+    font-size: .78rem; font-weight: 700; font-family: inherit;
     cursor: pointer; background: #1e293b; color: #64748b;
     transition: background .15s, color .15s; white-space: nowrap;
   }
   .tab.ativa { background: #1e3a8a; color: #fff; }
 
-  .paineis { flex: 1; padding: 12px 18px 0; overflow: hidden; position: relative; }
-  .painel { display: none; flex-direction: column; gap: 8px; height: 100%; }
+  .paineis { flex: 1; padding: 14px 18px 0; overflow: hidden; position: relative; }
+  .painel { display: none; flex-direction: column; gap: 10px; height: 100%; }
   .painel.ativo { display: flex; }
 
-  .label-versao {
-    font-size: .66rem; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: #475569; padding-left: 2px;
+  .heading {
+    font-size: .95rem; font-weight: 700; color: #93c5fd;
+    padding-left: 2px;
   }
-  .voz-info {
-    font-size: .68rem; color: #fbbf24; padding-left: 2px; line-height: 1.4;
-    font-weight: 600;
-  }
-  .voz-info.tocando { color: #22d3ee; }
-  .voz-info.erro { color: #f87171; }
 
   .texto-bloco {
-    background: #1e293b; border-radius: 12px; padding: 12px;
+    background: #1e293b; border-radius: 12px; padding: 14px;
     flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
   .frase {
-    font-size: .9rem; line-height: 1.55; color: #cbd5e1;
-    padding: 4px 7px; border-radius: 6px; margin-bottom: 1px;
+    font-size: .92rem; line-height: 1.6; color: #cbd5e1;
+    padding: 4px 7px; border-radius: 6px; margin-bottom: 2px;
     transition: background .15s, color .15s, transform .15s;
   }
   .frase.falando { background: rgba(59,130,246,.2); color: #fff; transform: translateX(2px); }
   .frase.falada { color: #475569; }
-  .quebra { height: 8px; }
+  .quebra { height: 10px; }
 
-  .player { padding: 10px 0 0; }
+  .player { padding: 8px 0 0; }
   .btn-play {
-    width: 100%; min-height: 50px; border: none; border-radius: 12px;
-    font-size: .92rem; font-weight: 800; font-family: inherit; cursor: pointer;
+    width: 100%; min-height: 52px; border: none; border-radius: 12px;
+    font-size: .95rem; font-weight: 800; font-family: inherit; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 9px;
     transition: opacity .15s, transform .1s;
   }
@@ -87,8 +62,13 @@
   .btn-play.parado  { background: #2563eb; color: #fff; }
   .btn-play.tocando { background: #dc2626; color: #fff; }
 
+  .voz-atual {
+    font-size: .7rem; color: #64748b; text-align: center;
+    padding: 8px 0 10px; font-weight: 600;
+  }
+
   .progresso-wrap {
-    margin-top: 7px; height: 4px; background: #1e293b;
+    margin-top: 8px; height: 4px; background: #1e293b;
     border-radius: 2px; overflow: hidden;
   }
   .progresso-fill {
@@ -98,13 +78,6 @@
 </style>
 </head>
 <body>
-
-<header>
-  <h1>👥 RH · Loop de Vozes</h1>
-  <p>Felipe → Fernanda → Luciana <span id="statusLoop" style="display:inline-flex;align-items:center;gap:4px;background:#0f3460;color:#93c5fd;font-size:.64rem;font-weight:700;padding:3px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;">iniciando...</span></p>
-</header>
-
-<div class="diagnostico" id="diagnostico">🔍 Carregando vozes do iPhone...</div>
 
 <div class="tabs">
   <button class="tab ativa" data-v="b1" onclick="trocarTab('b1')">Bloco 1</button>
@@ -116,122 +89,74 @@
 
 <script>
 /* =====================================================
-   CONEXÃO REAL COM AS VOZES DO iPHONE
-   Resolve os bugs do Safari:
-   1. voiceschanged não dispara sozinho
-   2. addEventListener não existe no iOS 15
-   3. Troca de voz ignorada se não setar u.voice
+   1. DETECÇÃO AUTOMÁTICA DE VOZES
    ===================================================== */
-
 let todasAsVozes = [];
-let vozesResolvidas = [];
+let cicloVozes = [];
+let indiceVozAtual = 0;
 let vozesCarregadas = false;
+let modoContinuo = true;
 
 function carregarVozesComRetry(callback) {
   let tentativas = 0;
-  const MAX_TENTATIVAS = 50; // 5 segundos
-
   function tentar() {
     tentativas++;
     const vozes = window.speechSynthesis.getVoices();
-
     if (vozes.length > 0) {
       todasAsVozes = vozes;
       vozesCarregadas = true;
       callback();
       return;
     }
-
-    if (tentativas < MAX_TENTATIVAS) {
-      setTimeout(tentar, 100);
-    } else {
-      console.error('Vozes não carregaram após 5s');
-      callback();
-    }
+    if (tentativas < 50) setTimeout(tentar, 100);
+    else callback();
   }
-
-  // Detecta se addEventListener existe (iOS 15 tem bug)
   if (window.speechSynthesis.addEventListener) {
-    try {
-      window.speechSynthesis.addEventListener('voiceschanged', tentar);
-    } catch (e) {
-      window.speechSynthesis.onvoiceschanged = tentar;
-    }
+    try { window.speechSynthesis.addEventListener('voiceschanged', tentar); }
+    catch (e) { window.speechSynthesis.onvoiceschanged = tentar; }
   } else {
     window.speechSynthesis.onvoiceschanged = tentar;
   }
-
-  // Tenta imediatamente (pode já estar em cache)
   tentar();
 }
 
-function buscarVoz(nome) {
-  return todasAsVozes.find(v => v.name === `${nome} (Aprimorada)`)
-      || todasAsVozes.find(v => v.name === `${nome} (Enhanced)`)
-      || todasAsVozes.find(v => v.name === nome)
-      || todasAsVozes.find(v => v.name.includes(nome))
-      || null;
+function montarCicloVozes() {
+  const ptBR = todasAsVozes.filter(v =>
+    v.lang === 'pt-BR' || v.lang === 'pt_BR' || v.lang.startsWith('pt-BR')
+  );
+  const aprimoradas = ptBR.filter(v =>
+    v.name.includes('Aprimorada') || v.name.includes('Enhanced') || v.name.includes('Premium') || v.name.includes('Natural')
+  );
+  const padrao = ptBR.filter(v =>
+    !v.name.includes('Aprimorada') && !v.name.includes('Enhanced') && !v.name.includes('Premium') && !v.name.includes('Natural')
+  );
+  const embaralhar = (arr) => {
+    const copia = [...arr];
+    for (let i = copia.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copia[i], copia[j]] = [copia[j], copia[i]];
+    }
+    return copia;
+  };
+  cicloVozes = [...embaralhar(aprimoradas), ...embaralhar(padrao)];
+  console.log('Ciclo:', cicloVozes.map(v => v.name));
 }
 
-function resolverVozes() {
-  const felipe = buscarVoz('Felipe');
-  const fernanda = buscarVoz('Fernanda');
-  const luciana = buscarVoz('Luciana');
-
-  vozesResolvidas = [
-    { nome: 'Felipe',   voz: felipe,   genero: 'M' },
-    { nome: 'Fernanda', voz: fernanda, genero: 'F' },
-    { nome: 'Luciana',  voz: luciana,  genero: 'F' }
-  ];
-
-  // Diagnóstico na tela
-  const diag = document.getElementById('diagnostico');
-  let html = `<b>🔍 Diagnóstico:</b> ${todasAsVozes.length} vozes no iPhone · `;
-  const ptBR = todasAsVozes.filter(v => v.lang === 'pt-BR' || v.lang === 'pt_BR');
-  html += `${ptBR.length} em pt-BR<br>`;
-
-  vozesResolvidas.forEach(r => {
-    if (r.voz) {
-      const aprimorada = r.voz.name.includes('Aprimorada') || r.voz.name.includes('Enhanced');
-      html += `<span class="ok">✓ ${r.nome}: ${r.voz.name}${aprimorada ? ' (Aprimorada)' : ''}</span><br>`;
-    } else {
-      html += `<span class="aviso">✗ ${r.nome}: NÃO ENCONTRADA</span><br>`;
-    }
-  });
-
-  diag.innerHTML = html;
-
-  // Atualiza o status do loop
-  const status = document.getElementById('statusLoop');
-  const encontradas = vozesResolvidas.filter(r => r.voz).length;
-  if (encontradas === 3) {
-    status.textContent = '3/3 vozes ✓';
-    status.style.background = '#14532d';
-    status.style.color = '#86efac';
-  } else if (encontradas > 0) {
-    status.textContent = `${encontradas}/3 vozes`;
-    status.style.background = '#78350f';
-    status.style.color = '#fcd34d';
-  } else {
-    status.textContent = '0/3 vozes';
-    status.style.background = '#7f1d1d';
-    status.style.color = '#fca5a5';
-  }
-
-  console.log('Vozes resolvidas:', vozesResolvidas.map(r => r.voz ? r.voz.name : `[${r.nome} não encontrada]`));
-
-  return vozesResolvidas;
+function proximaVoz() {
+  if (cicloVozes.length === 0) return null;
+  const voz = cicloVozes[indiceVozAtual];
+  indiceVozAtual = (indiceVozAtual + 1) % cicloVozes.length;
+  return voz;
 }
 
 /* =====================================================
-   CONTEÚDO — 3 Blocos de RH
+   2. CONTEÚDO — 3 Blocos de RH
    ===================================================== */
 const BLOCOS = [
   {
     id: "b1",
     titulo: "Bloco 1",
     heading: "O que é gestão de pessoas",
-    vozIndex: 0,
     unidades: [
       { tipo:"abertura",  texto:"Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
       { tipo:"definicao", texto:"Ela atrai, desenvolve, motiva | e mantém as pessoas na empresa." },
@@ -250,7 +175,6 @@ const BLOCOS = [
     id: "b2",
     titulo: "Bloco 2",
     heading: "Gestão estratégica de pessoas",
-    vozIndex: 1,
     unidades: [
       { tipo:"abertura",  texto:"A gestão estratégica de pessoas é quando a área de recursos humanos deixa de agir só no operacional | e passa a participar do planejamento da organização." },
       { tipo:"pausa" },
@@ -270,7 +194,6 @@ const BLOCOS = [
     id: "b3",
     titulo: "Bloco 3",
     heading: "Recrutamento",
-    vozIndex: 2,
     unidades: [
       { tipo:"abertura",  texto:"Recrutamento é o processo de atrair candidatos para uma vaga." },
       { tipo:"definicao", texto:"É a etapa em que a empresa vai ao mercado buscar pessoas com potencial para ocupar determinada função." },
@@ -287,7 +210,7 @@ const BLOCOS = [
 ];
 
 /* =====================================================
-   PERFIL V6b — Palestrante inspirador
+   3. PERFIL V6b — Palestrante inspirador
    ===================================================== */
 const V6B = {
   base: { rate: 0.88, pitch: 0.96, volume: 1.0 },
@@ -328,16 +251,10 @@ function renderTodos() {
     painel.className = 'painel' + (idx === 0 ? ' ativo' : '');
     painel.id = 'painel-' + bloco.id;
 
-    const label = document.createElement('div');
-    label.className = 'label-versao';
-    label.textContent = `${bloco.titulo} — ${bloco.heading}`;
-    painel.appendChild(label);
-
-    const vozInfo = document.createElement('div');
-    vozInfo.className = 'voz-info';
-    vozInfo.id = 'vozinfo-' + bloco.id;
-    vozInfo.textContent = '🎙 Aguardando vozes...';
-    painel.appendChild(vozInfo);
+    const heading = document.createElement('div');
+    heading.className = 'heading';
+    heading.textContent = bloco.heading;
+    painel.appendChild(heading);
 
     const texto = document.createElement('div');
     texto.className = 'texto-bloco';
@@ -363,9 +280,10 @@ function renderTodos() {
     player.innerHTML = `
       <button class="btn-play parado" id="btn-${bloco.id}" onclick="togglePlay('${bloco.id}')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        Ouvir ${bloco.titulo}
+        Ouvir
       </button>
       <div class="progresso-wrap"><div class="progresso-fill" id="prog-${bloco.id}"></div></div>
+      <div class="voz-atual" id="voz-${bloco.id}"></div>
     `;
     painel.appendChild(player);
 
@@ -373,25 +291,6 @@ function renderTodos() {
   });
 }
 renderTodos();
-
-/* Atualiza o rótulo de voz de cada bloco */
-function atualizarInfoVozes() {
-  BLOCOS.forEach(bloco => {
-    const r = vozesResolvidas[bloco.vozIndex];
-    const el = document.getElementById('vozinfo-' + bloco.id);
-    if (!el) return;
-    if (r && r.voz) {
-      el.textContent = `🎙 ${r.nome}: ${r.voz.name}`;
-      el.className = 'voz-info';
-    } else if (r) {
-      el.textContent = `⚠️ ${r.nome} não encontrada`;
-      el.className = 'voz-info erro';
-    } else {
-      el.textContent = '⚠️ Nenhuma voz pt-BR';
-      el.className = 'voz-info erro';
-    }
-  });
-}
 
 /* ── Tabs ── */
 function trocarTab(v) {
@@ -420,8 +319,7 @@ function pararTudo() {
 
 function setBtnEstado(id, playing) {
   const btn = document.getElementById('btn-' + id);
-  const bloco = BLOCOS.find(b => b.id === id);
-  if (!btn || !bloco) return;
+  if (!btn) return;
   if (playing) {
     btn.className = 'btn-play tocando';
     btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -429,7 +327,7 @@ function setBtnEstado(id, playing) {
   } else {
     btn.className = 'btn-play parado';
     btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M8 5v14l11-7z"/></svg> Ouvir ${bloco.titulo}`;
+      <path d="M8 5v14l11-7z"/></svg> Ouvir`;
   }
 }
 
@@ -472,6 +370,20 @@ function dividirComMicroPausas(texto) {
   return segmentos;
 }
 
+function falar(texto, rate, pitch, volume, voz) {
+  return new Promise(resolve => {
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = 'pt-BR';
+    u.rate = rate;
+    u.pitch = pitch;
+    u.volume = volume ?? 1.0;
+    if (voz) u.voice = voz;
+    u.onend = resolve;
+    u.onerror = resolve;
+    synth.speak(u);
+  });
+}
+
 async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz) {
   const segmentos = dividirComMicroPausas(textoOriginal);
   for (const seg of segmentos) {
@@ -486,48 +398,43 @@ async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz) {
   }
 }
 
-/* ── Fala com voz explícita (resolve Bug 2 do iOS) ── */
-function falar(texto, rate, pitch, volume, voz) {
-  return new Promise(resolve => {
-    const u = new SpeechSynthesisUtterance(texto);
-    u.lang = 'pt-BR';
-    u.rate = rate;
-    u.pitch = pitch;
-    u.volume = volume ?? 1.0;
-    if (voz) u.voice = voz;  // OBRIGATÓRIO: seta a voz explicitamente
-    u.onend = resolve;
-    u.onerror = resolve;
-    synth.speak(u);
-  });
+function esperar(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function tocarBloco(id) {
+async function forcarTrocaVoz(voz) {
+  synth.cancel();
+  await esperar(150);
+  await falar(' ', 1.0, 1.0, 1.0, voz);
+  await esperar(250);
+}
+
+async function tocarBloco(id, vozForcada) {
   const bloco = BLOCOS.find(b => b.id === id);
   if (!bloco) return;
 
-  // Garante que as vozes estão resolvidas
   if (!vozesCarregadas) {
     carregarVozesComRetry(() => {
-      resolverVozes();
-      atualizarInfoVozes();
-      tocarBloco(id);
+      montarCicloVozes();
+      tocarBloco(id, vozForcada);
     });
     return;
   }
 
-  const r = vozesResolvidas[bloco.vozIndex];
-  const voz = r ? r.voz : null;
+  const voz = vozForcada || proximaVoz();
+  if (!voz) { alert('Nenhuma voz pt-BR detectada.'); return; }
 
   cancelar = false;
   tocando = id;
   setBtnEstado(id, true);
   resetHighlights(id);
 
-  const infoEl = document.getElementById('vozinfo-' + id);
-  if (infoEl && voz) {
-    infoEl.textContent = `🎙 Tocando agora: ${voz.name}`;
-    infoEl.className = 'voz-info tocando';
-  }
+  // Atualiza linha discreta da voz
+  const vozEl = document.getElementById('voz-' + id);
+  if (vozEl) vozEl.textContent = `🎙 ${voz.name}`;
+
+  await forcarTrocaVoz(voz);
+  if (cancelar) return;
 
   const total = bloco.unidades.filter(u => u.tipo !== 'pausa').length;
   let faladas = 0;
@@ -556,28 +463,36 @@ async function tocarBloco(id) {
     if (cancelar) break;
   }
 
-  if (!cancelar) {
-    resetHighlights(id);
-    setProgresso(id, 100);
-    setTimeout(() => {
-      setBtnEstado(id, false);
+  if (cancelar) return;
+
+  resetHighlights(id);
+  setProgresso(id, 100);
+  setBtnEstado(id, false);
+
+  await esperar(600);
+
+  // MODO CONTÍNUO
+  if (modoContinuo) {
+    const idxAtual = BLOCOS.findIndex(b => b.id === id);
+    const proximoIdx = idxAtual + 1;
+
+    if (proximoIdx < BLOCOS.length) {
+      const proximoBloco = BLOCOS[proximoIdx];
+      trocarTab(proximoBloco.id);
       setProgresso(id, 0);
       if (tocando === id) tocando = null;
-      atualizarInfoVozes();
-    }, 700);
+      setTimeout(() => tocarBloco(proximoBloco.id), 300);
+      return;
+    }
   }
+
+  setProgresso(id, 0);
+  if (tocando === id) tocando = null;
 }
 
-function esperar(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-/* =====================================================
-   INICIALIZAÇÃO
-   ===================================================== */
+/* ── Init ── */
 carregarVozesComRetry(() => {
-  resolverVozes();
-  atualizarInfoVozes();
+  montarCicloVozes();
 });
 </script>
 </body>
