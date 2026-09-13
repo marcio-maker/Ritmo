@@ -13,29 +13,18 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Georgia, serif;
     background: #0f172a; color: #cbd5e1;
     min-height: 100dvh;
-    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    padding: env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 130px);
     display: flex; flex-direction: column;
+    overflow-x: hidden;
   }
-
-  .conteudo { flex: 1; padding: 24px 22px 0; overflow: hidden; display: flex; flex-direction: column; }
-
+  .conteudo { flex: 1; padding: 24px 22px 0; display: flex; flex-direction: column; }
   .texto-bloco {
-    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    flex: 1;
     font-size: 1.02rem; line-height: 1.85;
     color: #cbd5e1;
   }
-
-  .fala {
-    margin-bottom: 14px;
-    transition: opacity .25s, background .25s;
-  }
-
-  .simbolo {
-    font-weight: 700;
-    margin-right: 8px;
-    font-size: 1.1em;
-    opacity: .85;
-  }
+  .fala { margin-bottom: 14px; transition: opacity .25s, background .25s; }
+  .simbolo { font-weight: 700; margin-right: 8px; font-size: 1.1em; opacity: .85; }
   .fala.professor .simbolo { color: #a78bfa; }
   .fala.aluno1 .simbolo   { color: #60a5fa; }
   .fala.aluno2 .simbolo   { color: #fbbf24; }
@@ -44,86 +33,219 @@
   .fala.aluno5 .simbolo   { color: #22d3ee; }
   .fala.aluno6 .simbolo   { color: #fb923c; }
   .fala.aluno7 .simbolo   { color: #c084fc; }
-
   .fala.falando {
-    background: rgba(124, 58, 237, .15);
+    background: rgba(124, 58, 237, .18);
     border-left: 3px solid #7c3aed;
     border-radius: 4px;
-    padding: 6px 10px;
-    margin-left: -13px;
-    margin-right: -10px;
+    padding: 6px 10px; margin-left: -13px; margin-right: -10px;
     color: #f1f5f9;
   }
   .fala.falada { opacity: .4; }
   .fala.futura { opacity: .78; }
-
+  .enfase { color: #fbbf24; font-weight: 700; letter-spacing: .01em; }
   .quebra { height: 14px; }
 
-  .player { padding: 16px 0 20px; }
-  .btn-play {
-    width: 100%; min-height: 52px; border: none; border-radius: 12px;
-    font-size: 1rem; font-weight: 800; font-family: inherit; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 9px;
-    transition: opacity .15s, transform .1s;
-    background: #2563eb; color: #fff;
+  #playerFlutuante {
+    position: fixed; z-index: 9999;
+    bottom: 24px; right: 18px; width: 240px;
+    background: rgba(15, 23, 42, .97);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(148, 163, 184, .18);
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .5);
+    padding: 10px 10px 12px;
+    user-select: none; -webkit-user-select: none;
+    touch-action: none;
+    transition: box-shadow .2s, opacity .2s;
   }
-  .btn-play:active { opacity: .85; transform: scale(.98); }
-  .btn-play.tocando { background: #dc2626; }
+  #playerFlutuante.arrastando {
+    box-shadow: 0 20px 48px rgba(0, 0, 0, .7), 0 0 0 2px rgba(124, 58, 237, .5);
+    opacity: .96;
+  }
+  .handle {
+    height: 18px; display: flex; align-items: center; justify-content: center;
+    cursor: grab; margin-bottom: 4px; touch-action: none;
+  }
+  .handle::before {
+    content: ''; width: 36px; height: 4px;
+    background: #475569; border-radius: 2px; transition: background .15s;
+  }
+  #playerFlutuante.arrastando .handle::before { background: #7c3aed; }
+  .controles { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .btn-ctrl {
+    border: none; background: #1e293b; color: #cbd5e1;
+    font-family: inherit; font-weight: 700;
+    border-radius: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, transform .1s, color .15s;
+    touch-action: manipulation;
+  }
+  .btn-ctrl:active { transform: scale(.92); }
+  .btn-ctrl:disabled { opacity: .35; }
+  .btn-sec { width: 42px; height: 42px; font-size: .95rem; }
+  .btn-play-flut {
+    width: 58px; height: 58px; border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff; font-size: 1.4rem;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, .4);
+  }
+  .btn-play-flut.tocando {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    box-shadow: 0 6px 18px rgba(220, 38, 38, .4);
+  }
+  .rodape { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 6px; }
+  .btn-vel {
+    padding: 6px 10px; font-size: .72rem;
+    background: #1e293b; color: #93c5fd;
+    border-radius: 8px; letter-spacing: .02em;
+    min-width: 52px; border: none; font-family: inherit; font-weight: 700;
+    cursor: pointer; touch-action: manipulation;
+  }
+  .btn-vel.ativa { background: #1e3a8a; color: #fff; }
+  .status-mini {
+    font-size: .62rem; color: #64748b;
+    text-align: right; flex: 1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .progresso-mini {
+    position: absolute; left: 12px; right: 12px; bottom: 5px;
+    height: 2px; background: rgba(148, 163, 184, .15);
+    border-radius: 1px; overflow: hidden;
+  }
+  .progresso-mini-fill { height: 100%; background: #3b82f6; width: 0%; transition: width .3s; }
+  #playerFlutuante.minimizado .handle,
+  #playerFlutuante.minimizado .controles .btn-sec,
+  #playerFlutuante.minimizado .rodape,
+  #playerFlutuante.minimizado .progresso-mini { display: none; }
+  #playerFlutuante.minimizado { width: auto; padding: 6px; border-radius: 50%; }
+  #playerFlutuante.minimizado .controles { gap: 0; }
 
-  .progresso-wrap {
-    margin-top: 10px; height: 3px; background: #1e293b;
-    border-radius: 2px; overflow: hidden;
+  #debugPanel {
+    position: fixed; top: 12px; left: 12px; right: 12px;
+    background: rgba(0, 0, 0, .92); border: 1px solid #334155;
+    border-radius: 12px; padding: 12px;
+    color: #cbd5e1; font-family: ui-monospace, Menlo, monospace;
+    font-size: .68rem; line-height: 1.5;
+    z-index: 10000; max-height: 60vh; overflow-y: auto; display: none;
   }
-  .progresso-fill {
-    height: 100%; background: #3b82f6; border-radius: 2px;
-    width: 0%; transition: width .3s;
+  #debugPanel.ativo { display: block; }
+  #debugPanel h3 {
+    font-size: .72rem; color: #fbbf24; margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
   }
+  #debugPanel h3 button {
+    background: #7c3aed; color: #fff; border: none;
+    border-radius: 6px; padding: 3px 8px;
+    font-size: .65rem; font-family: inherit; cursor: pointer;
+  }
+  #debugPanel .linha {
+    display: flex; justify-content: space-between; padding: 2px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, .1);
+  }
+  #debugPanel .linha.ativa { color: #fbbf24; font-weight: 700; }
+  #debugPanel .voz { color: #93c5fd; }
+  #debugPanel .status-troca {
+    margin-top: 8px; padding: 6px;
+    background: rgba(124, 58, 237, .15);
+    border-radius: 6px; color: #c4b5fd;
+  }
+  #debugPanel .aviso {
+    margin-top: 8px; padding: 6px;
+    background: rgba(220, 38, 38, .15);
+    border-radius: 6px; color: #fca5a5;
+  }
+  .badge-voz {
+    position: fixed; top: 12px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(124, 58, 237, .9); color: #fff;
+    font-size: .7rem; font-weight: 700;
+    padding: 5px 12px; border-radius: 99px;
+    z-index: 9998; pointer-events: none;
+    opacity: 0; transition: opacity .3s;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .badge-voz.ativo { opacity: 1; }
 </style>
 </head>
 <body>
-
 <div class="conteudo">
   <div class="texto-bloco" id="texto"></div>
+</div>
 
-  <div class="player">
-    <button class="btn-play" id="btnPlay" onclick="togglePlay()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-      Ouvir
+<div class="badge-voz" id="badgeVoz"></div>
+
+<div id="debugPanel">
+  <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
+  <div id="debugElenco"></div>
+  <div class="status-troca" id="debugTroca">Aguardando…</div>
+</div>
+
+<div id="playerFlutuante" role="region" aria-label="Controles de áudio">
+  <div class="handle" id="handle" aria-label="Arraste para mover"></div>
+  <div class="controles">
+    <button class="btn-ctrl btn-sec" id="btnAnterior" onclick="pularFrase(-1)" aria-label="Frase anterior">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+      </svg>
     </button>
-    <div class="progresso-wrap"><div class="progresso-fill" id="prog"></div></div>
+    <button class="btn-ctrl btn-play-flut" id="btnPlayFlut" onclick="togglePlay()" aria-label="Ouvir ou pausar">
+      <svg id="iconePlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+    <button class="btn-ctrl btn-sec" id="btnProximo" onclick="pularFrase(1)" aria-label="Próxima frase">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
+      </svg>
+    </button>
+  </div>
+  <div class="rodape">
+    <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">1.0×</button>
+    <span class="status-mini" id="statusMini">Carregando vozes…</span>
+  </div>
+  <div class="progresso-mini">
+    <div class="progresso-mini-fill" id="progMini"></div>
   </div>
 </div>
 
 <script>
 /* =====================================================
-   DETECÇÃO DE VOZES
+   AMBIENTE
+   ===================================================== */
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+/* =====================================================
+   VOZES
    ===================================================== */
 let todasAsVozes = [];
 let elenco = null;
 
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
 function carregarVozesComRetry(callback) {
   let tentativas = 0;
+  let jaChamou = false;
+
   function tentar() {
     tentativas++;
     const vozes = window.speechSynthesis.getVoices();
     if (vozes.length > 0) {
       todasAsVozes = vozes;
-      callback();
+      if (!jaChamou) { jaChamou = true; callback(); }
+      if (tentativas < 20) setTimeout(tentar, 400);
       return;
     }
-    if (tentativas < 30) setTimeout(tentar, 100);
-    else callback();
+    if (tentativas < 40) setTimeout(tentar, 100);
+    else if (!jaChamou) { jaChamou = true; callback(); }
   }
+
   if (window.speechSynthesis.addEventListener) {
-    try { window.speechSynthesis.addEventListener('voiceschanged', tentar); }
-    catch (e) { window.speechSynthesis.onvoiceschanged = tentar; }
+    window.speechSynthesis.addEventListener('voiceschanged', tentar);
   } else {
     window.speechSynthesis.onvoiceschanged = tentar;
   }
   tentar();
+  setTimeout(tentar, 1000);
+  setTimeout(tentar, 2500);
 }
 
 function vozesPtBR() {
@@ -133,53 +255,37 @@ function vozesPtBR() {
   });
 }
 
-function filtrarVozes(ptBR) {
-  if (!isIOS) return ptBR;
-  const semSiri = ptBR.filter(v => !/siri/i.test(v.name));
-  return semSiri.length > 0 ? semSiri : ptBR;
-}
-
 /* =====================================================
-   PAPÉIS E PERFIS
+   PERFIS
    ===================================================== */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
-
 const SIMBOLOS = {
   professor: '§',
-  aluno1: '·',
-  aluno2: '·',
-  aluno3: '·',
-  aluno4: '·',
-  aluno5: '·',
-  aluno6: '·',
-  aluno7: '·'
+  aluno1: '·', aluno2: '·', aluno3: '·', aluno4: '·',
+  aluno5: '·', aluno6: '·', aluno7: '·'
 };
 
 const PERFIS = {
-  professor: { rate: 0.84, pitch: 0.88, volume: 1.0,
-    microCurta: 200, microLonga: 300,
-    pausas: { abertura:800, definicao:450, pergunta:300, confirmacao:350, guarde:850, conclusao:600, pausa:650 } },
-  aluno1: { rate: 1.02, pitch: 1.18, volume: 0.95,
-    microCurta: 100, microLonga: 180,
-    pausas: { abertura:280, definicao:200, pergunta:250, confirmacao:200, guarde:300, conclusao:300, pausa:400 } },
-  aluno2: { rate: 0.94, pitch: 0.96, volume: 0.95,
-    microCurta: 120, microLonga: 180,
-    pausas: { abertura:260, definicao:220, pergunta:240, confirmacao:200, guarde:280, conclusao:260, pausa:380 } },
-  aluno3: { rate: 0.98, pitch: 1.10, volume: 0.95,
-    microCurta: 140, microLonga: 200,
-    pausas: { abertura:300, definicao:240, pergunta:300, confirmacao:220, guarde:300, conclusao:280, pausa:400 } },
-  aluno4: { rate: 0.88, pitch: 0.90, volume: 0.95,
-    microCurta: 160, microLonga: 220,
-    pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:320, conclusao:300, pausa:420 } },
-  aluno5: { rate: 1.06, pitch: 1.12, volume: 0.95,
-    microCurta: 110, microLonga: 170,
-    pausas: { abertura:260, definicao:200, pergunta:260, confirmacao:200, guarde:280, conclusao:260, pausa:380 } },
-  aluno6: { rate: 0.92, pitch: 1.04, volume: 0.95,
-    microCurta: 130, microLonga: 190,
-    pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } },
-  aluno7: { rate: 0.96, pitch: 0.94, volume: 0.95,
-    microCurta: 140, microLonga: 200,
-    pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } }
+  professor: {
+    rate: 0.76, pitch: 0.80, volume: 1.0,
+    microCurta: 280, microLonga: 420,
+    rateEnfase: 0.70, pitchEnfase: 0.76,
+    pausas: { abertura:1100, definicao:520, pergunta:350, confirmacao:480, guarde:1200, conclusao:900, pausa:800 }
+  },
+  aluno1: { rate:1.12, pitch:1.42, volume:0.92, microCurta:80,  microLonga:150, rateEnfase:1.02, pitchEnfase:1.38,
+    pausas:{ abertura:220, definicao:180, pergunta:240, confirmacao:180, guarde:260, conclusao:240, pausa:360 } },
+  aluno2: { rate:0.80, pitch:0.72, volume:0.92, microCurta:160, microLonga:230, rateEnfase:0.73, pitchEnfase:0.70,
+    pausas:{ abertura:280, definicao:240, pergunta:260, confirmacao:220, guarde:300, conclusao:280, pausa:420 } },
+  aluno3: { rate:1.02, pitch:1.22, volume:0.92, microCurta:100, microLonga:170, rateEnfase:0.94, pitchEnfase:1.18,
+    pausas:{ abertura:300, definicao:240, pergunta:300, confirmacao:220, guarde:300, conclusao:280, pausa:400 } },
+  aluno4: { rate:0.78, pitch:0.93, volume:0.92, microCurta:180, microLonga:240, rateEnfase:0.70, pitchEnfase:0.90,
+    pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:320, conclusao:300, pausa:420 } },
+  aluno5: { rate:1.18, pitch:1.32, volume:0.92, microCurta:70,  microLonga:140, rateEnfase:1.08, pitchEnfase:1.28,
+    pausas:{ abertura:200, definicao:160, pergunta:220, confirmacao:160, guarde:240, conclusao:220, pausa:340 } },
+  aluno6: { rate:0.90, pitch:1.08, volume:0.92, microCurta:110, microLonga:180, rateEnfase:0.83, pitchEnfase:1.03,
+    pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } },
+  aluno7: { rate:0.96, pitch:0.86, volume:0.92, microCurta:140, microLonga:210, rateEnfase:0.88, pitchEnfase:0.83,
+    pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } }
 };
 
 /* =====================================================
@@ -187,98 +293,101 @@ const PERFIS = {
    ===================================================== */
 const AULA = [
   { papel:'professor', tipo:'abertura',
-    texto:"Bom dia, turma. Hoje vamos entender o que é gestão de pessoas." },
+    texto:"Bom dia, turma. Hoje vamos entender o que é *gestão de pessoas*." },
   { papel:'aluno1', tipo:'pergunta',
     texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
   { papel:'professor', tipo:'definicao',
-    texto:"Boa pergunta. Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
+    texto:"Boa pergunta. Gestão de pessoas é a área responsável pelo *ser humano* no trabalho." },
   { papel:'professor', tipo:'definicao',
-    texto:"Ela atrai, desenvolve, motiva | e mantém as pessoas dentro da empresa." },
+    texto:"Ela atrai, desenvolve, motiva | e *mantém* as pessoas dentro da empresa." },
   { papel:'aluno2', tipo:'confirmacao',
     texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
   { papel:'professor', tipo:'definicao',
-    texto:"Exatamente. Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
+    texto:"*Exatamente.* Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
   { papel:'aluno5', tipo:'pergunta',
     texto:"E como isso funciona no dia a dia?" },
   { papel:'professor', tipo:'definicao',
-    texto:"No dia a dia, aparece em cada decisão sobre pessoas." },
-
+    texto:"No dia a dia, aparece em *cada decisão* sobre pessoas." },
   { tipo:'pausa' },
-
   { papel:'aluno3', tipo:'pergunta',
     texto:"Mas professor, isso sempre foi assim?" },
   { papel:'professor', tipo:'definicao',
-    texto:"Não. Durante muito tempo, essa área foi vista apenas como operacional." },
+    texto:"*Não.* Durante muito tempo, essa área foi vista apenas como operacional." },
   { papel:'professor', tipo:'definicao',
-    texto:"Cuidava de folha de pagamento, ponto, férias e documentação." },
+    texto:"Cuidava de folha de pagamento, ponto, férias | e documentação." },
   { papel:'aluno1', tipo:'confirmacao',
     texto:"Ah, o famoso setor que resolvia papelada." },
   { papel:'professor', tipo:'confirmacao',
-    texto:"Isso mesmo. Era o setor da papelada." },
+    texto:"Isso mesmo. Era o setor da *papelada*." },
   { papel:'aluno6', tipo:'pergunta',
     texto:"E o que fazia alguém mudar de ideia?" },
   { papel:'professor', tipo:'definicao',
-    texto:"A percepção de que pessoas fazem a diferença nos resultados." },
-
+    texto:"A percepção de que *pessoas* fazem a diferença nos resultados." },
   { tipo:'pausa' },
-
   { papel:'aluno2', tipo:'pergunta',
     texto:"E hoje, o que mudou?" },
   { papel:'professor', tipo:'definicao',
-    texto:"Hoje o cenário mudou completamente." },
+    texto:"Hoje o cenário mudou *completamente*." },
   { papel:'professor', tipo:'definicao',
-    texto:"A gestão de pessoas passou a ser estratégica." },
+    texto:"A gestão de pessoas passou a ser *estratégica*." },
   { papel:'professor', tipo:'definicao',
-    texto:"Ela participa das decisões importantes da organização." },
+    texto:"Ela participa das *decisões importantes* da organização." },
   { papel:'aluno4', tipo:'confirmacao',
     texto:"Então ela deixou de só resolver problemas e passou a construir resultados." },
   { papel:'professor', tipo:'confirmacao',
-    texto:"Exatamente. Essa é a virada de chave." },
-
+    texto:"*Exatamente.* Essa é a virada de chave." },
   { tipo:'pausa' },
-
   { papel:'aluno7', tipo:'pergunta',
     texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
   { papel:'professor', tipo:'definicao',
-    texto:"Tem. E é uma diferença importante." },
+    texto:"Tem. E é uma diferença *importante*." },
   { papel:'professor', tipo:'definicao',
     texto:"Gestão de recursos humanos é o nome mais antigo." },
   { papel:'professor', tipo:'definicao',
-    texto:"Ligado à ideia de que pessoas são recursos. Como máquinas, como dinheiro." },
+    texto:"Ligado à ideia de que pessoas são *recursos*. Como máquinas, como dinheiro." },
   { papel:'professor', tipo:'definicao',
-    texto:"Gestão de pessoas é o nome mais moderno." },
+    texto:"Gestão de pessoas é o nome mais *moderno*." },
   { papel:'professor', tipo:'definicao',
-    texto:"Ela enxerga o ser humano como parceiro da organização. Não como recurso." },
+    texto:"Ela enxerga o ser humano como *parceiro* da organização. Não como recurso." },
   { papel:'aluno1', tipo:'confirmacao',
     texto:"Então não é só uma troca de nome." },
   { papel:'professor', tipo:'definicao',
-    texto:"Não. É uma mudança de mentalidade." },
+    texto:"*Não.* É uma mudança de *mentalidade*." },
   { papel:'professor', tipo:'definicao',
-    texto:"Antes, a pessoa era vista como custo. || Agora, é vista como diferencial competitivo." },
-
+    texto:"Antes, a pessoa era vista como custo. || Agora, é vista como *diferencial competitivo*." },
   { tipo:'pausa' },
-
   { papel:'professor', tipo:'guarde',
-    texto:"Guarde isto." },
+    texto:"*Guarde isto.*" },
   { papel:'professor', tipo:'guarde',
-    texto:"Gestão de pessoas é a área que cuida do ser humano no trabalho." },
+    texto:"Gestão de pessoas é a área que cuida do *ser humano* no trabalho." },
   { papel:'aluno4', tipo:'guarde',
     texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
   { papel:'professor', tipo:'guarde',
-    texto:"E passa a construir resultados." },
+    texto:"E passa a *construir resultados*." },
   { papel:'aluno2', tipo:'guarde',
     texto:"Agora ficou claro, professor." },
   { papel:'professor', tipo:'conclusao',
-    texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre gente. Sempre foi. E sempre será." }
+    texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
 ];
 
 let synth = window.speechSynthesis;
 let tocando = false;
+let pausado = false;
 let cancelar = false;
+let indiceAtual = 0;
+let velocidade = 1.0;
 
-/* ── Render ── */
+/* Delays adaptativos — começam CURTOS e crescem se o iOS falhar */
+let delayFantasma = isIOS ? 300 : 80;
+let delayPosFantasma = isIOS ? 250 : 60;
+
+/* =====================================================
+   RENDER
+   ===================================================== */
 function renderTextoLegivel(texto) {
-  return texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
+  let t = texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
+  t = t.replace(/\*([^*]+)\*/g, '<span class="enfase">$1</span>');
+  return t;
 }
 
 function renderAula() {
@@ -310,7 +419,12 @@ function destacarFala(idx) {
     else el.classList.add('futura');
   });
   const atual = document.getElementById('fala-' + idx);
-  if (atual) atual.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (atual) {
+    const rect = atual.getBoundingClientRect();
+    if (rect.top < 80 || rect.bottom > window.innerHeight - 100) {
+      atual.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
 }
 
 function resetDestaques() {
@@ -320,39 +434,114 @@ function resetDestaques() {
   });
 }
 
-/* ── Player ── */
-function togglePlay() {
-  if (tocando) { parar(); return; }
-  tocar();
+/* =====================================================
+   BADGE
+   ===================================================== */
+let badgeTimer = null;
+function mostrarBadge(txt) {
+  const el = document.getElementById('badgeVoz');
+  el.textContent = txt;
+  el.classList.add('ativo');
+  clearTimeout(badgeTimer);
+  badgeTimer = setTimeout(() => el.classList.remove('ativo'), 1600);
 }
 
-function parar() {
-  cancelar = true;
-  synth.cancel();
-  tocando = false;
-  resetDestaques();
-  setBtnEstado(false);
-  setProgresso(0);
-}
-
+/* =====================================================
+   UI
+   ===================================================== */
 function setBtnEstado(playing) {
-  const btn = document.getElementById('btnPlay');
+  const btn = document.getElementById('btnPlayFlut');
+  const icone = document.getElementById('iconePlay');
   if (playing) {
-    btn.className = 'btn-play tocando';
-    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Parar`;
+    btn.classList.add('tocando');
+    icone.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
   } else {
-    btn.className = 'btn-play';
-    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M8 5v14l11-7z"/></svg> Ouvir`;
+    btn.classList.remove('tocando');
+    icone.innerHTML = '<path d="M8 5v14l11-7z"/>';
   }
 }
 
-function setProgresso(pct) {
-  document.getElementById('prog').style.width = pct + '%';
+function setProgresso(pct) { document.getElementById('progMini').style.width = pct + '%'; }
+function setStatus(txt)    { document.getElementById('statusMini').textContent = txt; }
+
+function atualizarBotoesNavegacao() {
+  const temAnterior = AULA.slice(0, indiceAtual).some(f => f.tipo !== 'pausa');
+  const temProximo  = AULA.slice(indiceAtual + 1).some(f => f.tipo !== 'pausa');
+  document.getElementById('btnAnterior').disabled = !temAnterior;
+  document.getElementById('btnProximo').disabled  = !temProximo;
 }
 
-/* ── Micro-pausas ── */
+/* =====================================================
+   VELOCIDADE
+   ===================================================== */
+const VELOCIDADES = [0.75, 1.0, 1.25, 1.5, 2.0];
+
+function ciclarVelocidade() {
+  const i = VELOCIDADES.indexOf(velocidade);
+  velocidade = VELOCIDADES[(i + 1) % VELOCIDADES.length];
+  const btn = document.getElementById('btnVel');
+  btn.textContent = velocidade.toFixed(2).replace(/0$/, '') + '×';
+  btn.classList.toggle('ativa', velocidade !== 1.0);
+  if (tocando && !pausado) {
+    const idx = indiceAtual;
+    pararSilencioso();
+    setTimeout(() => { indiceAtual = idx; tocarDeOndeParou(); }, 100);
+  }
+}
+
+/* =====================================================
+   PLAY / PAUSE / PULAR
+   ===================================================== */
+function togglePlay() {
+  if (tocando && !pausado) {
+    pausado = true;
+    cancelar = true;
+    synth.cancel();
+    setBtnEstado(false);
+    setStatus('Pausado');
+    return;
+  }
+  if (tocando && pausado) {
+    pausado = false;
+    tocarDeOndeParou();
+    return;
+  }
+  indiceAtual = 0;
+  tocarDeOndeParou();
+}
+
+function pararSilencioso() {
+  cancelar = true;
+  synth.cancel();
+  tocando = false;
+  pausado = false;
+  setBtnEstado(false);
+}
+
+function pularFrase(direcao) {
+  let novo = indiceAtual + direcao;
+  while (novo >= 0 && novo < AULA.length && AULA[novo].tipo === 'pausa') {
+    novo += direcao;
+  }
+  if (novo < 0 || novo >= AULA.length) return;
+
+  const estavaTocando = tocando && !pausado;
+  pararSilencioso();
+  indiceAtual = novo;
+
+  if (estavaTocando) {
+    setTimeout(() => tocarDeOndeParou(), 80);
+  } else {
+    destacarFala(indiceAtual);
+    atualizarBotoesNavegacao();
+    const f = AULA[indiceAtual];
+    setStatus(f.papel === 'professor' ? 'Professor' : 'Aluno');
+  }
+}
+
+/* =====================================================
+   FALA
+   ===================================================== */
 function dividirComMicroPausas(texto) {
   const partesLongas = texto.split(/\s*\|\|\s*/);
   const segmentos = [];
@@ -361,7 +550,17 @@ function dividirComMicroPausas(texto) {
     const partesCurtas = parte.split(/\s*\|\s*/);
     partesCurtas.forEach((p, iCurta) => {
       if (iCurta > 0) segmentos.push({ tipo:'pausaCurta' });
-      if (p.trim()) segmentos.push({ tipo:'fala', texto:p.trim() });
+      if (p.trim()) {
+        const comEnfase = p.split(/(\*[^*]+\*)/g);
+        comEnfase.forEach(frag => {
+          if (!frag) return;
+          if (frag.startsWith('*') && frag.endsWith('*')) {
+            segmentos.push({ tipo:'enfase', texto: frag.slice(1, -1).trim() });
+          } else if (frag.trim()) {
+            segmentos.push({ tipo:'fala', texto: frag.trim() });
+          }
+        });
+      }
     });
   });
   return segmentos;
@@ -369,15 +568,23 @@ function dividirComMicroPausas(texto) {
 
 function falar(texto, rate, pitch, volume, voz) {
   return new Promise(resolve => {
+    let resolvido = false;
+    const finalizar = () => { if (!resolvido) { resolvido = true; resolve(); } };
+
     const u = new SpeechSynthesisUtterance(texto);
     u.lang = 'pt-BR';
-    u.rate = rate;
+    u.rate = Math.max(0.1, Math.min(2.0, rate * velocidade));
     u.pitch = pitch;
     u.volume = volume ?? 1.0;
     if (voz) u.voice = voz;
-    u.onend = resolve;
-    u.onerror = resolve;
+    u.onend = finalizar;
+    u.onerror = finalizar;
+
     synth.speak(u);
+
+    // Watchdog: se onend nunca disparar, libera depois de tempo proporcional
+    const estimativa = Math.max(3000, texto.length * 120 / u.rate);
+    setTimeout(finalizar, estimativa);
   });
 }
 
@@ -386,9 +593,11 @@ async function falarComMicroPausas(textoOriginal, perfil, voz) {
   for (const seg of segmentos) {
     if (cancelar) return;
     if (seg.tipo === 'pausaCurta') {
-      await esperar(perfil.microCurta);
+      await esperar(perfil.microCurta / velocidade);
     } else if (seg.tipo === 'pausaLonga') {
-      await esperar(perfil.microLonga);
+      await esperar(perfil.microLonga / velocidade);
+    } else if (seg.tipo === 'enfase') {
+      await falar(seg.texto, perfil.rateEnfase, perfil.pitchEnfase, perfil.volume, voz);
     } else if (seg.tipo === 'fala') {
       await falar(seg.texto, perfil.rate, perfil.pitch, perfil.volume, voz);
     }
@@ -399,33 +608,86 @@ function esperar(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function forcarTrocaVoz(voz) {
+/* =====================================================
+   TROCA DE VOZ — iOS usa hack, desktop não
+   ===================================================== */
+async function trocarVoz(vozAntiga, vozNova) {
+  const debugEl = document.getElementById('debugTroca');
+  debugEl.textContent = `Trocando: ${vozAntiga ? vozAntiga.name : '—'} → ${vozNova.name}`;
+
+  // No desktop, o voice é respeitado diretamente — só cancela e segue
+  if (!isIOS) {
+    synth.cancel();
+    await esperar(50);
+    mostrarBadge(`🎙️ ${vozNova.name}`);
+    return;
+  }
+
+  // iOS: precisa do ritual completo
+  if (vozAntiga) {
+    await new Promise(resolve => {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.voice = vozAntiga;
+      u.volume = 0.01;
+      u.rate = 2.5;
+      u.onend = resolve;
+      u.onerror = resolve;
+      synth.speak(u);
+      setTimeout(resolve, 150);
+    });
+  }
+
   synth.cancel();
-  await esperar(150);
-  await falar(' ', 1.0, 1.0, 0.001, voz);
-  await esperar(250);
+  await esperar(100);
+
+  await new Promise(resolve => {
+    const u = new SpeechSynthesisUtterance('.');
+    u.voice = vozNova;
+    u.volume = 0.01;
+    u.rate = 1.0;
+    u.onend = resolve;
+    u.onerror = resolve;
+    synth.speak(u);
+    setTimeout(resolve, delayFantasma);
+  });
+
+  await esperar(delayPosFantasma);
+  mostrarBadge(`🎙️ ${vozNova.name}`);
 }
 
-async function tocar() {
+/* =====================================================
+   LOOP PRINCIPAL — com watchdog de travamento
+   ===================================================== */
+async function tocarDeOndeParou() {
   if (!elenco || !elenco.professor) {
-    alert('Nenhuma voz pt-BR detectada no dispositivo.');
+    setStatus('Sem vozes');
     return;
   }
 
   cancelar = false;
   tocando = true;
+  pausado = false;
   setBtnEstado(true);
 
   const total = AULA.filter(d => d.tipo !== 'pausa').length;
-  let faladas = 0;
-  let ultimaVoz = null;
+  const jaFaladas = AULA.slice(0, indiceAtual).filter(d => d.tipo !== 'pausa').length;
+  let faladas = jaFaladas;
 
-  for (let i = 0; i < AULA.length; i++) {
+  let ultimaVoz = null;
+  for (let k = indiceAtual - 1; k >= 0; k--) {
+    if (AULA[k].tipo !== 'pausa') {
+      ultimaVoz = elenco[AULA[k].papel];
+      break;
+    }
+  }
+
+  for (let i = indiceAtual; i < AULA.length; i++) {
     if (cancelar) return;
+    indiceAtual = i;
     const fala = AULA[i];
 
     if (fala.tipo === 'pausa') {
-      await esperar(PERFIS.professor.pausas.pausa);
+      await esperar(PERFIS.professor.pausas.pausa / velocidade);
       continue;
     }
 
@@ -433,30 +695,167 @@ async function tocar() {
     const perfil = PERFIS[fala.papel];
 
     if (voz !== ultimaVoz) {
-      await forcarTrocaVoz(voz);
+      await trocarVoz(ultimaVoz, voz);
       if (cancelar) return;
       ultimaVoz = voz;
     }
 
     const pausaAntes = perfil.pausas[fala.tipo] || 0;
-    if (pausaAntes > 0) await esperar(pausaAntes);
+    if (pausaAntes > 0) await esperar(pausaAntes / velocidade);
 
     destacarFala(i);
+    atualizarBotoesNavegacao();
+    setStatus(fala.papel === 'professor' ? 'Professor' : 'Aluno');
+
     faladas++;
     setProgresso(Math.round((faladas / total) * 100));
 
     await falarComMicroPausas(fala.texto, perfil, voz);
+    if (cancelar) return;
   }
 
   if (!cancelar) {
     resetDestaques();
     setProgresso(100);
+    setStatus('Fim');
     setTimeout(() => {
       setBtnEstado(false);
       setProgresso(0);
+      setStatus('Pronto');
       tocando = false;
+      pausado = false;
+      indiceAtual = 0;
     }, 800);
   }
+}
+
+/* =====================================================
+   PLAYER ARRASTÁVEL
+   ===================================================== */
+const player = document.getElementById('playerFlutuante');
+const handle = document.getElementById('handle');
+let arrastando = false;
+let startX = 0, startY = 0, startLeft = 0, startTop = 0;
+let moveu = false;
+
+(function restaurarPosicao() {
+  try {
+    const salvo = JSON.parse(localStorage.getItem('playerPos') || 'null');
+    if (salvo && typeof salvo.left === 'number' && typeof salvo.top === 'number') {
+      const maxL = window.innerWidth - 80;
+      const maxT = window.innerHeight - 80;
+      player.style.left = Math.max(0, Math.min(maxL, salvo.left)) + 'px';
+      player.style.top  = Math.max(0, Math.min(maxT, salvo.top)) + 'px';
+      player.style.right = 'auto';
+      player.style.bottom = 'auto';
+    }
+  } catch(e) {}
+})();
+
+function iniciarArraste(e) {
+  if (e.target !== handle && !handle.contains(e.target)) return;
+  arrastando = true;
+  moveu = false;
+  player.classList.add('arrastando');
+  const rect = player.getBoundingClientRect();
+  startLeft = rect.left;
+  startTop = rect.top;
+  const ponto = e.touches ? e.touches[0] : e;
+  startX = ponto.clientX;
+  startY = ponto.clientY;
+  player.style.left = startLeft + 'px';
+  player.style.top = startTop + 'px';
+  player.style.right = 'auto';
+  player.style.bottom = 'auto';
+  e.preventDefault();
+}
+
+function moverArraste(e) {
+  if (!arrastando) return;
+  const ponto = e.touches ? e.touches[0] : e;
+  const dx = ponto.clientX - startX;
+  const dy = ponto.clientY - startY;
+  if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moveu = true;
+  const novoLeft = Math.max(8, Math.min(window.innerWidth - player.offsetWidth - 8, startLeft + dx));
+  const novoTop  = Math.max(8, Math.min(window.innerHeight - player.offsetHeight - 8, startTop + dy));
+  player.style.left = novoLeft + 'px';
+  player.style.top  = novoTop + 'px';
+}
+
+function soltarArraste(e) {
+  if (!arrastando) return;
+  arrastando = false;
+  player.classList.remove('arrastando');
+  const rect = player.getBoundingClientRect();
+  const centroX = rect.left + rect.width / 2;
+  const meio = window.innerWidth / 2;
+  const destinoX = centroX < meio ? 12 : window.innerWidth - rect.width - 12;
+  player.style.transition = 'left .25s cubic-bezier(.2,.8,.3,1)';
+  player.style.left = destinoX + 'px';
+  setTimeout(() => { player.style.transition = ''; }, 300);
+  try {
+    localStorage.setItem('playerPos', JSON.stringify({
+      left: destinoX, top: parseInt(player.style.top)
+    }));
+  } catch(e) {}
+  e.preventDefault();
+}
+
+handle.addEventListener('mousedown', iniciarArraste);
+document.addEventListener('mousemove', moverArraste);
+document.addEventListener('mouseup', soltarArraste);
+handle.addEventListener('touchstart', iniciarArraste, { passive: false });
+document.addEventListener('touchmove', moverArraste, { passive: false });
+document.addEventListener('touchend', soltarArraste);
+
+let toquesHandle = [];
+handle.addEventListener('touchend', () => {
+  if (moveu) return;
+  const agora = Date.now();
+  toquesHandle.push(agora);
+  toquesHandle = toquesHandle.filter(t => agora - t < 600);
+
+  if (toquesHandle.length === 3) {
+    document.getElementById('debugPanel').classList.toggle('ativo');
+    atualizarDebug();
+    toquesHandle = [];
+  } else if (toquesHandle.length === 2) {
+    setTimeout(() => {
+      if (toquesHandle.length === 2) {
+        player.classList.toggle('minimizado');
+        toquesHandle = [];
+      }
+    }, 620);
+  }
+});
+
+/* =====================================================
+   DEBUG
+   ===================================================== */
+function atualizarDebug() {
+  const el = document.getElementById('debugElenco');
+  if (!elenco) { el.textContent = 'Elenco não montado.'; return; }
+
+  const linhas = Object.entries(elenco).map(([papel, voz]) => {
+    const ativo = AULA[indiceAtual] && AULA[indiceAtual].papel === papel ? ' ativa' : '';
+    return `<div class="linha${ativo}">
+      <span>${papel}</span>
+      <span class="voz">${voz.name}</span>
+    </div>`;
+  }).join('');
+
+  const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
+  const aviso = unicas < 3
+    ? `<div class="aviso">⚠️ Só ${unicas} vozes distintas. Instale mais em Ajustes → Acessibilidade → Conteúdo Falado → Vozes → Português (Brasil).</div>`
+    : '';
+
+  el.innerHTML = linhas + `<div style="margin-top:8px;color:#94a3b8">
+    Vozes únicas: ${unicas} · pt-BR disponíveis: ${vozesPtBR().length}
+  </div>` + aviso;
+}
+
+function fecharDebug() {
+  document.getElementById('debugPanel').classList.remove('ativo');
 }
 
 /* =====================================================
@@ -464,14 +863,18 @@ async function tocar() {
    ===================================================== */
 function distribuirElenco(vozes) {
   if (vozes.length === 0) return null;
-  const masculinas = vozes.filter(v => /felipe|daniel|antonio|antônio|marcos|paulo|ricardo|joão|joao|carlos|bruno|thiago|hugo/i.test(v.name));
-  const professorVoz = masculinas[0] || vozes[0];
-  const outras = vozes.filter(v => v !== professorVoz);
-  const filaAlunos = outras.length > 0 ? outras : [professorVoz];
+  const normais = vozes.filter(v => !/siri/i.test(v.name));
+  const siris   = vozes.filter(v => /siri/i.test(v.name));
+  const ordenadas = [...normais, ...siris];
 
-  const e = { professor: professorVoz };
+  let professor = ordenadas.find(v => /felipe/i.test(v.name))
+              || ordenadas.find(v => !/siri/i.test(v.name))
+              || ordenadas[0];
+
+  const restantes = ordenadas.filter(v => v !== professor);
+  const e = { professor };
   PAPEIS_ALUNO.forEach((papel, i) => {
-    e[papel] = filaAlunos[i % filaAlunos.length];
+    e[papel] = restantes[i % restantes.length] || professor;
   });
   return e;
 }
@@ -480,12 +883,34 @@ function distribuirElenco(vozes) {
    INIT
    ===================================================== */
 carregarVozesComRetry(() => {
-  const ptBR = filtrarVozes(vozesPtBR());
+  const ptBR = vozesPtBR();
   if (ptBR.length === 0) {
-    alert('Nenhuma voz pt-BR detectada no dispositivo.');
+    setStatus('Sem vozes pt-BR');
+    mostrarBadge('⚠️ Nenhuma voz pt-BR');
     return;
   }
   elenco = distribuirElenco(ptBR);
+  const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
+  setStatus(`${unicas} vozes · 1.0×`);
+  atualizarBotoesNavegacao();
+
+  // Pré-aquecimento SÓ no iOS, e sem travar o app
+  if (isIOS) {
+    setTimeout(() => {
+      const vozesUnicas = [...new Set(Object.values(elenco))];
+      vozesUnicas.forEach((voz, i) => {
+        setTimeout(() => {
+          try {
+            const u = new SpeechSynthesisUtterance(' ');
+            u.voice = voz;
+            u.volume = 0.01;
+            u.rate = 2.0;
+            speechSynthesis.speak(u);
+          } catch(e) {}
+        }, i * 120);
+      });
+    }, 400);
+  }
 });
 </script>
 </body>
