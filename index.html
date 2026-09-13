@@ -10,115 +10,77 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0f172a; color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Georgia, serif;
+    background: #0f172a; color: #cbd5e1;
     min-height: 100dvh;
     padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
     display: flex; flex-direction: column;
   }
 
-  .cabecalho {
-    padding: 18px 18px 0;
-    text-align: center;
-  }
-  .cabecalho h1 {
-    font-size: .95rem; font-weight: 700; color: #93c5fd;
-    margin-bottom: 4px;
-  }
-  .cabecalho p {
-    font-size: .72rem; color: #64748b;
-  }
-
-  .conteudo {
-    flex: 1; padding: 16px 18px 0;
-    overflow: hidden; display: flex; flex-direction: column;
-  }
+  .conteudo { flex: 1; padding: 24px 22px 0; overflow: hidden; display: flex; flex-direction: column; }
 
   .texto-bloco {
-    background: #1e293b; border-radius: 12px; padding: 14px;
     flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    font-size: 1.02rem; line-height: 1.85;
+    color: #cbd5e1;
   }
 
   .fala {
-    display: flex; gap: 8px; margin-bottom: 10px;
-    align-items: flex-start;
-    transition: opacity .2s;
+    margin-bottom: 14px;
+    transition: opacity .25s, background .25s;
   }
-  .avatar {
-    width: 32px; height: 32px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .72rem; font-weight: 800; flex-shrink: 0;
-    color: #fff;
+
+  .simbolo {
+    font-weight: 700;
+    margin-right: 8px;
+    font-size: 1.1em;
+    opacity: .85;
   }
-  .fala.professor .avatar { background: #7c3aed; }
-  .fala.aluno1   .avatar { background: #3b82f6; }
-  .fala.aluno2   .avatar { background: #f59e0b; }
-  .fala.aluno3   .avatar { background: #10b981; }
-  .fala.aluno4   .avatar { background: #ec4899; }
+  .fala.professor .simbolo { color: #a78bfa; }
+  .fala.aluno1 .simbolo   { color: #60a5fa; }
+  .fala.aluno2 .simbolo   { color: #fbbf24; }
+  .fala.aluno3 .simbolo   { color: #34d399; }
+  .fala.aluno4 .simbolo   { color: #f472b6; }
+  .fala.aluno5 .simbolo   { color: #22d3ee; }
+  .fala.aluno6 .simbolo   { color: #fb923c; }
+  .fala.aluno7 .simbolo   { color: #c084fc; }
 
-  .balao {
-    flex: 1; padding: 8px 12px; border-radius: 12px;
-    font-size: .88rem; line-height: 1.5;
-    background: #0f172a; color: #cbd5e1;
-    border: 1px solid #334155;
-    transition: background .15s, border-color .15s, color .15s;
+  .fala.falando {
+    background: rgba(124, 58, 237, .15);
+    border-left: 3px solid #7c3aed;
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin-left: -13px;
+    margin-right: -10px;
+    color: #f1f5f9;
   }
-  .fala.professor .balao { border-top-left-radius: 4px; }
-  .fala.aluno1   .balao { border-top-left-radius: 4px; }
-  .fala.aluno2   .balao { border-top-right-radius: 4px; }
-  .fala.aluno3   .balao { border-top-left-radius: 4px; }
-  .fala.aluno4   .balao { border-top-right-radius: 4px; }
+  .fala.falada { opacity: .4; }
+  .fala.futura { opacity: .78; }
 
-  .fala.falando .balao { color: #fff; }
-  .fala.professor.falando .balao { background: #4c1d95; border-color: #7c3aed; }
-  .fala.aluno1.falando   .balao { background: #1e3a8a; border-color: #3b82f6; }
-  .fala.aluno2.falando   .balao { background: #78350f; border-color: #f59e0b; }
-  .fala.aluno3.falando   .balao { background: #064e3b; border-color: #10b981; }
-  .fala.aluno4.falando   .balao { background: #831843; border-color: #ec4899; }
+  .quebra { height: 14px; }
 
-  .fala.falada { opacity: .45; }
-  .fala.futura { opacity: .65; }
-
-  .quebra { height: 10px; }
-
-  .player { padding: 12px 0 0; }
+  .player { padding: 16px 0 20px; }
   .btn-play {
     width: 100%; min-height: 52px; border: none; border-radius: 12px;
-    font-size: .95rem; font-weight: 800; font-family: inherit; cursor: pointer;
+    font-size: 1rem; font-weight: 800; font-family: inherit; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 9px;
     transition: opacity .15s, transform .1s;
     background: #2563eb; color: #fff;
   }
-  .btn-play:active { opacity: .8; transform: scale(.97); }
+  .btn-play:active { opacity: .85; transform: scale(.98); }
   .btn-play.tocando { background: #dc2626; }
 
-  .elenco {
-    font-size: .68rem; color: #475569; text-align: center;
-    padding: 10px 0 12px; font-weight: 600; line-height: 1.6;
-  }
-  .elenco .prof { color: #a78bfa; font-weight: 700; }
-  .elenco .a1 { color: #60a5fa; font-weight: 700; }
-  .elenco .a2 { color: #fbbf24; font-weight: 700; }
-  .elenco .a3 { color: #34d399; font-weight: 700; }
-  .elenco .a4 { color: #f472b6; font-weight: 700; }
-  .modo { font-size: .62rem; color: #64748b; text-align: center; padding-bottom: 8px; font-style: italic; }
-
   .progresso-wrap {
-    margin-top: 8px; height: 4px; background: #1e293b;
+    margin-top: 10px; height: 3px; background: #1e293b;
     border-radius: 2px; overflow: hidden;
   }
   .progresso-fill {
-    height: 100%; background: #2563eb; border-radius: 2px;
+    height: 100%; background: #3b82f6; border-radius: 2px;
     width: 0%; transition: width .3s;
   }
 </style>
 </head>
 <body>
-
-<div class="cabecalho">
-  <h1>🎓 RH — Bloco 1 · Sala de Aula</h1>
-  <p>1 professor + 4 alunos</p>
-</div>
 
 <div class="conteudo">
   <div class="texto-bloco" id="texto"></div>
@@ -126,25 +88,21 @@
   <div class="player">
     <button class="btn-play" id="btnPlay" onclick="togglePlay()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-      Ouvir aula
+      Ouvir
     </button>
     <div class="progresso-wrap"><div class="progresso-fill" id="prog"></div></div>
-    <div class="elenco" id="elenco">🎙 Detectando vozes...</div>
-    <div class="modo" id="modo"></div>
   </div>
 </div>
 
 <script>
 /* =====================================================
-   1. DETECÇÃO DE VOZES + MODO
-   Detecta se pode usar vozes reais diferentes.
-   Se sim → Modo Real (PC/Android).
-   Se não → Modo Personagem (iOS): 1 voz real + 5 perfis.
+   DETECÇÃO DE VOZES
    ===================================================== */
 let todasAsVozes = [];
-let vozesCarregadas = false;
-let modoReal = false;      // true = usa vozes diferentes de verdade
 let elenco = null;
+
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 function carregarVozesComRetry(callback) {
   let tentativas = 0;
@@ -153,11 +111,10 @@ function carregarVozesComRetry(callback) {
     const vozes = window.speechSynthesis.getVoices();
     if (vozes.length > 0) {
       todasAsVozes = vozes;
-      vozesCarregadas = true;
       callback();
       return;
     }
-    if (tentativas < 50) setTimeout(tentar, 100);
+    if (tentativas < 30) setTimeout(tentar, 100);
     else callback();
   }
   if (window.speechSynthesis.addEventListener) {
@@ -176,85 +133,57 @@ function vozesPtBR() {
   });
 }
 
-function detectarModo() {
-  const pt = vozesPtBR();
-  // Se tem 5+ vozes pt-BR, tenta modo real.
-  // Se tem 4 ou menos, usa modo personagem (iOS bloqueia troca de voz).
-  // Mas o critério real: iOS tem várias vozes no getVoices, mas trava na padrão.
-  // Então usamos a user agent como heurística.
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  modoReal = (pt.length >= 5) && !isIOS;
-  return { pt: pt.length, modoReal };
+function filtrarVozes(ptBR) {
+  if (!isIOS) return ptBR;
+  const semSiri = ptBR.filter(v => !/siri/i.test(v.name));
+  return semSiri.length > 0 ? semSiri : ptBR;
 }
 
 /* =====================================================
-   2. ELENCO
-   Modo real: cada papel usa uma voz diferente.
-   Modo personagem: todos os papéis usam a mesma voz real,
-   mas com pitch/rate bem diferentes.
+   PAPÉIS E PERFIS
    ===================================================== */
-function sortearElenco() {
-  const pt = vozesPtBR();
-  if (pt.length === 0) return null;
+const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
 
-  const baralhadas = [...pt];
-  for (let i = baralhadas.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [baralhadas[i], baralhadas[j]] = [baralhadas[j], baralhadas[i]];
-  }
+const SIMBOLOS = {
+  professor: '§',
+  aluno1: '·',
+  aluno2: '·',
+  aluno3: '·',
+  aluno4: '·',
+  aluno5: '·',
+  aluno6: '·',
+  aluno7: '·'
+};
 
-  if (modoReal) {
-    // 5 vozes diferentes
-    return {
-      professor: baralhadas[0],
-      aluno1: baralhadas[1] || baralhadas[0],
-      aluno2: baralhadas[2] || baralhadas[0],
-      aluno3: baralhadas[3] || baralhadas[0],
-      aluno4: baralhadas[4] || baralhadas[0]
-    };
-  } else {
-    // Modo personagem: mesma voz para todos, mas pitch/rate diferentes
-    const vozUnica = baralhadas[0];
-    return {
-      professor: vozUnica,
-      aluno1: vozUnica,
-      aluno2: vozUnica,
-      aluno3: vozUnica,
-      aluno4: vozUnica
-    };
-  }
-}
-
-function atualizarElenco() {
-  const elElenco = document.getElementById('elenco');
-  const elModo = document.getElementById('modo');
-
-  if (!elenco || !elenco.professor) {
-    elElenco.textContent = '⚠️ Nenhuma voz pt-BR detectada';
-    return;
-  }
-
-  if (modoReal) {
-    elElenco.innerHTML = `
-      <span class="prof">Prof:</span> ${elenco.professor.name}<br>
-      <span class="a1">A1:</span> ${elenco.aluno1.name} ·
-      <span class="a2">A2:</span> ${elenco.aluno2.name} ·
-      <span class="a3">A3:</span> ${elenco.aluno3.name} ·
-      <span class="a4">A4:</span> ${elenco.aluno4.name}
-    `;
-    elModo.textContent = '✓ Modo Real — 5 vozes diferentes detectadas';
-  } else {
-    elElenco.innerHTML = `
-      Voz base: <strong>${elenco.professor.name}</strong><br>
-      <span class="prof">Prof</span> · <span class="a1">A1</span> · <span class="a2">A2</span> · <span class="a3">A3</span> · <span class="a4">A4</span> — perfis de tom
-    `;
-    elModo.textContent = '⚠️ Modo Personagem — iOS limita a 1 voz pt-BR; cada papel tem tom próprio';
-  }
-}
+const PERFIS = {
+  professor: { rate: 0.84, pitch: 0.88, volume: 1.0,
+    microCurta: 200, microLonga: 300,
+    pausas: { abertura:800, definicao:450, pergunta:300, confirmacao:350, guarde:850, conclusao:600, pausa:650 } },
+  aluno1: { rate: 1.02, pitch: 1.18, volume: 0.95,
+    microCurta: 100, microLonga: 180,
+    pausas: { abertura:280, definicao:200, pergunta:250, confirmacao:200, guarde:300, conclusao:300, pausa:400 } },
+  aluno2: { rate: 0.94, pitch: 0.96, volume: 0.95,
+    microCurta: 120, microLonga: 180,
+    pausas: { abertura:260, definicao:220, pergunta:240, confirmacao:200, guarde:280, conclusao:260, pausa:380 } },
+  aluno3: { rate: 0.98, pitch: 1.10, volume: 0.95,
+    microCurta: 140, microLonga: 200,
+    pausas: { abertura:300, definicao:240, pergunta:300, confirmacao:220, guarde:300, conclusao:280, pausa:400 } },
+  aluno4: { rate: 0.88, pitch: 0.90, volume: 0.95,
+    microCurta: 160, microLonga: 220,
+    pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:320, conclusao:300, pausa:420 } },
+  aluno5: { rate: 1.06, pitch: 1.12, volume: 0.95,
+    microCurta: 110, microLonga: 170,
+    pausas: { abertura:260, definicao:200, pergunta:260, confirmacao:200, guarde:280, conclusao:260, pausa:380 } },
+  aluno6: { rate: 0.92, pitch: 1.04, volume: 0.95,
+    microCurta: 130, microLonga: 190,
+    pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } },
+  aluno7: { rate: 0.96, pitch: 0.94, volume: 0.95,
+    microCurta: 140, microLonga: 200,
+    pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } }
+};
 
 /* =====================================================
-   3. DIÁLOGO — Sala de aula sobre "O que é gestão de pessoas"
+   DIÁLOGO
    ===================================================== */
 const AULA = [
   { papel:'professor', tipo:'abertura',
@@ -269,6 +198,10 @@ const AULA = [
     texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
   { papel:'professor', tipo:'definicao',
     texto:"Exatamente. Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
+  { papel:'aluno5', tipo:'pergunta',
+    texto:"E como isso funciona no dia a dia?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"No dia a dia, aparece em cada decisão sobre pessoas." },
 
   { tipo:'pausa' },
 
@@ -282,6 +215,10 @@ const AULA = [
     texto:"Ah, o famoso setor que resolvia papelada." },
   { papel:'professor', tipo:'confirmacao',
     texto:"Isso mesmo. Era o setor da papelada." },
+  { papel:'aluno6', tipo:'pergunta',
+    texto:"E o que fazia alguém mudar de ideia?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"A percepção de que pessoas fazem a diferença nos resultados." },
 
   { tipo:'pausa' },
 
@@ -300,8 +237,8 @@ const AULA = [
 
   { tipo:'pausa' },
 
-  { papel:'aluno3', tipo:'pergunta',
-    texto:"Professor, tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
+  { papel:'aluno7', tipo:'pergunta',
+    texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
   { papel:'professor', tipo:'definicao',
     texto:"Tem. E é uma diferença importante." },
   { papel:'professor', tipo:'definicao',
@@ -335,43 +272,6 @@ const AULA = [
     texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre gente. Sempre foi. E sempre será." }
 ];
 
-/* =====================================================
-   4. PERFIS VOCAIS
-   Dois níveis:
-   - modoReal: rate/pitch suaves (as vozes já são diferentes)
-   - modoPersonagem: rate/pitch extremos (precisa criar a ilusão)
-   ===================================================== */
-const PERFIS_REAL = {
-  professor: { rate: 0.86, pitch: 0.94, volume: 1.0, microCurta: 200, microLonga: 300,
-               pausas: { abertura:800, definicao:450, pergunta:300, confirmacao:350, guarde:850, conclusao:600, pausa:650 } },
-  aluno1:    { rate: 0.98, pitch: 1.06, volume: 0.95, microCurta: 100, microLonga: 180,
-               pausas: { abertura:300, definicao:200, pergunta:250, confirmacao:200, guarde:300, conclusao:300, pausa:400 } },
-  aluno2:    { rate: 0.92, pitch: 0.98, volume: 0.95, microCurta: 120, microLonga: 180,
-               pausas: { abertura:250, definicao:200, pergunta:220, confirmacao:180, guarde:280, conclusao:250, pausa:380 } },
-  aluno3:    { rate: 0.94, pitch: 1.02, volume: 0.95, microCurta: 150, microLonga: 220,
-               pausas: { abertura:300, definicao:220, pergunta:300, confirmacao:200, guarde:300, conclusao:280, pausa:400 } },
-  aluno4:    { rate: 0.88, pitch: 0.96, volume: 0.95, microCurta: 160, microLonga: 220,
-               pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:320, conclusao:300, pausa:420 } }
-};
-
-/* Pitch/rate extremos para criar 5 "vozes" diferentes na mesma voz base */
-const PERFIS_PERSONAGEM = {
-  professor: { rate: 0.82, pitch: 0.80, volume: 1.0, microCurta: 240, microLonga: 340,
-               pausas: { abertura:900, definicao:500, pergunta:350, confirmacao:400, guarde:900, conclusao:700, pausa:700 } },
-  aluno1:    { rate: 1.05, pitch: 1.20, volume: 1.0, microCurta: 80,  microLonga: 140,
-               pausas: { abertura:250, definicao:180, pergunta:220, confirmacao:180, guarde:280, conclusao:280, pausa:380 } },
-  aluno2:    { rate: 0.94, pitch: 0.95, volume: 1.0, microCurta: 120, microLonga: 180,
-               pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } },
-  aluno3:    { rate: 0.98, pitch: 1.12, volume: 1.0, microCurta: 150, microLonga: 220,
-               pausas: { abertura:320, definicao:240, pergunta:320, confirmacao:220, guarde:320, conclusao:300, pausa:420 } },
-  aluno4:    { rate: 0.86, pitch: 0.88, volume: 1.0, microCurta: 180, microLonga: 240,
-               pausas: { abertura:300, definicao:240, pergunta:260, confirmacao:220, guarde:340, conclusao:320, pausa:440 } }
-};
-
-function perfilParaPapel(papel) {
-  return modoReal ? PERFIS_REAL[papel] : PERFIS_PERSONAGEM[papel];
-}
-
 let synth = window.speechSynthesis;
 let tocando = false;
 let cancelar = false;
@@ -394,13 +294,8 @@ function renderAula() {
     const div = document.createElement('div');
     div.className = 'fala ' + fala.papel + ' futura';
     div.id = 'fala-' + i;
-    const label = {
-      professor: 'P', aluno1: 'A1', aluno2: 'A2', aluno3: 'A3', aluno4: 'A4'
-    }[fala.papel];
-    div.innerHTML = `
-      <div class="avatar">${label}</div>
-      <div class="balao">${renderTextoLegivel(fala.texto)}</div>
-    `;
+    const simbolo = SIMBOLOS[fala.papel] || '·';
+    div.innerHTML = `<span class="simbolo">${simbolo}</span>${renderTextoLegivel(fala.texto)}`;
     el.appendChild(div);
   });
 }
@@ -449,7 +344,7 @@ function setBtnEstado(playing) {
   } else {
     btn.className = 'btn-play';
     btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M8 5v14l11-7z"/></svg> Ouvir aula`;
+      <path d="M8 5v14l11-7z"/></svg> Ouvir`;
   }
 }
 
@@ -507,27 +402,13 @@ function esperar(ms) {
 async function forcarTrocaVoz(voz) {
   synth.cancel();
   await esperar(150);
-  await falar(' ', 1.0, 1.0, 1.0, voz);
+  await falar(' ', 1.0, 1.0, 0.001, voz);
   await esperar(250);
 }
 
 async function tocar() {
-  if (!vozesCarregadas) {
-    carregarVozesComRetry(() => {
-      const info = detectarModo();
-      elenco = sortearElenco();
-      atualizarElenco();
-      tocar();
-    });
-    return;
-  }
-  if (!elenco) {
-    detectarModo();
-    elenco = sortearElenco();
-    atualizarElenco();
-  }
   if (!elenco || !elenco.professor) {
-    alert('Nenhuma voz pt-BR detectada.');
+    alert('Nenhuma voz pt-BR detectada no dispositivo.');
     return;
   }
 
@@ -544,21 +425,14 @@ async function tocar() {
     const fala = AULA[i];
 
     if (fala.tipo === 'pausa') {
-      const perfilProf = perfilParaPapel('professor');
-      await esperar(perfilProf.pausas.pausa);
+      await esperar(PERFIS.professor.pausas.pausa);
       continue;
     }
 
     const voz = elenco[fala.papel];
-    const perfil = perfilParaPapel(fala.papel);
+    const perfil = PERFIS[fala.papel];
 
-    // Workaround iOS: força troca de voz quando muda de voz real (só no modo real)
-    if (modoReal && ultimaVoz !== voz) {
-      await forcarTrocaVoz(voz);
-      if (cancelar) return;
-      ultimaVoz = voz;
-    } else if (!modoReal && ultimaVoz === null) {
-      // No modo personagem, força a voz base uma única vez
+    if (voz !== ultimaVoz) {
       await forcarTrocaVoz(voz);
       if (cancelar) return;
       ultimaVoz = voz;
@@ -585,11 +459,33 @@ async function tocar() {
   }
 }
 
-/* ── Init ── */
+/* =====================================================
+   ELENCO
+   ===================================================== */
+function distribuirElenco(vozes) {
+  if (vozes.length === 0) return null;
+  const masculinas = vozes.filter(v => /felipe|daniel|antonio|antônio|marcos|paulo|ricardo|joão|joao|carlos|bruno|thiago|hugo/i.test(v.name));
+  const professorVoz = masculinas[0] || vozes[0];
+  const outras = vozes.filter(v => v !== professorVoz);
+  const filaAlunos = outras.length > 0 ? outras : [professorVoz];
+
+  const e = { professor: professorVoz };
+  PAPEIS_ALUNO.forEach((papel, i) => {
+    e[papel] = filaAlunos[i % filaAlunos.length];
+  });
+  return e;
+}
+
+/* =====================================================
+   INIT
+   ===================================================== */
 carregarVozesComRetry(() => {
-  detectarModo();
-  elenco = sortearElenco();
-  atualizarElenco();
+  const ptBR = filtrarVozes(vozesPtBR());
+  if (ptBR.length === 0) {
+    alert('Nenhuma voz pt-BR detectada no dispositivo.');
+    return;
+  }
+  elenco = distribuirElenco(ptBR);
 });
 </script>
 </body>
