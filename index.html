@@ -15,7 +15,7 @@
     background: #0f172a;
     color: #cbd5e1;
     min-height: 100dvh;
-    padding: env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 130px);
+    padding: env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 150px);
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
@@ -26,13 +26,15 @@
     padding: 24px 22px 0;
     display: flex;
     flex-direction: column;
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
   }
 
   /* ============================================
-     CARD — página de livro
+     FOLHA (que expande)
      ============================================ */
   .texto-bloco {
-    flex: 1;
     font-size: 1.02rem;
     line-height: 1.75;
     color: #cbd5e1;
@@ -40,15 +42,15 @@
     border: 1px solid rgba(148, 163, 184, .12);
     border-radius: 14px;
     padding: 16px 18px 20px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
     position: relative;
     box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
-    min-height: 200px;
+    min-height: 260px;
     text-align: justify;
     hyphens: auto;
     -webkit-hyphens: auto;
-    transition: background .3s, color .3s;
+    transition: background .3s, color .3s, opacity .25s;
+    /* Sem scroll interno — a folha expande */
+    /* Sem flex:1 — altura cresce com o conteúdo */
   }
 
   /* Tema claro */
@@ -65,29 +67,41 @@
     color: #64748b;
     border-bottom-color: rgba(100, 116, 139, .2);
   }
-  body[data-tema="claro"] .progresso-card {
-    background: rgba(100, 116, 139, .2);
+  body[data-tema="claro"] .progresso-paginas {
+    background: rgba(100, 116, 139, .15);
+  }
+  body[data-tema="claro"] .bolinha-pagina {
+    background: rgba(100, 116, 139, .3);
+  }
+  body[data-tema="claro"] .bolinha-pagina.ativa {
+    background: #7c3aed;
   }
 
-  /* Barra de progresso */
-  .progresso-card {
-    position: sticky;
-    top: -16px;
+  /* Barra de progresso da página (topo da folha) */
+  .progresso-paginas {
+    display: flex;
+    gap: 4px;
+    margin: -8px -18px 12px -18px;
+    padding: 0 18px;
     height: 3px;
+  }
+  .progresso-paginas .segmento {
+    flex: 1;
+    height: 100%;
     background: rgba(148, 163, 184, .15);
     border-radius: 2px;
     overflow: hidden;
-    margin: -16px -18px 10px -18px;
-    z-index: 2;
+    position: relative;
   }
-  .progresso-card-fill {
-    height: 100%;
+  .progresso-paginas .segmento .preenchimento {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
     width: 0%;
     background: linear-gradient(90deg, #7c3aed, #2563eb);
-    transition: width .35s ease;
+    transition: width .3s ease;
   }
 
-  /* Título do capítulo */
+  /* Cabeçalho do capítulo */
   .titulo-capitulo {
     display: block;
     text-align: center;
@@ -96,26 +110,52 @@
     letter-spacing: .22em;
     text-transform: uppercase;
     color: #94a3b8;
-    margin: 0 0 12px 0;
+    margin: 0 0 14px 0;
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(148, 163, 184, .2);
   }
 
-  /* Falas */
+  /* Indicador de páginas (bolinhas) */
+  .bolinhas-pagina {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 0 0 14px 0;
+  }
+  .bolinha-pagina {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(148, 163, 184, .3);
+    transition: background .3s, transform .3s;
+  }
+  .bolinha-pagina.ativa {
+    background: #7c3aed;
+    transform: scale(1.4);
+  }
+
+  /* Falas — fluem como texto corrido */
   .fala {
-    margin-bottom: 10px;
-    transition: opacity .25s, background .25s;
+    display: inline;
+    margin: 0;
+    padding: 0;
+    transition: background .25s, color .25s;
     cursor: pointer;
   }
-  .fala:last-child { margin-bottom: 0; }
+
+  /* Espaço entre falas */
+  .fala::after {
+    content: ' ';
+  }
 
   .simbolo {
     font-weight: 700;
-    margin-right: 6px;
-    font-size: 1.05em;
+    margin-right: 3px;
+    font-size: 1em;
     opacity: .9;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
-  .fala.professor .simbolo { color: #a78bfa; }
+  .fala.professor .simbolo { color: #a78bfa; font-size: 1.1em; letter-spacing: .04em; }
   .fala.aluno1 .simbolo   { color: #60a5fa; }
   .fala.aluno2 .simbolo   { color: #fbbf24; }
   .fala.aluno3 .simbolo   { color: #34d399; }
@@ -124,35 +164,36 @@
   .fala.aluno6 .simbolo   { color: #fb923c; }
   .fala.aluno7 .simbolo   { color: #c084fc; }
 
+  /* Fala atual: marca-texto sutil */
   .fala.falando {
-    background: rgba(124, 58, 237, .18);
-    border-left: 3px solid #7c3aed;
-    border-radius: 4px;
-    padding: 4px 8px;
-    margin-left: -11px;
-    margin-right: -8px;
+    background: rgba(124, 58, 237, .22);
+    border-radius: 3px;
+    padding: 1px 4px;
+    margin: 0 -4px;
     color: #f1f5f9;
+    font-weight: 500;
   }
-  /* No destaque ativo, o símbolo fica levemente maior para chamar atenção */
   .fala.falando .simbolo {
-    font-size: 1.15em;
+    font-size: 1.1em;
     opacity: 1;
   }
-  /* Professor: símbolo sempre mais visível */
-  .fala.professor .simbolo {
-    font-size: 1.1em;
-    letter-spacing: .04em;
-  }
-  .fala.falada { opacity: .4; }
-  .fala.futura { opacity: .9; }
-  .fala:hover { background: rgba(124, 58, 237, .08); border-radius: 3px; }
+
+  .fala.falada { opacity: .42; }
+  .fala.futura { opacity: .92; }
+  .fala:hover { background: rgba(124, 58, 237, .1); border-radius: 3px; }
 
   .enfase {
     color: #fbbf24;
     font-weight: 700;
+    font-style: italic;
     letter-spacing: .01em;
   }
-  .quebra { height: 8px; }
+
+  /* Pausa entre blocos: linha em branco */
+  .quebra {
+    display: block;
+    height: 12px;
+  }
 
   /* ============================================
      TOOLBAR
@@ -188,14 +229,15 @@
   .toolbar button:disabled { opacity: .35; cursor: not-allowed; }
 
   /* ============================================
-     PLAYER
+     PLAYER (com 5 botões)
      ============================================ */
   #playerFlutuante {
     position: fixed;
     z-index: 9999;
     bottom: 24px;
-    right: 18px;
-    width: 240px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
     background: rgba(15, 23, 42, .97);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
@@ -213,7 +255,7 @@
     opacity: .96;
   }
   .handle {
-    height: 18px;
+    height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -234,7 +276,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: 4px;
   }
   .btn-ctrl {
     border: none;
@@ -251,15 +293,20 @@
     touch-action: manipulation;
   }
   .btn-ctrl:active { transform: scale(.92); }
-  .btn-ctrl:disabled { opacity: .35; }
-  .btn-sec { width: 42px; height: 42px; font-size: .95rem; }
+  .btn-ctrl:disabled { opacity: .3; }
+  .btn-sec { width: 38px; height: 38px; font-size: .9rem; }
+  .btn-pagina {
+    background: #312e81;
+    color: #c7d2fe;
+  }
+  .btn-pagina:not(:disabled):hover { background: #3730a3; }
   .btn-play-flut {
-    width: 58px;
-    height: 58px;
+    width: 54px;
+    height: 54px;
     border-radius: 50%;
     background: linear-gradient(135deg, #2563eb, #7c3aed);
     color: #fff;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     box-shadow: 0 6px 18px rgba(37, 99, 235, .4);
   }
   .btn-play-flut.tocando {
@@ -269,8 +316,10 @@
   .rodape {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     margin-top: 8px;
+    padding: 0 4px;
+    gap: 6px;
   }
   .btn-vel {
     padding: 6px 10px;
@@ -287,8 +336,18 @@
     touch-action: manipulation;
   }
   .btn-vel.ativa { background: #1e3a8a; color: #fff; }
+  .contador-pagina {
+    font-size: .68rem;
+    color: #94a3b8;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-align: right;
+    flex: 1;
+    font-family: ui-monospace, Menlo, monospace;
+  }
   #playerFlutuante.minimizado .handle,
   #playerFlutuante.minimizado .controles .btn-sec,
+  #playerFlutuante.minimizado .controles .btn-pagina,
   #playerFlutuante.minimizado .rodape { display: none; }
   #playerFlutuante.minimizado { width: auto; padding: 6px; border-radius: 50%; }
   #playerFlutuante.minimizado .controles { gap: 0; }
@@ -361,7 +420,7 @@
      ============================================ */
   .toast {
     position: fixed;
-    bottom: 110px;
+    bottom: 130px;
     left: 50%;
     transform: translateX(-50%) translateY(20px);
     background: rgba(124, 58, 237, .95);
@@ -384,35 +443,29 @@
 
   /* ── RESPONSIVIDADE ────────────────────────────── */
 
-  /* Telas pequenas (iPhone SE, 375px) */
   @media (max-width: 390px) {
     .texto-bloco { padding: 13px 13px 16px; font-size: .95rem; }
-    #playerFlutuante { width: 210px; padding: 8px 8px 10px; }
-    .btn-play-flut { width: 52px; height: 52px; font-size: 1.25rem; }
-    .btn-sec { width: 38px; height: 38px; font-size: .88rem; }
+    #playerFlutuante { width: 290px; padding: 8px 8px 10px; }
+    .btn-play-flut { width: 48px; height: 48px; font-size: 1.2rem; }
+    .btn-sec { width: 34px; height: 34px; font-size: .82rem; }
     .btn-vel { font-size: .68rem; padding: 5px 8px; min-width: 46px; }
     .toolbar button { width: 38px; height: 38px; font-size: .78rem; }
     .conteudo { padding: 20px 16px 0; }
+    .contador-pagina { font-size: .62rem; }
   }
 
-  /* Telas muito pequenas (iPhone SE 1ª gen, 320px) */
-  @media (max-width: 330px) {
-    #playerFlutuante { width: 190px; }
-    .btn-play-flut { width: 46px; height: 46px; font-size: 1.1rem; }
-    .btn-sec { width: 34px; height: 34px; }
+  @media (max-width: 340px) {
+    #playerFlutuante { width: 270px; }
+    .btn-play-flut { width: 42px; height: 42px; font-size: 1.05rem; }
+    .btn-sec { width: 30px; height: 30px; font-size: .75rem; }
+    .btn-vel { font-size: .62rem; padding: 4px 7px; min-width: 40px; }
   }
 
-  /* Telas médias (iPhone 14/15, 390–430px) */
-  @media (min-width: 391px) and (max-width: 430px) {
-    #playerFlutuante { width: 230px; }
-  }
-
-  /* Tablet / desktop — player um pouco mais largo */
   @media (min-width: 600px) {
-    .conteudo { max-width: 680px; margin: 0 auto; padding: 32px 32px 0; }
-    #playerFlutuante { width: 260px; }
-    .btn-play-flut { width: 62px; height: 62px; font-size: 1.5rem; }
-    .btn-sec { width: 46px; height: 46px; font-size: 1rem; }
+    .conteudo { padding: 32px 32px 0; }
+    #playerFlutuante { width: 340px; }
+    .btn-play-flut { width: 58px; height: 58px; font-size: 1.4rem; }
+    .btn-sec { width: 42px; height: 42px; font-size: .95rem; }
   }
 </style>
 </head>
@@ -438,24 +491,35 @@
 <div id="playerFlutuante" role="region" aria-label="Controles de áudio">
   <div class="handle" id="handle" aria-label="Arraste para mover"></div>
   <div class="controles">
-    <button class="btn-ctrl btn-sec" id="btnAnterior" onclick="pularFrase(-1)" aria-label="Frase anterior">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <button class="btn-ctrl btn-pagina btn-sec" id="btnPaginaAnterior" onclick="pularPagina(-1)" aria-label="Página anterior" title="Página anterior">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/>
+      </svg>
+    </button>
+    <button class="btn-ctrl btn-sec" id="btnAnterior" onclick="pularFrase(-1)" aria-label="Frase anterior" title="Frase anterior">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
       </svg>
     </button>
     <button class="btn-ctrl btn-play-flut" id="btnPlayFlut" onclick="togglePlay()" aria-label="Ouvir ou pausar">
-      <svg id="iconePlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+      <svg id="iconePlay" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z"/>
       </svg>
     </button>
-    <button class="btn-ctrl btn-sec" id="btnProximo" onclick="pularFrase(1)" aria-label="Próxima frase">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <button class="btn-ctrl btn-sec" id="btnProximo" onclick="pularFrase(1)" aria-label="Próxima frase" title="Próxima frase">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
+      </svg>
+    </button>
+    <button class="btn-ctrl btn-pagina btn-sec" id="btnPaginaProxima" onclick="pularPagina(1)" aria-label="Próxima página" title="Próxima página">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"/>
       </svg>
     </button>
   </div>
   <div class="rodape">
     <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">1.0×</button>
+    <span class="contador-pagina" id="contadorPagina">Página 1 / 3</span>
   </div>
 </div>
 
@@ -476,7 +540,6 @@ let prefTema = 'escuro';
 let prefTamanho = 1.02;
 let prefVelocidade = 1.0;
 
-// Lê com validação (não confia em nada que está no localStorage)
 try {
   const t = localStorage.getItem('pref-tema');
   if (t === 'claro' || t === 'escuro') prefTema = t;
@@ -486,9 +549,7 @@ try {
 
   const v = parseFloat(localStorage.getItem('pref-velocidade'));
   if (isFinite(v) && v >= 0.5 && v <= 3.0) prefVelocidade = v;
-} catch(e) {
-  // Se localStorage falhar (modo privado, etc.), segue com padrões
-}
+} catch(e) {}
 
 function salvarPrefs() {
   try {
@@ -528,18 +589,11 @@ function acharIndiceFonte() {
 }
 
 function aplicarFonte() {
-  // 🛡️ FALLBACK TRIPLO:
-  // 1. Garante valor válido
   const tam = (isFinite(prefTamanho) && prefTamanho > 0.3 && prefTamanho < 2.5) ? prefTamanho : 1.02;
-
-  // 2. Seta a variável CSS global (fallback para qualquer elemento)
   document.documentElement.style.setProperty('--tamanho-fonte', tam + 'rem');
-
-  // 3. Seta inline no card (sobrevive a qualquer problema com a var CSS)
   const card = document.getElementById('texto');
   if (card) card.style.fontSize = tam + 'rem';
 
-  // 4. Estado dos botões
   const i = acharIndiceFonte();
   const btnM = document.getElementById('btnFonteMenos');
   const btnP = document.getElementById('btnFonteMais');
@@ -571,7 +625,7 @@ function mostrarToast(txt) {
 }
 
 /* =====================================================
-   VOZES — COM TRY/CATCH DE SEGURANÇA
+   VOZES
    ===================================================== */
 let todasAsVozes = [];
 let elenco = null;
@@ -586,8 +640,6 @@ function carregarVozes(callback) {
     callback();
   };
 
-  // 🛡️ Try/catch: se speechSynthesis falhar (raro, mas acontece em
-  // navegadores antigos ou modo privado agressivo), não trava a página.
   try {
     let vozes = speechSynthesis.getVoices();
     if (vozes.length > 0) {
@@ -604,9 +656,7 @@ function carregarVozes(callback) {
           speechSynthesis.removeEventListener('voiceschanged', handler);
           finalizar();
         }
-      } catch(e) {
-        finalizar();
-      }
+      } catch(e) { finalizar(); }
     };
 
     if (speechSynthesis.addEventListener) {
@@ -627,13 +677,10 @@ function carregarVozes(callback) {
         }
         if (tentativas < 30) setTimeout(poll, 200);
         else finalizar();
-      } catch(e) {
-        finalizar();
-      }
+      } catch(e) { finalizar(); }
     };
     setTimeout(poll, 200);
   } catch(e) {
-    // Se nem isso funcionou, libera o callback com lista vazia
     finalizar();
   }
 }
@@ -649,19 +696,17 @@ function vozesPtBR() {
    PERFIS
    ===================================================== */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
-// Cada papel tem símbolo único → fácil identificar quem fala mesmo sem mudar a voz
 const SIMBOLOS = {
-  professor: '§',   // Professor: símbolo distinto e amplo
-  aluno1:    '▸',   // Rápida/aguda
-  aluno2:    '◂',   // Lenta/grave
-  aluno3:    '›',   // Aguda
-  aluno4:    '‹',   // Grave
-  aluno5:    '▴',   // Mais aguda/rápida
-  aluno6:    '●',   // Média
-  aluno7:    '▾'    // Mais grave/lenta
+  professor: '§',
+  aluno1:    '▸',
+  aluno2:    '◂',
+  aluno3:    '›',
+  aluno4:    '‹',
+  aluno5:    '▴',
+  aluno6:    '●',
+  aluno7:    '▾'
 };
 
-// ── PERFIS ──────────────────────────────────────────────────────────────────
 const PERFIS = {
   professor: {
     rate: 0.90, pitch: 0.75, volume: 1.0,
@@ -669,17 +714,14 @@ const PERFIS = {
     rateEnfase: 0.84, pitchEnfase: 0.72,
     pausas: { abertura:900, definicao:460, pergunta:300, confirmacao:400, guarde:1050, conclusao:820, pausa:640 }
   },
-  // FAIXA AGUDA-RÁPIDA
   aluno1: { rate:1.22, pitch:1.38, volume:0.93, microCurta:55,  microLonga:110, rateEnfase:1.14, pitchEnfase:1.30,
     pausas:{ abertura:160, definicao:130, pergunta:180, confirmacao:130, guarde:200, conclusao:180, pausa:280 } },
   aluno3: { rate:1.15, pitch:1.28, volume:0.93, microCurta:75,  microLonga:140, rateEnfase:1.08, pitchEnfase:1.24,
     pausas:{ abertura:200, definicao:160, pergunta:210, confirmacao:150, guarde:230, conclusao:210, pausa:320 } },
   aluno5: { rate:1.28, pitch:1.45, volume:0.93, microCurta:45,  microLonga:100, rateEnfase:1.20, pitchEnfase:1.40,
     pausas:{ abertura:140, definicao:115, pergunta:160, confirmacao:115, guarde:175, conclusao:155, pausa:250 } },
-  // FAIXA MÉDIO-NORMAL
   aluno6: { rate:1.05, pitch:1.12, volume:0.93, microCurta:100, microLonga:180, rateEnfase:0.97, pitchEnfase:1.08,
     pausas:{ abertura:260, definicao:210, pergunta:230, confirmacao:190, guarde:280, conclusao:260, pausa:380 } },
-  // FAIXA GRAVE-LENTA
   aluno2: { rate:0.88, pitch:0.96, volume:0.93, microCurta:155, microLonga:230, rateEnfase:0.82, pitchEnfase:0.93,
     pausas:{ abertura:280, definicao:240, pergunta:260, confirmacao:220, guarde:300, conclusao:280, pausa:420 } },
   aluno4: { rate:0.94, pitch:1.02, volume:0.93, microCurta:135, microLonga:210, rateEnfase:0.87, pitchEnfase:0.98,
@@ -689,93 +731,107 @@ const PERFIS = {
 };
 
 /* =====================================================
-   DIÁLOGO
+   CONTEÚDO — CAPÍTULO 1 DIVIDIDO EM 3 PÁGINAS
    ===================================================== */
-const AULA = [
-  { papel:'professor', tipo:'abertura',
-    texto:"Bom dia, turma. Hoje vamos entender o que é *gestão de pessoas*." },
-  { papel:'aluno1', tipo:'pergunta',
-    texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
-  { papel:'professor', tipo:'definicao',
-    texto:"Boa pergunta. Gestão de pessoas é a área responsável pelo *ser humano* no trabalho." },
-  { papel:'professor', tipo:'definicao',
-    texto:"Ela atrai, desenvolve, motiva | e *mantém* as pessoas dentro da empresa." },
-  { papel:'aluno2', tipo:'confirmacao',
-    texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
-  { papel:'professor', tipo:'definicao',
-    texto:"*Exatamente.* Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
-  { papel:'aluno5', tipo:'pergunta',
-    texto:"E como isso funciona no dia a dia?" },
-  { papel:'professor', tipo:'definicao',
-    texto:"No dia a dia, aparece em *cada decisão* sobre pessoas." },
-  { tipo:'pausa' },
-  { papel:'aluno3', tipo:'pergunta',
-    texto:"Mas professor, isso sempre foi assim?" },
-  { papel:'professor', tipo:'definicao',
-    texto:"*Não.* Durante muito tempo, essa área foi vista apenas como operacional." },
-  { papel:'professor', tipo:'definicao',
-    texto:"Cuidava de folha de pagamento, ponto, férias | e documentação." },
-  { papel:'aluno1', tipo:'confirmacao',
-    texto:"Ah, o famoso setor que resolvia papelada." },
-  { papel:'professor', tipo:'confirmacao',
-    texto:"Isso mesmo. Era o setor da *papelada*." },
-  { papel:'aluno6', tipo:'pergunta',
-    texto:"E o que fazia alguém mudar de ideia?" },
-  { papel:'professor', tipo:'definicao',
-    texto:"A percepção de que *pessoas* fazem a diferença nos resultados." },
-  { tipo:'pausa' },
-  { papel:'aluno2', tipo:'pergunta',
-    texto:"E hoje, o que mudou?" },
-  { papel:'professor', tipo:'definicao',
-    texto:"Hoje o cenário mudou *completamente*." },
-  { papel:'professor', tipo:'definicao',
-    texto:"A gestão de pessoas passou a ser *estratégica*." },
-  { papel:'professor', tipo:'definicao',
-    texto:"Ela participa das *decisões importantes* da organização." },
-  { papel:'aluno4', tipo:'confirmacao',
-    texto:"Então ela deixou de só resolver problemas e passou a construir resultados." },
-  { papel:'professor', tipo:'confirmacao',
-    texto:"*Exatamente.* Essa é a virada de chave." },
-  { tipo:'pausa' },
-  { papel:'aluno7', tipo:'pergunta',
-    texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
-  { papel:'professor', tipo:'definicao',
-    texto:"Tem. E é uma diferença *importante*." },
-  { papel:'professor', tipo:'definicao',
-    texto:"Gestão de recursos humanos é o nome mais antigo." },
-  { papel:'professor', tipo:'definicao',
-    texto:"Ligado à ideia de que pessoas são *recursos*. Como máquinas, como dinheiro." },
-  { papel:'professor', tipo:'definicao',
-    texto:"Gestão de pessoas é o nome mais *moderno*." },
-  { papel:'professor', tipo:'definicao',
-    texto:"Ela enxerga o ser humano como *parceiro* da organização. Não como recurso." },
-  { papel:'aluno1', tipo:'confirmacao',
-    texto:"Então não é só uma troca de nome." },
-  { papel:'professor', tipo:'definicao',
-    texto:"*Não.* É uma mudança de *mentalidade*." },
-  { papel:'professor', tipo:'definicao',
-    texto:"Antes, a pessoa era vista como custo. || Agora, é vista como *diferencial competitivo*." },
-  { tipo:'pausa' },
-  { papel:'professor', tipo:'guarde',
-    texto:"*Guarde isto.*" },
-  { papel:'professor', tipo:'guarde',
-    texto:"Gestão de pessoas é a área que cuida do *ser humano* no trabalho." },
-  { papel:'aluno4', tipo:'guarde',
-    texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
-  { papel:'professor', tipo:'guarde',
-    texto:"E passa a *construir resultados*." },
-  { papel:'aluno2', tipo:'guarde',
-    texto:"Agora ficou claro, professor." },
-  { papel:'professor', tipo:'conclusao',
-    texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
-];
+const CAPITULO_1 = {
+  titulo: 'Capítulo 1 — Gestão de Pessoas',
+  paginas: [
+    // PÁGINA 1 — O que é gestão de pessoas
+    [
+      { papel:'professor', tipo:'abertura',
+        texto:"Bom dia, turma. Hoje vamos entender o que é *gestão de pessoas*." },
+      { papel:'aluno1', tipo:'pergunta',
+        texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"Boa pergunta. Gestão de pessoas é a área responsável pelo *ser humano* no trabalho." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Ela atrai, desenvolve, motiva | e *mantém* as pessoas dentro da empresa." },
+      { papel:'aluno2', tipo:'confirmacao',
+        texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
+      { papel:'professor', tipo:'definicao',
+        texto:"*Exatamente.* Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
+      { papel:'aluno5', tipo:'pergunta',
+        texto:"E como isso funciona no dia a dia?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"No dia a dia, aparece em *cada decisão* sobre pessoas." }
+    ],
+    // PÁGINA 2 — Antes e depois
+    [
+      { papel:'aluno3', tipo:'pergunta',
+        texto:"Mas professor, isso sempre foi assim?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"*Não.* Durante muito tempo, essa área foi vista apenas como operacional." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Cuidava de folha de pagamento, ponto, férias | e documentação." },
+      { papel:'aluno1', tipo:'confirmacao',
+        texto:"Ah, o famoso setor que resolvia papelada." },
+      { papel:'professor', tipo:'confirmacao',
+        texto:"Isso mesmo. Era o setor da *papelada*." },
+      { papel:'aluno6', tipo:'pergunta',
+        texto:"E o que fazia alguém mudar de ideia?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"A percepção de que *pessoas* fazem a diferença nos resultados." },
+      { papel:'aluno2', tipo:'pergunta',
+        texto:"E hoje, o que mudou?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"Hoje o cenário mudou *completamente*. A gestão de pessoas passou a ser *estratégica*." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Ela participa das *decisões importantes* da organização." },
+      { papel:'aluno4', tipo:'confirmacao',
+        texto:"Então ela deixou de só resolver problemas e passou a construir resultados." },
+      { papel:'professor', tipo:'confirmacao',
+        texto:"*Exatamente.* Essa é a virada de chave." }
+    ],
+    // PÁGINA 3 — GP vs GRH + conclusão
+    [
+      { papel:'aluno7', tipo:'pergunta',
+        texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"Tem. E é uma diferença *importante*." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Gestão de recursos humanos é o nome mais antigo." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Ligado à ideia de que pessoas são *recursos*. Como máquinas, como dinheiro." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Gestão de pessoas é o nome mais *moderno*." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Ela enxerga o ser humano como *parceiro* da organização. Não como recurso." },
+      { papel:'aluno1', tipo:'confirmacao',
+        texto:"Então não é só uma troca de nome." },
+      { papel:'professor', tipo:'definicao',
+        texto:"*Não.* É uma mudança de *mentalidade*." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Antes, a pessoa era vista como custo. || Agora, é vista como *diferencial competitivo*." },
+      { papel:'professor', tipo:'guarde',
+        texto:"*Guarde isto.*" },
+      { papel:'professor', tipo:'guarde',
+        texto:"Gestão de pessoas é a área que cuida do *ser humano* no trabalho." },
+      { papel:'aluno4', tipo:'guarde',
+        texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
+      { papel:'professor', tipo:'guarde',
+        texto:"E passa a *construir resultados*." },
+      { papel:'aluno2', tipo:'guarde',
+        texto:"Agora ficou claro, professor." },
+      { papel:'professor', tipo:'conclusao',
+        texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
+    ]
+  ]
+};
 
+/* =====================================================
+   ESTADO
+   ===================================================== */
 let synth = window.speechSynthesis;
 let tocando = false;
 let pausado = false;
 let cancelar = false;
-let indiceAtual = 0;
+let paginaAtual = 0;          // 0, 1, 2
+let indiceAtual = 0;          // índice na página atual
 let velocidade = prefVelocidade;
+
+function getPaginas() { return CAPITULO_1.paginas; }
+function getTotalPaginas() { return getPaginas().length; }
+function getAulaAtual() { return getPaginas()[paginaAtual]; }
 
 /* =====================================================
    RENDER
@@ -786,45 +842,86 @@ function renderTextoLegivel(texto) {
   return t;
 }
 
-function renderAula() {
+function renderPagina() {
   const el = document.getElementById('texto');
   if (!el) return;
-  el.innerHTML = '';
+  el.style.opacity = 0;
+  setTimeout(function() {
+    el.innerHTML = '';
+    const aula = getAulaAtual();
 
-  // Barra de progresso
-  const progresso = document.createElement('div');
-  progresso.className = 'progresso-card';
-  progresso.innerHTML = '<div class="progresso-card-fill" id="progCard"></div>';
-  el.appendChild(progresso);
-
-  // Título
-  const titulo = document.createElement('div');
-  titulo.className = 'titulo-capitulo';
-  titulo.textContent = 'Capítulo 1 — Gestão de Pessoas';
-  el.appendChild(titulo);
-
-  // Falas
-  AULA.forEach(function(fala, i) {
-    if (fala.tipo === 'pausa') {
-      const br = document.createElement('div');
-      br.className = 'quebra';
-      el.appendChild(br);
-      return;
+    // Barra de progresso com segmentos
+    const progresso = document.createElement('div');
+    progresso.className = 'progresso-paginas';
+    for (let p = 0; p < getTotalPaginas(); p++) {
+      const seg = document.createElement('div');
+      seg.className = 'segmento';
+      const fill = document.createElement('div');
+      fill.className = 'preenchimento';
+      fill.id = 'progSeg-' + p;
+      seg.appendChild(fill);
+      progresso.appendChild(seg);
     }
-    const div = document.createElement('div');
-    div.className = 'fala ' + fala.papel + ' futura';
-    div.id = 'fala-' + i;
-    const simbolo = SIMBOLOS[fala.papel] || '·';
-    div.innerHTML = '<span class="simbolo">' + simbolo + '</span>' + renderTextoLegivel(fala.texto);
-    div.addEventListener('click', function() { irParaFala(i); });
-    el.appendChild(div);
-  });
+    el.appendChild(progresso);
+
+    // Título
+    const titulo = document.createElement('div');
+    titulo.className = 'titulo-capitulo';
+    titulo.textContent = CAPITULO_1.titulo;
+    el.appendChild(titulo);
+
+    // Bolinhas indicadoras
+    const bolinhas = document.createElement('div');
+    bolinhas.className = 'bolinhas-pagina';
+    for (let p = 0; p < getTotalPaginas(); p++) {
+      const b = document.createElement('div');
+      b.className = 'bolinha-pagina' + (p === paginaAtual ? ' ativa' : '');
+      bolinhas.appendChild(b);
+    }
+    el.appendChild(bolinhas);
+
+    // Falas
+    aula.forEach(function(fala, i) {
+      if (fala.tipo === 'pausa') {
+        const br = document.createElement('div');
+        br.className = 'quebra';
+        el.appendChild(br);
+        return;
+      }
+      const div = document.createElement('div');
+      div.className = 'fala ' + fala.papel + ' futura';
+      div.id = 'fala-' + i;
+      const simbolo = SIMBOLOS[fala.papel] || '·';
+      div.innerHTML = '<span class="simbolo">' + simbolo + '</span>' + renderTextoLegivel(fala.texto);
+      div.addEventListener('click', function() { irParaFala(i); });
+      el.appendChild(div);
+    });
+
+    el.style.opacity = 1;
+    atualizarProgressoTotal();
+  }, 180);
 }
-renderAula();
+
+function atualizarProgressoTotal() {
+  // Cada segmento mostra o progresso da sua página
+  for (let p = 0; p < getTotalPaginas(); p++) {
+    const el = document.getElementById('progSeg-' + p);
+    if (!el) continue;
+    let pct = 0;
+    if (p < paginaAtual) pct = 100;
+    else if (p === paginaAtual) {
+      const total = getAulaAtual().filter(f => f.tipo !== 'pausa').length;
+      const atual = getAulaAtual().slice(0, indiceAtual + 1).filter(f => f.tipo !== 'pausa').length;
+      pct = Math.round((atual / total) * 100);
+    }
+    el.style.width = pct + '%';
+  }
+}
 
 function irParaFala(idx) {
-  if (idx < 0 || idx >= AULA.length) return;
-  if (AULA[idx].tipo === 'pausa') return;
+  const aula = getAulaAtual();
+  if (idx < 0 || idx >= aula.length) return;
+  if (aula[idx].tipo === 'pausa') return;
 
   const estavaTocando = tocando && !pausado;
   pararSilencioso();
@@ -832,7 +929,7 @@ function irParaFala(idx) {
 
   destacarFala(idx);
   atualizarBotoesNavegacao();
-  atualizarProgressoCard();
+  atualizarProgressoTotal();
 
   if (estavaTocando) {
     setTimeout(function() { tocarDeOndeParou(); }, 80);
@@ -842,11 +939,12 @@ function irParaFala(idx) {
 }
 
 function contarFalas(idx) {
+  const aula = getAulaAtual();
   let n = 0;
-  for (let k = 0; k <= idx && k < AULA.length; k++) {
-    if (AULA[k].tipo !== 'pausa') n++;
+  for (let k = 0; k <= idx && k < aula.length; k++) {
+    if (aula[k].tipo !== 'pausa') n++;
   }
-  const total = AULA.filter(function(f) { return f.tipo !== 'pausa'; }).length;
+  const total = aula.filter(function(f) { return f.tipo !== 'pausa'; }).length;
   return n + ' / ' + total;
 }
 
@@ -861,20 +959,11 @@ function destacarFala(idx) {
   const atual = document.getElementById('fala-' + idx);
   if (atual) {
     const rect = atual.getBoundingClientRect();
-    if (rect.top < 100 || rect.bottom > window.innerHeight - 120) {
+    if (rect.top < 100 || rect.bottom > window.innerHeight - 200) {
       atual.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
-  atualizarProgressoCard();
-}
-
-function atualizarProgressoCard() {
-  const el = document.getElementById('progCard');
-  if (!el) return;
-  const total = AULA.filter(function(f) { return f.tipo !== 'pausa'; }).length;
-  const atual = AULA.slice(0, indiceAtual + 1).filter(function(f) { return f.tipo !== 'pausa'; }).length;
-  const pct = Math.round((atual / total) * 100);
-  el.style.width = pct + '%';
+  atualizarProgressoTotal();
 }
 
 function resetDestaques() {
@@ -882,6 +971,33 @@ function resetDestaques() {
     el.classList.remove('falando', 'falada');
     el.classList.add('futura');
   });
+}
+
+/* =====================================================
+   NAVEGAÇÃO DE PÁGINA
+   ===================================================== */
+function pularPagina(direcao) {
+  const novaPagina = paginaAtual + direcao;
+  if (novaPagina < 0 || novaPagina >= getTotalPaginas()) return;
+
+  const estavaTocando = tocando && !pausado;
+  pararSilencioso();
+
+  paginaAtual = novaPagina;
+  indiceAtual = 0;
+  atualizarContadorPagina();
+  renderPagina();
+
+  mostrarToast('📄 Página ' + (paginaAtual + 1) + ' de ' + getTotalPaginas());
+
+  if (estavaTocando) {
+    setTimeout(function() { tocarDeOndeParou(); }, 300);
+  }
+}
+
+function atualizarContadorPagina() {
+  const el = document.getElementById('contadorPagina');
+  if (el) el.textContent = 'Página ' + (paginaAtual + 1) + ' / ' + getTotalPaginas();
 }
 
 /* =====================================================
@@ -901,13 +1017,20 @@ function setBtnEstado(playing) {
 }
 
 function atualizarBotoesNavegacao() {
+  const aula = getAulaAtual();
   const btnA = document.getElementById('btnAnterior');
   const btnP = document.getElementById('btnProximo');
-  if (!btnA || !btnP) return;
-  const temAnterior = AULA.slice(0, indiceAtual).some(function(f) { return f.tipo !== 'pausa'; });
-  const temProximo  = AULA.slice(indiceAtual + 1).some(function(f) { return f.tipo !== 'pausa'; });
-  btnA.disabled = !temAnterior;
-  btnP.disabled = !temProximo;
+  const btnPA = document.getElementById('btnPaginaAnterior');
+  const btnPP = document.getElementById('btnPaginaProxima');
+
+  if (btnA && btnP) {
+    const temAnterior = aula.slice(0, indiceAtual).some(function(f) { return f.tipo !== 'pausa'; });
+    const temProximo  = aula.slice(indiceAtual + 1).some(function(f) { return f.tipo !== 'pausa'; });
+    btnA.disabled = !temAnterior;
+    btnP.disabled = !temProximo;
+  }
+  if (btnPA) btnPA.disabled = (paginaAtual === 0);
+  if (btnPP) btnPP.disabled = (paginaAtual === getTotalPaginas() - 1);
 }
 
 /* =====================================================
@@ -952,6 +1075,7 @@ function togglePlay() {
     tocarDeOndeParou();
     return;
   }
+  // Começa do início da página atual
   indiceAtual = 0;
   tocarDeOndeParou();
 }
@@ -965,9 +1089,30 @@ function pararSilencioso() {
 }
 
 function pularFrase(direcao) {
+  const aula = getAulaAtual();
   let novo = indiceAtual + direcao;
-  while (novo >= 0 && novo < AULA.length && AULA[novo].tipo === 'pausa') novo += direcao;
-  if (novo < 0 || novo >= AULA.length) return;
+  while (novo >= 0 && novo < aula.length && aula[novo].tipo === 'pausa') novo += direcao;
+
+  // Se saiu da página, muda de página
+  if (novo < 0) {
+    if (paginaAtual > 0) {
+      pularPagina(-1);
+      // Vai para a última fala da nova página
+      setTimeout(function() {
+        const novaAula = getAulaAtual();
+        for (let k = novaAula.length - 1; k >= 0; k--) {
+          if (novaAula[k].tipo !== 'pausa') { indiceAtual = k; destacarFala(k); atualizarBotoesNavegacao(); break; }
+        }
+      }, 250);
+    }
+    return;
+  }
+  if (novo >= aula.length) {
+    if (paginaAtual < getTotalPaginas() - 1) {
+      pularPagina(1);
+    }
+    return;
+  }
 
   const estavaTocando = tocando && !pausado;
   pararSilencioso();
@@ -1061,15 +1206,16 @@ async function tocarDeOndeParou() {
     return;
   }
 
+  const aula = getAulaAtual();
   cancelar = false;
   tocando = true;
   pausado = false;
   setBtnEstado(true);
 
-  for (let i = indiceAtual; i < AULA.length; i++) {
+  for (let i = indiceAtual; i < aula.length; i++) {
     if (cancelar) return;
     indiceAtual = i;
-    const fala = AULA[i];
+    const fala = aula[i];
 
     if (fala.tipo === 'pausa') {
       await esperar(PERFIS.professor.pausas.pausa / velocidade);
@@ -1089,13 +1235,27 @@ async function tocarDeOndeParou() {
     if (cancelar) return;
   }
 
+  // Fim da página
   if (!cancelar) {
-    resetDestaques();
-    setBtnEstado(false);
-    tocando = false;
-    pausado = false;
-    atualizarBotoesNavegacao();
-    mostrarToast('✅ Fim da aula');
+    if (paginaAtual < getTotalPaginas() - 1) {
+      // Auto-avança para a próxima página
+      mostrarToast('📄 Próxima página...');
+      setBtnEstado(false);
+      tocando = false;
+      pausado = false;
+      setTimeout(function() {
+        pularPagina(1);
+        setTimeout(function() { tocarDeOndeParou(); }, 400);
+      }, 800);
+    } else {
+      // Fim do capítulo
+      resetDestaques();
+      setBtnEstado(false);
+      tocando = false;
+      pausado = false;
+      atualizarBotoesNavegacao();
+      mostrarToast('✅ Fim do capítulo');
+    }
   }
 }
 
@@ -1107,20 +1267,6 @@ const handle = document.getElementById('handle');
 let arrastando = false;
 let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 let moveu = false;
-
-(function restaurarPosicao() {
-  try {
-    const salvo = JSON.parse(localStorage.getItem('playerPos') || 'null');
-    if (salvo && typeof salvo.left === 'number' && typeof salvo.top === 'number') {
-      const maxL = window.innerWidth - 80;
-      const maxT = window.innerHeight - 80;
-      player.style.left = Math.max(0, Math.min(maxL, salvo.left)) + 'px';
-      player.style.top  = Math.max(0, Math.min(maxT, salvo.top)) + 'px';
-      player.style.right = 'auto';
-      player.style.bottom = 'auto';
-    }
-  } catch(e) {}
-})();
 
 function iniciarArraste(e) {
   if (e.target !== handle && !handle.contains(e.target)) return;
@@ -1135,6 +1281,7 @@ function iniciarArraste(e) {
   startY = ponto.clientY;
   player.style.left = startLeft + 'px';
   player.style.top = startTop + 'px';
+  player.style.transform = 'none';
   player.style.right = 'auto';
   player.style.bottom = 'auto';
   e.preventDefault();
@@ -1156,18 +1303,6 @@ function soltarArraste(e) {
   if (!arrastando) return;
   arrastando = false;
   player.classList.remove('arrastando');
-  const rect = player.getBoundingClientRect();
-  const centroX = rect.left + rect.width / 2;
-  const meio = window.innerWidth / 2;
-  const destinoX = centroX < meio ? 12 : window.innerWidth - rect.width - 12;
-  player.style.transition = 'left .25s cubic-bezier(.2,.8,.3,1)';
-  player.style.left = destinoX + 'px';
-  setTimeout(function() { player.style.transition = ''; }, 300);
-  try {
-    localStorage.setItem('playerPos', JSON.stringify({
-      left: destinoX, top: parseInt(player.style.top)
-    }));
-  } catch(e) {}
   if (e && e.preventDefault) e.preventDefault();
 }
 
@@ -1210,7 +1345,7 @@ function atualizarDebug() {
   const linhas = Object.entries(elenco).map(function(par) {
     const papel = par[0];
     const voz = par[1];
-    const ativo = (AULA[indiceAtual] && AULA[indiceAtual].papel === papel) ? ' ativa' : '';
+    const ativo = (getAulaAtual()[indiceAtual] && getAulaAtual()[indiceAtual].papel === papel) ? ' ativa' : '';
     const perfil = PERFIS[papel];
     const pitchTxt = perfil ? perfil.pitch.toFixed(2) : '—';
     const rateTxt  = perfil ? perfil.rate.toFixed(2)  : '—';
@@ -1324,9 +1459,6 @@ function distribuirElenco(vozes) {
 
 function ajustarPerfilProfessor() {
   if (!isIOS) return;
-  // No iOS sem Felipe: a voz padrão é neutra/feminina.
-  // 🎯 AJUSTE: pitch 0.70 (em vez de 0.60) → ainda grave/distinto,
-  //    mas sem o risco de distorção robótica do Safari.
   if (!felipeEncontrado) {
     PERFIS.professor = {
       rate: 0.85, pitch: 0.70, volume: 1.0,
@@ -1334,9 +1466,7 @@ function ajustarPerfilProfessor() {
       rateEnfase: 0.79, pitchEnfase: 0.68,
       pausas: { abertura:950, definicao:490, pergunta:320, confirmacao:420, guarde:1120, conclusao:860, pausa:670 }
     };
-  }
-  // Com Felipe: já é masculino. Só reforça a lentidão/gravidade docente.
-  else {
+  } else {
     PERFIS.professor.rate = 0.88;
     PERFIS.professor.pitch = 0.78;
     PERFIS.professor.rateEnfase = 0.82;
@@ -1372,6 +1502,7 @@ function preAquecerVozes() {
 aplicarTema();
 aplicarFonte();
 atualizarBtnVel();
+atualizarContadorPagina();
 
 const btnTema = document.getElementById('btnTema');
 const btnMenos = document.getElementById('btnFonteMenos');
@@ -1380,6 +1511,8 @@ const btnMais = document.getElementById('btnFonteMais');
 if (btnTema)  btnTema.addEventListener('click', alternarTema);
 if (btnMenos) btnMenos.addEventListener('click', function() { ajustarFonte(-1); });
 if (btnMais)  btnMais.addEventListener('click', function() { ajustarFonte(1); });
+
+renderPagina();
 
 carregarVozes(function() {
   const ptBR = vozesPtBR();
@@ -1393,7 +1526,7 @@ carregarVozes(function() {
   elenco = distribuirElenco(ptBR);
   ajustarPerfilProfessor();
   atualizarBotoesNavegacao();
-  atualizarProgressoCard();
+  atualizarProgressoTotal();
   atualizarDebug();
 });
 
