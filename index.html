@@ -236,7 +236,7 @@
         <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
       </svg>
     </button>
-    <button class="btn-ctrl btn-play-flut" id="btnPlayFlut" onclick="togglePlay()" aria-label="Ouvir ou pausar">
+    <button class="btn-ctrl btn-play-flut" id="btnPlayFlut" onclick="togglePlay()" aria-label="Ouvir ou pausar" disabled>
       <svg id="iconePlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z"/>
       </svg>
@@ -303,13 +303,12 @@ function vozesPtBR() {
   });
 }
 
-// Agora usamos TODAS as vozes (incluindo Siri)
 function filtrarVozes(ptBR) {
   return ptBR;
 }
 
 /* =====================================================
-   PERFIS — contrastes mais fortes
+   PERFIS
    ===================================================== */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
 const SIMBOLOS = {
@@ -429,18 +428,19 @@ let pausado = false;
 let cancelar = false;
 let indiceAtual = 0;
 let velocidade = 1.0;
+let aquecendo = false;
+let vozesAquecidas = false;
 
-/* Delays maiores para iOS */
+/* Delays para iOS */
 let delayFantasma = 650;
 let delayPosFantasma = 550;
 
 /* =====================================================
-   PRÉ-AQUECIMENTO
+   PRÉ-AQUECIMENTO DE VOZES
    ===================================================== */
-let vozesAquecidas = false;
-
 async function preAquecerVozes() {
   if (vozesAquecidas || !elenco) return;
+  aquecendo = true;
   const vozesUnicas = [...new Set(Object.values(elenco))];
   mostrarBadge(`Carregando ${vozesUnicas.length} vozes…`);
 
@@ -449,7 +449,7 @@ async function preAquecerVozes() {
       await new Promise(resolve => {
         const u = new SpeechSynthesisUtterance(' ');
         u.voice = voz;
-        u.volume = 0;
+        u.volume = 0.01;   // iOS ignora volume 0
         u.rate = 1.0;
         u.pitch = 1.0;
         u.onend = resolve;
@@ -461,6 +461,7 @@ async function preAquecerVozes() {
     } catch(e) {}
   }
   vozesAquecidas = true;
+  aquecendo = false;
   mostrarBadge(`${vozesUnicas.length} vozes prontas`);
 }
 
@@ -502,7 +503,13 @@ function destacarFala(idx) {
     else el.classList.add('futura');
   });
   const atual = document.getElementById('fala-' + idx);
-  if (atual) atual.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (atual) {
+    // Só rola se estiver fora da viewport
+    const rect = atual.getBoundingClientRect();
+    if (rect.top < 80 || rect.bottom > window.innerHeight - 100) {
+      atual.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
 }
 
 function resetDestaques() {
@@ -565,6 +572,8 @@ function ciclarVelocidade() {
   const btn = document.getElementById('btnVel');
   btn.textContent = velocidade.toFixed(2).replace(/0$/, '') + '×';
   btn.classList.toggle('ativa', velocidade !== 1.0);
+  mostrarBadge(`Velocidade ${btn.textContent}`);
+  // Se estiver tocando, reinicia a fala atual para aplicar nova velocidade
   if (tocando && !pausado) {
     const idx = indiceAtual;
     pararSilencioso();
@@ -577,6 +586,7 @@ function ciclarVelocidade() {
    ===================================================== */
 function togglePlay() {
   if (tocando && !pausado) {
+    // Pausar
     pausado = true;
     cancelar = true;
     synth.cancel();
@@ -585,10 +595,12 @@ function togglePlay() {
     return;
   }
   if (tocando && pausado) {
+    // Retomar com delay (iOS precisa "esquentar" após cancel)
     pausado = false;
-    tocarDeOndeParou();
+    setTimeout(() => tocarDeOndeParou(), 200);
     return;
   }
+  // Iniciar
   indiceAtual = 0;
   tocarDeOndeParou();
 }
@@ -598,6 +610,7 @@ function pararSilencioso() {
   synth.cancel();
   tocando = false;
   pausado = false;
+  setBtnEstado(false);   // ← CORREÇÃO: reseta visual do botão
 }
 
 function pularFrase(direcao) {
@@ -683,7 +696,7 @@ function esperar(ms) {
 }
 
 /* =====================================================
-   TROCA DE VOZ — versão reforçada para iOS
+   TROCA DE VOZ — reforçada para iOS
    ===================================================== */
 async function trocarVoz(vozAntiga, vozNova) {
   const debugEl = document.getElementById('debugTroca');
@@ -706,7 +719,7 @@ async function trocarVoz(vozAntiga, vozNova) {
     });
   }
 
-  // 2. Cancela várias vezes
+  // 2. Cancelamento duplo
   synth.cancel();
   await esperar(120);
   synth.cancel();
@@ -728,7 +741,7 @@ async function trocarVoz(vozAntiga, vozNova) {
   // 4. Pausa crítica
   await esperar(delayPosFantasma);
 
-  // 5. Segundo fantasma (ajuda muito no iOS)
+  // 5. Segundo fantasma
   await new Promise(resolve => {
     const u = new SpeechSynthesisUtterance(' ');
     u.voice = vozNova;
@@ -752,6 +765,9 @@ async function tocarDeOndeParou() {
     alert('Nenhuma voz pt-BR detectada no dispositivo.');
     return;
   }
+
+  // Aguarda pré-aquecimento se estiver rodando
+  while (aquecendo) await esperar(100);
 
   cancelar = false;
   tocando = true;
@@ -783,7 +799,6 @@ async function tocarDeOndeParou() {
     const voz = elenco[fala.papel];
     const perfil = PERFIS[fala.papel];
 
-    // Sempre tenta trocar quando a voz muda
     if (voz !== ultimaVoz) {
       await trocarVoz(ultimaVoz, voz);
       if (cancelar) return;
@@ -898,7 +913,7 @@ handle.addEventListener('touchstart', iniciarArraste, { passive: false });
 document.addEventListener('touchmove', moverArraste, { passive: false });
 document.addEventListener('touchend', soltarArraste);
 
-/* Toques no handle */
+/* Toques no handle: 2× minimiza, 3× abre debug */
 let toquesHandle = [];
 handle.addEventListener('touchend', () => {
   if (moveu) return;
@@ -951,17 +966,19 @@ function fecharDebug() {
 
 /* =====================================================
    DISTRIBUIÇÃO DE ELENCO
+   Professor NUNCA é Siri. Prioriza Felipe.
    ===================================================== */
 function distribuirElenco(vozes) {
   if (vozes.length === 0) return null;
 
-  // Prioriza vozes normais e depois Siri
   const normais = vozes.filter(v => !/siri/i.test(v.name));
   const siris   = vozes.filter(v => /siri/i.test(v.name));
   const ordenadas = [...normais, ...siris];
 
-  // Professor prefere Felipe
-  let professor = ordenadas.find(v => /felipe/i.test(v.name)) || ordenadas[0];
+  // Professor: Felipe > qualquer não-Siri > primeiro da lista
+  let professor = ordenadas.find(v => /felipe/i.test(v.name))
+              || ordenadas.find(v => !/siri/i.test(v.name))
+              || ordenadas[0];
 
   const restantes = ordenadas.filter(v => v !== professor);
 
@@ -988,6 +1005,10 @@ carregarVozesComRetry(async () => {
   setStatus(`${unicas} vozes · 1.0×`);
   atualizarBotoesNavegacao();
 
+  // Habilita botão de play agora que o elenco está pronto
+  document.getElementById('btnPlayFlut').disabled = false;
+
+  // Pré-aquece vozes
   if (isIOS) {
     setTimeout(() => preAquecerVozes(), 600);
   } else {
