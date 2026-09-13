@@ -31,9 +31,6 @@
     width: 100%;
   }
 
-  /* ============================================
-     FOLHA (que expande)
-     ============================================ */
   .texto-bloco {
     font-size: 1.02rem;
     line-height: 1.75;
@@ -51,7 +48,6 @@
     transition: background .3s, color .3s, opacity .25s;
   }
 
-  /* Tema claro */
   body[data-tema="claro"] .texto-bloco {
     background: #f8fafc;
     color: #1e293b;
@@ -65,18 +61,13 @@
     color: #64748b;
     border-bottom-color: rgba(100, 116, 139, .2);
   }
-  body[data-tema="claro"] .aba {
-    color: #64748b;
-  }
+  body[data-tema="claro"] .aba { color: #64748b; }
   body[data-tema="claro"] .aba.ativa {
     color: #7c3aed;
     border-bottom-color: #7c3aed;
   }
-  body[data-tema="claro"] .bolinha-pagina {
-    background: rgba(100, 116, 139, .3);
-  }
+  body[data-tema="claro"] .bolinha-pagina { background: rgba(100, 116, 139, .3); }
 
-  /* ── Abas de capítulo ─────────────── */
   .abas-capitulos {
     display: flex;
     gap: 4px;
@@ -111,7 +102,6 @@
   }
   .aba:active { opacity: .7; }
 
-  /* Cabeçalho do capítulo */
   .titulo-capitulo {
     display: block;
     text-align: center;
@@ -125,7 +115,6 @@
     border-bottom: 1px solid rgba(148, 163, 184, .2);
   }
 
-  /* Indicador de páginas (bolinhas) */
   .bolinhas-pagina {
     display: flex;
     justify-content: center;
@@ -144,7 +133,6 @@
     transform: scale(1.4);
   }
 
-  /* Falas — fluem como texto corrido */
   .fala {
     display: inline;
     margin: 0;
@@ -193,9 +181,6 @@
 
   .quebra { display: block; height: 12px; }
 
-  /* ============================================
-     TOOLBAR
-     ============================================ */
   .toolbar {
     position: fixed;
     top: calc(env(safe-area-inset-top) + 10px);
@@ -226,9 +211,6 @@
   .toolbar button:active { transform: scale(.9); }
   .toolbar button:disabled { opacity: .35; cursor: not-allowed; }
 
-  /* ============================================
-     PLAYER
-     ============================================ */
   #playerFlutuante {
     position: fixed;
     z-index: 9999;
@@ -293,10 +275,7 @@
   .btn-ctrl:active { transform: scale(.92); }
   .btn-ctrl:disabled { opacity: .3; }
   .btn-sec { width: 38px; height: 38px; font-size: .9rem; }
-  .btn-pagina {
-    background: #312e81;
-    color: #c7d2fe;
-  }
+  .btn-pagina { background: #312e81; color: #c7d2fe; }
   .btn-pagina:not(:disabled):hover { background: #3730a3; }
   .btn-play-flut {
     width: 54px;
@@ -350,9 +329,6 @@
   #playerFlutuante.minimizado { width: auto; padding: 6px; border-radius: 50%; }
   #playerFlutuante.minimizado .controles { gap: 0; }
 
-  /* ============================================
-     DEBUG
-     ============================================ */
   #debugPanel {
     position: fixed;
     top: 12px;
@@ -413,9 +389,6 @@
     color: #86efac;
   }
 
-  /* ============================================
-     TOAST
-     ============================================ */
   .toast {
     position: fixed;
     bottom: 130px;
@@ -439,7 +412,6 @@
     transform: translateX(-50%) translateY(0);
   }
 
-  /* ── RESPONSIVIDADE ────────────────────────────── */
   @media (max-width: 390px) {
     .texto-bloco { padding: 13px 13px 16px; font-size: .95rem; }
     #playerFlutuante { width: 290px; padding: 8px 8px 10px; }
@@ -732,9 +704,6 @@ const PERFIS = {
    CONTEÚDO — 3 CAPÍTULOS (1 página cada)
    ===================================================== */
 const CAPITULOS = [
-  // ─────────────────────────────────────────────
-  // BLOCO 1 — O QUE É GESTÃO DE PESSOAS
-  // ─────────────────────────────────────────────
   {
     titulo: 'Bloco 1 — O que é gestão de pessoas',
     aula: [
@@ -784,10 +753,6 @@ const CAPITULOS = [
         texto:"E passa a *construir resultados*. Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
     ]
   },
-
-  // ─────────────────────────────────────────────
-  // BLOCO 2 — GESTÃO ESTRATÉGICA DE PESSOAS
-  // ─────────────────────────────────────────────
   {
     titulo: 'Bloco 2 — Gestão estratégica de pessoas',
     aula: [
@@ -833,10 +798,6 @@ const CAPITULOS = [
         texto:"Não é só contratar e pagar. É *pensar no presente e no futuro* da organização." }
     ]
   },
-
-  // ─────────────────────────────────────────────
-  // BLOCO 3 — RECRUTAMENTO
-  // ─────────────────────────────────────────────
   {
     titulo: 'Bloco 3 — Recrutamento',
     aula: [
@@ -895,12 +856,39 @@ let synth = window.speechSynthesis;
 let tocando = false;
 let pausado = false;
 let cancelar = false;
-let indiceCapitulo = 0;   // 0, 1, 2
-let indiceAtual = 0;      // índice da fala dentro do capítulo atual
+let indiceCapitulo = 0;
+let indiceAtual = 0;
 let velocidade = prefVelocidade;
 
 function getAulaAtual() { return CAPITULOS[indiceCapitulo].aula; }
 function getTotalCapitulos() { return CAPITULOS.length; }
+
+/* =====================================================
+   🔑 UNLOCK DO iOS
+   =====================================================
+   O Safari do iPhone bloqueia speechSynthesis até o usuário
+   interagir. Disparar uma utterance vazia no MESMO gesto
+   (touch/click) destrava o motor para o resto da sessão.
+   ===================================================== */
+let iosDesbloqueado = false;
+
+function desbloquearAudioIOS() {
+  if (!isIOS) return;
+  if (iosDesbloqueado) return;
+  try {
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0.01;
+    u.rate = 2.0;
+    u.pitch = 1.0;
+    if (elenco && elenco.professor) u.voice = elenco.professor;
+    synth.speak(u);
+    iosDesbloqueado = true;
+  } catch(e) {}
+}
+
+// Desbloqueia em qualquer gesto do usuário (touch/click)
+document.addEventListener('touchstart', desbloquearAudioIOS, { once: true, passive: true });
+document.addEventListener('click', desbloquearAudioIOS, { once: true });
 
 /* =====================================================
    RENDER
@@ -918,7 +906,6 @@ function renderCapitulo() {
   setTimeout(function() {
     el.innerHTML = '';
 
-    // Abas de capítulo
     const abas = document.createElement('div');
     abas.className = 'abas-capitulos';
     CAPITULOS.forEach(function(cap, i) {
@@ -934,13 +921,11 @@ function renderCapitulo() {
     });
     el.appendChild(abas);
 
-    // Título
     const titulo = document.createElement('div');
     titulo.className = 'titulo-capitulo';
     titulo.textContent = CAPITULOS[indiceCapitulo].titulo;
     el.appendChild(titulo);
 
-    // Bolinhas
     const bolinhas = document.createElement('div');
     bolinhas.className = 'bolinhas-pagina';
     for (let p = 0; p < getTotalCapitulos(); p++) {
@@ -950,7 +935,6 @@ function renderCapitulo() {
     }
     el.appendChild(bolinhas);
 
-    // Falas
     const aula = getAulaAtual();
     aula.forEach(function(fala, i) {
       if (fala.tipo === 'pausa') {
@@ -1043,7 +1027,6 @@ function irParaCapitulo(novo) {
   renderCapitulo();
   mostrarToast('📖 ' + CAPITULOS[indiceCapitulo].titulo);
 
-  // Regra A: se estava tocando, continua tocando o novo capítulo
   if (estavaTocando) {
     setTimeout(function() { tocarDeOndeParou(); }, 350);
   }
@@ -1118,9 +1101,12 @@ function ciclarVelocidade() {
 }
 
 /* =====================================================
-   PLAY / PAUSE / PULAR
+   🔑 PLAY / PAUSE CORRIGIDO PARA iOS
    ===================================================== */
 function togglePlay() {
+  // 🔑 SEMPRE tenta desbloquear no gesto do usuário
+  desbloquearAudioIOS();
+
   if (tocando && !pausado) {
     pausado = true;
     cancelar = true;
@@ -1130,11 +1116,14 @@ function togglePlay() {
   }
   if (tocando && pausado) {
     pausado = false;
-    tocarDeOndeParou();
+    // 🔑 No iOS, o cancel() do pause pode ter travado a fila
+    // Um pequeno delay ajuda a não atropelar
+    setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 120 : 60);
     return;
   }
   indiceAtual = 0;
-  tocarDeOndeParou();
+  // 🔑 Delay maior no iOS para o unlock terminar
+  setTimeout(function() { tocarDeOndeParou(); }, isIOS ? 150 : 80);
 }
 
 function pararSilencioso() {
@@ -1150,7 +1139,6 @@ function pularFrase(direcao) {
   let novo = indiceAtual + direcao;
   while (novo >= 0 && novo < aula.length && aula[novo].tipo === 'pausa') novo += direcao;
 
-  // Se saiu do capítulo, muda de capítulo
   if (novo < 0) {
     if (indiceCapitulo > 0) pularCapitulo(-1);
     return;
@@ -1272,7 +1260,13 @@ async function tocarDeOndeParou() {
     const perfil = PERFIS[fala.papel];
 
     const pausaAntes = perfil.pausas[fala.tipo] || 0;
-    if (pausaAntes > 0) await esperar(pausaAntes / velocidade);
+
+    // 🔑 No iOS, NÃO faz pausa antes da PRIMEIRA fala do play,
+    // senão o Safari entende que não houve gesto do usuário e bloqueia
+    const ehPrimeiraFalaDoPlay = (i === indiceAtual);
+    if (pausaAntes > 0 && !(isIOS && ehPrimeiraFalaDoPlay)) {
+      await esperar(pausaAntes / velocidade);
+    }
 
     destacarFala(i);
     atualizarBotoesNavegacao();
@@ -1281,7 +1275,6 @@ async function tocarDeOndeParou() {
     if (cancelar) return;
   }
 
-  // Fim do capítulo (regra B: para e mostra mensagem)
   if (!cancelar) {
     resetDestaques();
     setBtnEstado(false);
@@ -1406,7 +1399,8 @@ function atualizarDebug() {
     'Vozes únicas: ' + unicas + ' · pt-BR disponíveis: ' + vozesPtBR().length + '<br>' +
     'Total exposto pelo navegador: ' + todasAsVozes.length + '<br>' +
     'Modo: ' + (isIOS ? 'iPhone/Safari' : (isMicrosoft ? 'Microsoft' : 'Desktop')) + '<br>' +
-    'Felipe detectado: ' + (felipeEncontrado ? '✅ sim' : '❌ não') +
+    'Felipe detectado: ' + (felipeEncontrado ? '✅ sim' : '❌ não') + '<br>' +
+    'iOS desbloqueado: ' + (iosDesbloqueado ? '✅ sim' : '⏳ aguardando gesto') +
     '</div>' + aviso;
 }
 
@@ -1520,6 +1514,8 @@ function preAquecerVozes() {
   if (preAquecido) return;
   preAquecido = true;
   if (!elenco) return;
+  // No iOS NÃO faz pré-aquecimento (utterance vazia pode travar a fila)
+  if (isIOS) return;
   const vozesUnicas = Array.from(new Set(Object.values(elenco)));
   vozesUnicas.forEach(function(voz, i) {
     setTimeout(function() {
