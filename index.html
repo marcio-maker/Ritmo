@@ -57,6 +57,13 @@
   .fala.falada { opacity: .4; }
   .fala.futura { opacity: .78; }
 
+  /* ênfase visual nas palavras-âncora */
+  .enfase {
+    color: #fbbf24;
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
+
   .quebra { height: 14px; }
 
   .player { padding: 16px 0 20px; }
@@ -78,6 +85,11 @@
     height: 100%; background: #3b82f6; border-radius: 2px;
     width: 0%; transition: width .3s;
   }
+
+  .status-vozes {
+    margin-top: 8px; font-size: .72rem; color: #64748b;
+    text-align: center; line-height: 1.5;
+  }
 </style>
 </head>
 <body>
@@ -91,12 +103,13 @@
       Ouvir
     </button>
     <div class="progresso-wrap"><div class="progresso-fill" id="prog"></div></div>
+    <p class="status-vozes" id="statusVozes">Detectando vozes…</p>
   </div>
 </div>
 
 <script>
 /* =====================================================
-   DETECÇÃO DE VOZES
+   DETECÇÃO DE VOZES (com retry duplo para iOS)
    ===================================================== */
 let todasAsVozes = [];
 let elenco = null;
@@ -106,24 +119,29 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 
 function carregarVozesComRetry(callback) {
   let tentativas = 0;
+  let jaChamou = false;
+
   function tentar() {
     tentativas++;
     const vozes = window.speechSynthesis.getVoices();
     if (vozes.length > 0) {
       todasAsVozes = vozes;
-      callback();
+      if (!jaChamou) { jaChamou = true; callback(); }
+      // iOS: segunda leva de vozes chega ~1s depois
+      if (tentativas < 20) setTimeout(tentar, 500);
       return;
     }
-    if (tentativas < 30) setTimeout(tentar, 100);
-    else callback();
+    if (tentativas < 40) setTimeout(tentar, 100);
+    else if (!jaChamou) { jaChamou = true; callback(); }
   }
+
   if (window.speechSynthesis.addEventListener) {
-    try { window.speechSynthesis.addEventListener('voiceschanged', tentar); }
-    catch (e) { window.speechSynthesis.onvoiceschanged = tentar; }
+    window.speechSynthesis.addEventListener('voiceschanged', tentar);
   } else {
     window.speechSynthesis.onvoiceschanged = tentar;
   }
   tentar();
+  setTimeout(tentar, 1500);
 }
 
 function vozesPtBR() {
@@ -135,150 +153,201 @@ function vozesPtBR() {
 
 function filtrarVozes(ptBR) {
   if (!isIOS) return ptBR;
+  // No iOS, Siri costuma falhar em cadeias longas — remove se houver alternativa
   const semSiri = ptBR.filter(v => !/siri/i.test(v.name));
-  return semSiri.length > 0 ? semSiri : ptBR;
+  return semSiri.length >= 2 ? semSiri : ptBR;
 }
 
 /* =====================================================
-   PAPÉIS E PERFIS
+   PERFIS — PROFESSOR COACH + ALUNOS DISTINTOS
    ===================================================== */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
 
 const SIMBOLOS = {
   professor: '§',
-  aluno1: '·',
-  aluno2: '·',
-  aluno3: '·',
-  aluno4: '·',
-  aluno5: '·',
-  aluno6: '·',
-  aluno7: '·'
+  aluno1: '·', aluno2: '·', aluno3: '·', aluno4: '·',
+  aluno5: '·', aluno6: '·', aluno7: '·'
 };
 
 const PERFIS = {
-  professor: { rate: 0.84, pitch: 0.88, volume: 1.0,
-    microCurta: 200, microLonga: 300,
-    pausas: { abertura:800, definicao:450, pergunta:300, confirmacao:350, guarde:850, conclusao:600, pausa:650 } },
-  aluno1: { rate: 1.02, pitch: 1.18, volume: 0.95,
-    microCurta: 100, microLonga: 180,
-    pausas: { abertura:280, definicao:200, pergunta:250, confirmacao:200, guarde:300, conclusao:300, pausa:400 } },
-  aluno2: { rate: 0.94, pitch: 0.96, volume: 0.95,
-    microCurta: 120, microLonga: 180,
+  /* ── PROFESSOR: coach motivacional ──
+     Grave, lento, domina o silêncio com pausas longas */
+  professor: {
+    rate: 0.78, pitch: 0.82, volume: 1.0,
+    microCurta: 280, microLonga: 420,
+    rateEnfase: 0.72,      // palavra-âncora ainda mais lenta
+    pitchEnfase: 0.78,     // e mais grave
+    pausas: {
+      abertura: 1100, definicao: 520, pergunta: 350,
+      confirmacao: 480, guarde: 1200, conclusao: 900, pausa: 800
+    }
+  },
+
+  /* ── ALUNOS: variação ampla de timbre e ritmo ──
+     pitch separado por ~0.10 entre cada um para distinguir bem */
+  aluno1: { rate: 1.05, pitch: 1.25, volume: 0.92,
+    microCurta: 90, microLonga: 160, rateEnfase: 0.95, pitchEnfase: 1.20,
+    pausas: { abertura:240, definicao:180, pergunta:260, confirmacao:200, guarde:280, conclusao:280, pausa:380 } },
+
+  aluno2: { rate: 0.90, pitch: 0.92, volume: 0.92,
+    microCurta: 130, microLonga: 200, rateEnfase: 0.82, pitchEnfase: 0.90,
     pausas: { abertura:260, definicao:220, pergunta:240, confirmacao:200, guarde:280, conclusao:260, pausa:380 } },
-  aluno3: { rate: 0.98, pitch: 1.10, volume: 0.95,
-    microCurta: 140, microLonga: 200,
+
+  aluno3: { rate: 1.00, pitch: 1.12, volume: 0.92,
+    microCurta: 110, microLonga: 180, rateEnfase: 0.92, pitchEnfase: 1.08,
     pausas: { abertura:300, definicao:240, pergunta:300, confirmacao:220, guarde:300, conclusao:280, pausa:400 } },
-  aluno4: { rate: 0.88, pitch: 0.90, volume: 0.95,
-    microCurta: 160, microLonga: 220,
+
+  aluno4: { rate: 0.85, pitch: 0.88, volume: 0.92,
+    microCurta: 150, microLonga: 220, rateEnfase: 0.78, pitchEnfase: 0.86,
     pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:320, conclusao:300, pausa:420 } },
-  aluno5: { rate: 1.06, pitch: 1.12, volume: 0.95,
-    microCurta: 110, microLonga: 170,
-    pausas: { abertura:260, definicao:200, pergunta:260, confirmacao:200, guarde:280, conclusao:260, pausa:380 } },
-  aluno6: { rate: 0.92, pitch: 1.04, volume: 0.95,
-    microCurta: 130, microLonga: 190,
+
+  aluno5: { rate: 1.10, pitch: 1.18, volume: 0.92,
+    microCurta: 80, microLonga: 150, rateEnfase: 1.00, pitchEnfase: 1.14,
+    pausas: { abertura:220, definicao:180, pergunta:240, confirmacao:180, guarde:260, conclusao:240, pausa:360 } },
+
+  aluno6: { rate: 0.95, pitch: 1.05, volume: 0.92,
+    microCurta: 120, microLonga: 190, rateEnfase: 0.88, pitchEnfase: 1.02,
     pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } },
-  aluno7: { rate: 0.96, pitch: 0.94, volume: 0.95,
-    microCurta: 140, microLonga: 200,
+
+  aluno7: { rate: 0.98, pitch: 0.95, volume: 0.92,
+    microCurta: 130, microLonga: 200, rateEnfase: 0.90, pitchEnfase: 0.93,
     pausas: { abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } }
 };
 
 /* =====================================================
-   DIÁLOGO
+   DIÁLOGO — professor com palavras-âncora em *asteriscos*
    ===================================================== */
 const AULA = [
   { papel:'professor', tipo:'abertura',
-    texto:"Bom dia, turma. Hoje vamos entender o que é gestão de pessoas." },
+    texto:"Bom dia, turma. Hoje vamos entender o que é *gestão de pessoas*." },
+
   { papel:'aluno1', tipo:'pergunta',
     texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Boa pergunta. Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
+    texto:"Boa pergunta. Gestão de pessoas é a área responsável pelo *ser humano* no trabalho." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Ela atrai, desenvolve, motiva | e mantém as pessoas dentro da empresa." },
+    texto:"Ela atrai, desenvolve, motiva | e *mantém* as pessoas dentro da empresa." },
+
   { papel:'aluno2', tipo:'confirmacao',
     texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Exatamente. Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
+    texto:"*Exatamente.* Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
+
   { papel:'aluno5', tipo:'pergunta',
     texto:"E como isso funciona no dia a dia?" },
+
   { papel:'professor', tipo:'definicao',
-    texto:"No dia a dia, aparece em cada decisão sobre pessoas." },
+    texto:"No dia a dia, aparece em *cada decisão* sobre pessoas." },
 
   { tipo:'pausa' },
 
   { papel:'aluno3', tipo:'pergunta',
     texto:"Mas professor, isso sempre foi assim?" },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Não. Durante muito tempo, essa área foi vista apenas como operacional." },
+    texto:"*Não.* Durante muito tempo, essa área foi vista apenas como operacional." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Cuidava de folha de pagamento, ponto, férias e documentação." },
+    texto:"Cuidava de folha de pagamento, ponto, férias | e documentação." },
+
   { papel:'aluno1', tipo:'confirmacao',
     texto:"Ah, o famoso setor que resolvia papelada." },
+
   { papel:'professor', tipo:'confirmacao',
-    texto:"Isso mesmo. Era o setor da papelada." },
+    texto:"Isso mesmo. Era o setor da *papelada*." },
+
   { papel:'aluno6', tipo:'pergunta',
     texto:"E o que fazia alguém mudar de ideia?" },
+
   { papel:'professor', tipo:'definicao',
-    texto:"A percepção de que pessoas fazem a diferença nos resultados." },
+    texto:"A percepção de que *pessoas* fazem a diferença nos resultados." },
 
   { tipo:'pausa' },
 
   { papel:'aluno2', tipo:'pergunta',
     texto:"E hoje, o que mudou?" },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Hoje o cenário mudou completamente." },
+    texto:"Hoje o cenário mudou *completamente*." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"A gestão de pessoas passou a ser estratégica." },
+    texto:"A gestão de pessoas passou a ser *estratégica*." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Ela participa das decisões importantes da organização." },
+    texto:"Ela participa das *decisões importantes* da organização." },
+
   { papel:'aluno4', tipo:'confirmacao',
     texto:"Então ela deixou de só resolver problemas e passou a construir resultados." },
+
   { papel:'professor', tipo:'confirmacao',
-    texto:"Exatamente. Essa é a virada de chave." },
+    texto:"*Exatamente.* Essa é a virada de chave." },
 
   { tipo:'pausa' },
 
   { papel:'aluno7', tipo:'pergunta',
     texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Tem. E é uma diferença importante." },
+    texto:"Tem. E é uma diferença *importante*." },
+
   { papel:'professor', tipo:'definicao',
     texto:"Gestão de recursos humanos é o nome mais antigo." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Ligado à ideia de que pessoas são recursos. Como máquinas, como dinheiro." },
+    texto:"Ligado à ideia de que pessoas são *recursos*. Como máquinas, como dinheiro." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Gestão de pessoas é o nome mais moderno." },
+    texto:"Gestão de pessoas é o nome mais *moderno*." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Ela enxerga o ser humano como parceiro da organização. Não como recurso." },
+    texto:"Ela enxerga o ser humano como *parceiro* da organização. Não como recurso." },
+
   { papel:'aluno1', tipo:'confirmacao',
     texto:"Então não é só uma troca de nome." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Não. É uma mudança de mentalidade." },
+    texto:"*Não.* É uma mudança de *mentalidade*." },
+
   { papel:'professor', tipo:'definicao',
-    texto:"Antes, a pessoa era vista como custo. || Agora, é vista como diferencial competitivo." },
+    texto:"Antes, a pessoa era vista como custo. || Agora, é vista como *diferencial competitivo*." },
 
   { tipo:'pausa' },
 
   { papel:'professor', tipo:'guarde',
-    texto:"Guarde isto." },
+    texto:"*Guarde isto.*" },
+
   { papel:'professor', tipo:'guarde',
-    texto:"Gestão de pessoas é a área que cuida do ser humano no trabalho." },
+    texto:"Gestão de pessoas é a área que cuida do *ser humano* no trabalho." },
+
   { papel:'aluno4', tipo:'guarde',
     texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
+
   { papel:'professor', tipo:'guarde',
-    texto:"E passa a construir resultados." },
+    texto:"E passa a *construir resultados*." },
+
   { papel:'aluno2', tipo:'guarde',
     texto:"Agora ficou claro, professor." },
+
   { papel:'professor', tipo:'conclusao',
-    texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre gente. Sempre foi. E sempre será." }
+    texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
 ];
 
 let synth = window.speechSynthesis;
 let tocando = false;
 let cancelar = false;
 
-/* ── Render ── */
+/* =====================================================
+   RENDER
+   ===================================================== */
 function renderTextoLegivel(texto) {
-  return texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
+  // remove marcadores de micro-pausa
+  let t = texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
+  // converte *palavra* em <span class="enfase">
+  t = t.replace(/\*([^*]+)\*/g, '<span class="enfase">$1</span>');
+  return t;
 }
 
 function renderAula() {
@@ -320,7 +389,9 @@ function resetDestaques() {
   });
 }
 
-/* ── Player ── */
+/* =====================================================
+   PLAYER
+   ===================================================== */
 function togglePlay() {
   if (tocando) { parar(); return; }
   tocar();
@@ -352,7 +423,9 @@ function setProgresso(pct) {
   document.getElementById('prog').style.width = pct + '%';
 }
 
-/* ── Micro-pausas ── */
+/* =====================================================
+   SEGMENTAÇÃO: micro-pausas + ênfase
+   ===================================================== */
 function dividirComMicroPausas(texto) {
   const partesLongas = texto.split(/\s*\|\|\s*/);
   const segmentos = [];
@@ -361,7 +434,18 @@ function dividirComMicroPausas(texto) {
     const partesCurtas = parte.split(/\s*\|\s*/);
     partesCurtas.forEach((p, iCurta) => {
       if (iCurta > 0) segmentos.push({ tipo:'pausaCurta' });
-      if (p.trim()) segmentos.push({ tipo:'fala', texto:p.trim() });
+      if (p.trim()) {
+        // dentro de cada parte, separa ênfases
+        const comEnfase = p.split(/(\*[^*]+\*)/g);
+        comEnfase.forEach(frag => {
+          if (!frag) return;
+          if (frag.startsWith('*') && frag.endsWith('*')) {
+            segmentos.push({ tipo:'enfase', texto: frag.slice(1, -1).trim() });
+          } else if (frag.trim()) {
+            segmentos.push({ tipo:'fala', texto: frag.trim() });
+          }
+        });
+      }
     });
   });
   return segmentos;
@@ -389,6 +473,8 @@ async function falarComMicroPausas(textoOriginal, perfil, voz) {
       await esperar(perfil.microCurta);
     } else if (seg.tipo === 'pausaLonga') {
       await esperar(perfil.microLonga);
+    } else if (seg.tipo === 'enfase') {
+      await falar(seg.texto, perfil.rateEnfase, perfil.pitchEnfase, perfil.volume, voz);
     } else if (seg.tipo === 'fala') {
       await falar(seg.texto, perfil.rate, perfil.pitch, perfil.volume, voz);
     }
@@ -399,13 +485,27 @@ function esperar(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/* ── Troca de voz robusta (iOS-safe) ── */
 async function forcarTrocaVoz(voz) {
   synth.cancel();
-  await esperar(150);
-  await falar(' ', 1.0, 1.0, 0.001, voz);
-  await esperar(250);
+  await esperar(120);
+  await new Promise(resolve => {
+    const u = new SpeechSynthesisUtterance('.');
+    u.voice = voz;
+    u.volume = 0;          // inaudível
+    u.rate = 1.0;
+    u.pitch = 1.0;
+    u.onend = resolve;
+    u.onerror = resolve;
+    synth.speak(u);
+    setTimeout(resolve, 250); // segurança
+  });
+  await esperar(180);
 }
 
+/* =====================================================
+   LOOP PRINCIPAL
+   ===================================================== */
 async function tocar() {
   if (!elenco || !elenco.professor) {
     alert('Nenhuma voz pt-BR detectada no dispositivo.');
@@ -460,20 +560,55 @@ async function tocar() {
 }
 
 /* =====================================================
-   ELENCO
+   DISTRIBUIÇÃO DO ELENCO — prioriza vozes enhanced
    ===================================================== */
+const REGEX_PROFESSOR = [
+  /felipe.*(enhanced|premium)/i,
+  /felipe/i,
+  /daniel.*(enhanced|premium)/i,
+  /daniel/i,
+  /bruno/i,
+  /eddy/i,
+  /antonio|antônio/i,
+  /joão|joao/i
+];
+
+function escolherProfessor(vozes) {
+  for (const re of REGEX_PROFESSOR) {
+    const v = vozes.find(v => re.test(v.name));
+    if (v) return v;
+  }
+  return vozes[0];
+}
+
 function distribuirElenco(vozes) {
   if (vozes.length === 0) return null;
-  const masculinas = vozes.filter(v => /felipe|daniel|antonio|antônio|marcos|paulo|ricardo|joão|joao|carlos|bruno|thiago|hugo/i.test(v.name));
-  const professorVoz = masculinas[0] || vozes[0];
-  const outras = vozes.filter(v => v !== professorVoz);
-  const filaAlunos = outras.length > 0 ? outras : [professorVoz];
 
-  const e = { professor: professorVoz };
+  const professor = escolherProfessor(vozes);
+  const restantes = vozes.filter(v => v !== professor);
+
+  // Enhanced/premium primeiro → timbre mais rico para os alunos
+  const enhanced = restantes.filter(v => /enhanced|premium/i.test(v.name));
+  const compactas = restantes.filter(v => !/enhanced|premium/i.test(v.name));
+  const ordenadas = [...enhanced, ...compactas];
+
+  const fila = ordenadas.length > 0 ? ordenadas : [professor];
+
+  const e = { professor };
   PAPEIS_ALUNO.forEach((papel, i) => {
-    e[papel] = filaAlunos[i % filaAlunos.length];
+    e[papel] = fila[i % fila.length];
   });
   return e;
+}
+
+/* =====================================================
+   STATUS VISUAL (ajuda a debugar elenco)
+   ===================================================== */
+function atualizarStatus() {
+  const el = document.getElementById('statusVozes');
+  if (!elenco) { el.textContent = 'Sem vozes pt-BR detectadas.'; return; }
+  const unicas = new Set(Object.values(elenco).map(v => v.name));
+  el.textContent = `Professor: ${elenco.professor.name} · ${unicas.size} vozes distintas em uso`;
 }
 
 /* =====================================================
@@ -482,10 +617,11 @@ function distribuirElenco(vozes) {
 carregarVozesComRetry(() => {
   const ptBR = filtrarVozes(vozesPtBR());
   if (ptBR.length === 0) {
-    alert('Nenhuma voz pt-BR detectada no dispositivo.');
+    document.getElementById('statusVozes').textContent = 'Nenhuma voz pt-BR instalada.';
     return;
   }
   elenco = distribuirElenco(ptBR);
+  atualizarStatus();
 });
 </script>
 </body>
