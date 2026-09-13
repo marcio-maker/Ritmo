@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Diálogos Sortidos — RH</title>
+<title>Sala de Aula — RH Bloco 1</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
@@ -17,25 +17,21 @@
     display: flex; flex-direction: column;
   }
 
-  .tabs {
-    display: flex; gap: 6px; padding: 16px 18px 0; overflow-x: auto;
+  .cabecalho {
+    padding: 18px 18px 0;
+    text-align: center;
   }
-  .tab {
-    flex: 1; min-width: 68px; padding: 10px 6px;
-    border: none; border-radius: 9px;
-    font-size: .78rem; font-weight: 700; font-family: inherit;
-    cursor: pointer; background: #1e293b; color: #64748b;
-    transition: background .15s, color .15s; white-space: nowrap;
-  }
-  .tab.ativa { background: #1e3a8a; color: #fff; }
-
-  .paineis { flex: 1; padding: 14px 18px 0; overflow: hidden; position: relative; }
-  .painel { display: none; flex-direction: column; gap: 10px; height: 100%; }
-  .painel.ativo { display: flex; }
-
-  .heading {
+  .cabecalho h1 {
     font-size: .95rem; font-weight: 700; color: #93c5fd;
-    padding-left: 2px;
+    margin-bottom: 4px;
+  }
+  .cabecalho p {
+    font-size: .72rem; color: #64748b;
+  }
+
+  .conteudo {
+    flex: 1; padding: 16px 18px 0;
+    overflow: hidden; display: flex; flex-direction: column;
   }
 
   .texto-bloco {
@@ -50,13 +46,17 @@
     transition: opacity .2s;
   }
   .avatar {
-    width: 30px; height: 30px; border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: .78rem; font-weight: 800; flex-shrink: 0;
+    font-size: .72rem; font-weight: 800; flex-shrink: 0;
     color: #fff;
   }
-  .fala.vozA .avatar { background: #3b82f6; }
-  .fala.vozB .avatar { background: #f59e0b; }
+  /* Cores por papel */
+  .fala.professor .avatar { background: #7c3aed; }
+  .fala.aluno1   .avatar { background: #3b82f6; }
+  .fala.aluno2   .avatar { background: #f59e0b; }
+  .fala.aluno3   .avatar { background: #10b981; }
+  .fala.aluno4   .avatar { background: #ec4899; }
 
   .balao {
     flex: 1; padding: 8px 12px; border-radius: 12px;
@@ -65,21 +65,27 @@
     border: 1px solid #334155;
     transition: background .15s, border-color .15s, color .15s;
   }
-  .fala.vozA .balao { border-top-left-radius: 4px; }
-  .fala.vozB .balao { border-top-right-radius: 4px; }
+  .fala.professor .balao { border-top-left-radius: 4px; }
+  .fala.aluno1   .balao { border-top-left-radius: 4px; }
+  .fala.aluno2   .balao { border-top-right-radius: 4px; }
+  .fala.aluno3   .balao { border-top-left-radius: 4px; }
+  .fala.aluno4   .balao { border-top-right-radius: 4px; }
 
   .fala.falando .balao {
-    background: #1e3a8a; border-color: #3b82f6; color: #fff;
+    color: #fff;
   }
-  .fala.vozB.falando .balao {
-    background: #78350f; border-color: #f59e0b; color: #fff;
-  }
+  .fala.professor.falando .balao { background: #4c1d95; border-color: #7c3aed; }
+  .fala.aluno1.falando   .balao { background: #1e3a8a; border-color: #3b82f6; }
+  .fala.aluno2.falando   .balao { background: #78350f; border-color: #f59e0b; }
+  .fala.aluno3.falando   .balao { background: #064e3b; border-color: #10b981; }
+  .fala.aluno4.falando   .balao { background: #831843; border-color: #ec4899; }
+
   .fala.falada { opacity: .45; }
   .fala.futura { opacity: .65; }
 
-  .quebra { height: 8px; }
+  .quebra { height: 10px; }
 
-  .player { padding: 10px 0 0; }
+  .player { padding: 12px 0 0; }
   .btn-play {
     width: 100%; min-height: 52px; border: none; border-radius: 12px;
     font-size: .95rem; font-weight: 800; font-family: inherit; cursor: pointer;
@@ -90,12 +96,15 @@
   .btn-play:active { opacity: .8; transform: scale(.97); }
   .btn-play.tocando { background: #dc2626; }
 
-  .voz-info {
+  .elenco {
     font-size: .68rem; color: #475569; text-align: center;
-    padding: 8px 0 10px; font-weight: 600; line-height: 1.5;
+    padding: 10px 0 12px; font-weight: 600; line-height: 1.6;
   }
-  .voz-info .tagA { color: #60a5fa; font-weight: 700; }
-  .voz-info .tagB { color: #fbbf24; font-weight: 700; }
+  .elenco .prof { color: #a78bfa; font-weight: 700; }
+  .elenco .a1 { color: #60a5fa; font-weight: 700; }
+  .elenco .a2 { color: #fbbf24; font-weight: 700; }
+  .elenco .a3 { color: #34d399; font-weight: 700; }
+  .elenco .a4 { color: #f472b6; font-weight: 700; }
 
   .progresso-wrap {
     margin-top: 8px; height: 4px; background: #1e293b;
@@ -109,13 +118,23 @@
 </head>
 <body>
 
-<div class="tabs">
-  <button class="tab ativa" data-v="b1" onclick="trocarTab('b1')">Bloco 1</button>
-  <button class="tab" data-v="b2" onclick="trocarTab('b2')">Bloco 2</button>
-  <button class="tab" data-v="b3" onclick="trocarTab('b3')">Bloco 3</button>
+<div class="cabecalho">
+  <h1>🎓 RH — Bloco 1 · Sala de Aula</h1>
+  <p>1 professor + 4 alunos</p>
 </div>
 
-<div class="paineis" id="paineis"></div>
+<div class="conteudo">
+  <div class="texto-bloco" id="texto"></div>
+
+  <div class="player">
+    <button class="btn-play" id="btnPlay" onclick="togglePlay()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      Ouvir aula
+    </button>
+    <div class="progresso-wrap"><div class="progresso-fill" id="prog"></div></div>
+    <div class="elenco" id="elenco">🎙 Sorteando elenco...</div>
+  </div>
+</div>
 
 <script>
 /* =====================================================
@@ -154,270 +173,271 @@ function vozesPtBR() {
   });
 }
 
-/* Sorteia 2 vozes diferentes (prioriza M+F se possível) */
-function sortearDuasVozes() {
+/* Heurística de gênero por nome */
+function pareceMasculina(nome) {
+  return /felipe|daniel|antonio|antônio|marcos|paulo|ricardo|joão|joao|carlos|bruno|thiago|tiago|eduardo|hugo/i.test(nome);
+}
+function pareceFeminina(nome) {
+  return /luciana|fernanda|thalita|francisca|maria|joana|catarina|ana|helena|beatriz|camila|julia|júlia|leticia|letícia|patricia|patrícia/i.test(nome);
+}
+
+/* Sorteia 5 vozes (ou o que tiver) e distribui papéis */
+function sortearElenco() {
   const pt = vozesPtBR();
-  if (pt.length === 0) return { A: null, B: null };
-  if (pt.length === 1) return { A: pt[0], B: pt[0] };
+  if (pt.length === 0) return null;
 
-  const masculinas = pt.filter(v => /felipe|daniel|antonio|antônio|marcos|paulo|ricardo|joão|joao|carlos|bruno|thiago|tiago|eduardo|hugo/i.test(v.name));
-  const femininas = pt.filter(v => /luciana|fernanda|thalita|francisca|maria|joana|catarina|ana|helena|beatriz|camila|julia|júlia|leticia|letícia|patricia|patrícia/i.test(v.name));
-
-  let A, B;
-  if (masculinas.length > 0 && femininas.length > 0) {
-    A = masculinas[Math.floor(Math.random() * masculinas.length)];
-    B = femininas[Math.floor(Math.random() * femininas.length)];
-  } else {
-    // Sorteia 2 diferentes
-    const idxA = Math.floor(Math.random() * pt.length);
-    let idxB = Math.floor(Math.random() * pt.length);
-    while (idxB === idxA && pt.length > 1) {
-      idxB = Math.floor(Math.random() * pt.length);
-    }
-    A = pt[idxA];
-    B = pt[idxB];
+  // Embaralha
+  const baralhadas = [...pt];
+  for (let i = baralhadas.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [baralhadas[i], baralhadas[j]] = [baralhadas[j], baralhadas[i]];
   }
-  return { A, B };
+
+  // Distribui papéis
+  const elenco = {
+    professor: baralhadas[0] || null,
+    aluno1: baralhadas[1] || baralhadas[0] || null,
+    aluno2: baralhadas[2] || baralhadas[0] || null,
+    aluno3: baralhadas[3] || baralhadas[0] || null,
+    aluno4: baralhadas[4] || baralhadas[0] || null
+  };
+
+  // Se tiver uma masculina e uma feminina, garante que o professor seja uma delas
+  // (opcional: mantém o sorteio puro, mas isso dá variedade)
+
+  return elenco;
+}
+
+let elenco = null;
+
+function atualizarElenco() {
+  const el = document.getElementById('elenco');
+  if (!elenco || !elenco.professor) {
+    el.textContent = '⚠️ Nenhuma voz pt-BR detectada';
+    return;
+  }
+  el.innerHTML = `
+    <span class="prof">Prof:</span> ${elenco.professor.name}<br>
+    <span class="a1">Aluno 1:</span> ${elenco.aluno1.name} ·
+    <span class="a2">Aluno 2:</span> ${elenco.aluno2.name}<br>
+    <span class="a3">Aluno 3:</span> ${elenco.aluno3.name} ·
+    <span class="a4">Aluno 4:</span> ${elenco.aluno4.name}
+  `;
 }
 
 /* =====================================================
-   2. DIÁLOGOS — 3 Blocos em formato de conversa
-   voz 'A' = quem explica · voz 'B' = quem reage
-   " | " = micro-pausa curta · " || " = micro-pausa longa
+   2. DIÁLOGO — Sala de aula sobre "O que é gestão de pessoas"
+   Papéis:
+     professor → explica, motiva, conduz
+     aluno1    → curioso (pergunta)
+     aluno2    → confirma (concorda)
+     aluno3    → questiona (dúvida)
+     aluno4    → sintetiza (conclui)
    ===================================================== */
-const BLOCOS = [
-  {
-    id: "b1",
-    heading: "O que é gestão de pessoas",
-    dialogo: [
-      { voz:'A', tipo:'abertura',  texto:"Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
-      { voz:'B', tipo:'definicao', texto:"Entendi. Então ela cuida de tudo que envolve gente dentro da empresa." },
-      { voz:'A', tipo:'definicao', texto:"Exatamente. Ela atrai, desenvolve, motiva | e mantém as pessoas na empresa." },
-      { tipo:'pausa' },
-      { voz:'B', tipo:'definicao', texto:"E isso sempre foi assim?" },
-      { voz:'A', tipo:'definicao', texto:"Não. Durante muito tempo, essa área foi vista apenas como operacional." },
-      { voz:'A', tipo:'definicao', texto:"Cuidava de folha de pagamento, ponto, férias e documentação." },
-      { voz:'B', tipo:'definicao', texto:"Ah, o setor que resolvia papelada." },
-      { voz:'A', tipo:'definicao', texto:"Isso mesmo." },
-      { tipo:'pausa' },
-      { voz:'B', tipo:'definicao', texto:"E hoje, o que mudou?" },
-      { voz:'A', tipo:'definicao', texto:"Hoje o cenário mudou. || A gestão de pessoas passou a ser estratégica." },
-      { voz:'A', tipo:'definicao', texto:"Ela participa das decisões importantes da organização." },
-      { tipo:'pausa' },
-      { voz:'B', tipo:'definicao', texto:"Então tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
-      { voz:'A', tipo:'definicao', texto:"Tem. || Gestão de recursos humanos é o nome mais antigo." },
-      { voz:'A', tipo:'definicao', texto:"Ligado à ideia de que pessoas são recursos, como máquinas ou dinheiro." },
-      { voz:'A', tipo:'definicao', texto:"Gestão de pessoas é o nome mais moderno, que enxerga o ser humano como parceiro da organização." },
-      { voz:'B', tipo:'definicao', texto:"Faz sentido. O nome muda, a mentalidade muda também." },
-      { tipo:'pausa' },
-      { voz:'A', tipo:'guarde',    texto:"Guarde isto." },
-      { voz:'A', tipo:'guarde',    texto:"Gestão de pessoas é a área que cuida do ser humano no trabalho." },
-      { voz:'B', tipo:'guarde',    texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
-      { voz:'A', tipo:'guarde',    texto:"E passa a construir resultados." }
-    ]
-  },
-  {
-    id: "b2",
-    heading: "Gestão estratégica de pessoas",
-    dialogo: [
-      { voz:'A', tipo:'abertura',  texto:"A gestão estratégica de pessoas é quando a área de recursos humanos deixa de agir só no operacional." },
-      { voz:'B', tipo:'definicao', texto:"Então ela passa a participar do planejamento da organização." },
-      { voz:'A', tipo:'definicao', texto:"Exatamente." },
-      { tipo:'pausa' },
-      { voz:'B', tipo:'definicao', texto:"E o que isso significa na prática?" },
-      { voz:'A', tipo:'definicao', texto:"Significa alinhar as políticas de pessoas aos objetivos do negócio." },
-      { voz:'A', tipo:'definicao', texto:"Se a empresa quer crescer, o setor de pessoas precisa preparar a equipe para esse crescimento." },
-      { voz:'A', tipo:'definicao', texto:"Se a empresa quer inovar, precisa contratar e desenvolver pessoas com esse perfil." },
-      { tipo:'pausa' },
-      { voz:'B', tipo:'definicao', texto:"E quais são as frentes de trabalho dela?" },
-      { voz:'A', tipo:'definicao', texto:"São quatro frentes principais." },
-      { voz:'A', tipo:'definicao', texto:"Primeiro, atrai talentos. Segundo, desenvolve esses talentos." },
-      { voz:'A', tipo:'definicao', texto:"Terceiro, mantém as pessoas boas na empresa. || Quarto, garante que tudo isso esteja ligado à estratégia." },
-      { voz:'B', tipo:'definicao', texto:"Entendi. Então não é só contratar e pagar." },
-      { voz:'A', tipo:'definicao', texto:"Não. É pensar no presente e no futuro da organização." },
-      { tipo:'pausa' },
-      { voz:'A', tipo:'guarde',    texto:"Guarde isto." },
-      { voz:'A', tipo:'guarde',    texto:"Gestão estratégica de pessoas é alinhar gente e negócio." },
-      { voz:'B', tipo:'guarde',    texto:"Não é só contratar e pagar." },
-      { voz:'A', tipo:'guarde',    texto:"É pensar no presente e no futuro da organização." }
-    ]
-  },
-  {
-    id: "b3",
-    heading: "Recrutamento",
-    dialogo: [
-      { voz:'A', tipo:'abertura',  texto:"Recrutamento é o processo de atrair candidatos para uma vaga." },
-      { voz:'B', tipo:'definicao', texto:"Então é a etapa em que a empresa vai ao mercado buscar pessoas." },
-      { voz:'A', tipo:'definicao', texto:"Isso. Buscar pessoas com potencial para ocupar determinada função." },
-      { tipo:'pausa' },
-      { voz:'B', tipo:'definicao', texto:"E recrutamento é a mesma coisa que seleção?" },
-      { voz:'A', tipo:'definicao', texto:"Não. || Muita gente confunde, mas são coisas diferentes." },
-      { voz:'A', tipo:'definicao', texto:"Recrutamento atrai. Seleção escolhe." },
-      { voz:'B', tipo:'definicao', texto:"São duas etapas diferentes, uma depois da outra." },
-      { voz:'A', tipo:'definicao', texto:"Exatamente." },
-      { tipo:'pausa' },
-      { voz:'B', tipo:'definicao', texto:"E quais são os tipos de recrutamento?" },
-      { voz:'A', tipo:'definicao', texto:"Existem dois tipos principais. || O recrutamento interno | e o recrutamento externo." },
-      { voz:'B', tipo:'definicao', texto:"E qual é a diferença?" },
-      { voz:'A', tipo:'definicao', texto:"O interno busca candidatos dentro da própria empresa. O externo busca no mercado." },
-      { voz:'B', tipo:'definicao', texto:"Entendi. Um olha para dentro, o outro para fora." },
-      { voz:'A', tipo:'definicao', texto:"Isso mesmo." },
-      { tipo:'pausa' },
-      { voz:'A', tipo:'guarde',    texto:"Guarde isto." },
-      { voz:'A', tipo:'guarde',    texto:"Recrutamento é atrair." },
-      { voz:'B', tipo:'guarde',    texto:"E a escolha entre interno e externo depende do momento da empresa." },
-      { voz:'A', tipo:'guarde',    texto:"E do tipo de vaga." }
-    ]
-  }
+const AULA = [
+  { papel:'professor', tipo:'abertura',
+    texto:"Bom dia, turma. Hoje vamos entender o que é gestão de pessoas." },
+  { papel:'aluno1', tipo:'pergunta',
+    texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"Boa pergunta. Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Ela atrai, desenvolve, motiva | e mantém as pessoas dentro da empresa." },
+  { papel:'aluno2', tipo:'confirmacao',
+    texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Exatamente. Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
+
+  { tipo:'pausa' },
+
+  { papel:'aluno3', tipo:'pergunta',
+    texto:"Mas professor, isso sempre foi assim?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"Não. Durante muito tempo, essa área foi vista apenas como operacional." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Cuidava de folha de pagamento, ponto, férias e documentação." },
+  { papel:'aluno1', tipo:'confirmacao',
+    texto:"Ah, o famoso setor que resolvia papelada." },
+  { papel:'professor', tipo:'confirmacao',
+    texto:"Isso mesmo. Era o setor da papelada." },
+
+  { tipo:'pausa' },
+
+  { papel:'aluno2', tipo:'pergunta',
+    texto:"E hoje, o que mudou?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"Hoje o cenário mudou completamente." },
+  { papel:'professor', tipo:'definicao',
+    texto:"A gestão de pessoas passou a ser estratégica." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Ela participa das decisões importantes da organização." },
+  { papel:'aluno4', tipo:'confirmacao',
+    texto:"Então ela deixou de só resolver problemas e passou a construir resultados." },
+  { papel:'professor', tipo:'confirmacao',
+    texto:"Exatamente. Essa é a virada de chave." },
+
+  { tipo:'pausa' },
+
+  { papel:'aluno3', tipo:'pergunta',
+    texto:"Professor, tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"Tem. E é uma diferença importante." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Gestão de recursos humanos é o nome mais antigo." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Ligado à ideia de que pessoas são recursos. Como máquinas, como dinheiro." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Gestão de pessoas é o nome mais moderno." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Ela enxerga o ser humano como parceiro da organização. Não como recurso." },
+  { papel:'aluno1', tipo:'confirmacao',
+    texto:"Então não é só uma troca de nome." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Não. É uma mudança de mentalidade." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Antes, a pessoa era vista como custo. || Agora, é vista como diferencial competitivo." },
+
+  { tipo:'pausa' },
+
+  { papel:'professor', tipo:'guarde',
+    texto:"Guarde isto." },
+  { papel:'professor', tipo:'guarde',
+    texto:"Gestão de pessoas é a área que cuida do ser humano no trabalho." },
+  { papel:'aluno4', tipo:'guarde',
+    texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
+  { papel:'professor', tipo:'guarde',
+    texto:"E passa a construir resultados." },
+  { papel:'aluno2', tipo:'guarde',
+    texto:"Agora ficou claro, professor." },
+  { papel:'professor', tipo:'conclusao',
+    texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre gente. Sempre foi. E sempre será." }
 ];
 
 /* =====================================================
-   3. PERFIL V6b — Palestrante inspirador
+   3. PERFIS DE RITMO POR PAPEL
+   Professor: motivacional, grave, pausado
+   Aluno1: curioso, agudo, rápido
+   Aluno2: confirma, neutro
+   Aluno3: questiona, pensativo
+   Aluno4: sintetiza, calmo
    ===================================================== */
-const V6B = {
-  base: { rate: 0.88, pitch: 0.96, volume: 1.0 },
-  pausas: {
-    abertura:700, definicao:400, lista:180, exemplo:220,
-    conclusao:500, guarde:800, pausa:650
+const PERFIS = {
+  professor: {
+    base: { rate: 0.86, pitch: 0.94, volume: 1.0 },
+    pausas: {
+      abertura:800, definicao:450, pergunta:300,
+      confirmacao:350, guarde:850, conclusao:600, pausa:650
+    },
+    microCurta: 220, microLonga: 320
   },
-  ratePorTipo: {
-    abertura:0.86, definicao:0.90, lista:0.92,
-    exemplo:0.90, conclusao:0.84, guarde:0.80
+  aluno1: { // curioso
+    base: { rate: 0.98, pitch: 1.08, volume: 0.95 },
+    pausas: {
+      abertura:300, definicao:200, pergunta:250,
+      confirmacao:200, guarde:300, conclusao:300, pausa:400
+    },
+    microCurta: 100, microLonga: 180
   },
-  pitchPorTipo: {
-    abertura:0.98, definicao:0.96, lista:0.96,
-    exemplo:0.98, conclusao:0.92, guarde:0.90
+  aluno2: { // confirma
+    base: { rate: 0.92, pitch: 0.98, volume: 0.95 },
+    pausas: {
+      abertura:250, definicao:200, pergunta:220,
+      confirmacao:180, guarde:280, conclusao:250, pausa:380
+    },
+    microCurta: 120, microLonga: 180
   },
-  volumePorTipo: {
-    abertura:1.0, definicao:1.0, lista:0.98,
-    exemplo:0.96, conclusao:1.0, guarde:0.90
+  aluno3: { // questiona
+    base: { rate: 0.94, pitch: 1.02, volume: 0.95 },
+    pausas: {
+      abertura:300, definicao:220, pergunta:300,
+      confirmacao:200, guarde:300, conclusao:280, pausa:400
+    },
+    microCurta: 150, microLonga: 220
   },
-  microCurta: 120, microLonga: 220
+  aluno4: { // sintetiza
+    base: { rate: 0.88, pitch: 0.96, volume: 0.95 },
+    pausas: {
+      abertura:280, definicao:220, pergunta:240,
+      confirmacao:200, guarde:320, conclusao:300, pausa:420
+    },
+    microCurta: 160, microLonga: 220
+  }
 };
 
 let synth = window.speechSynthesis;
-let tocando = null;
+let tocando = false;
 let cancelar = false;
-let modoContinuo = true;
-
-/* Armazena o par de vozes sorteado para cada bloco */
-const vozesPorBloco = {};
 
 /* ── Render ── */
-const paineisEl = document.getElementById('paineis');
-
 function renderTextoLegivel(texto) {
   return texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
 }
 
-function renderTodos() {
-  paineisEl.innerHTML = '';
-  BLOCOS.forEach((bloco, idx) => {
-    const painel = document.createElement('div');
-    painel.className = 'painel' + (idx === 0 ? ' ativo' : '');
-    painel.id = 'painel-' + bloco.id;
-
-    const heading = document.createElement('div');
-    heading.className = 'heading';
-    heading.textContent = bloco.heading;
-    painel.appendChild(heading);
-
-    const texto = document.createElement('div');
-    texto.className = 'texto-bloco';
-    texto.id = 'texto-' + bloco.id;
-    bloco.dialogo.forEach((fala, i) => {
-      if (fala.tipo === 'pausa') {
-        const br = document.createElement('div');
-        br.className = 'quebra';
-        texto.appendChild(br);
-        return;
-      }
-      const div = document.createElement('div');
-      div.className = 'fala voz' + fala.voz + ' futura';
-      div.id = bloco.id + '-f-' + i;
-      div.innerHTML = `
-        <div class="avatar">${fala.voz}</div>
-        <div class="balao">${renderTextoLegivel(fala.texto)}</div>
-      `;
-      texto.appendChild(div);
-    });
-    painel.appendChild(texto);
-
-    const player = document.createElement('div');
-    player.className = 'player';
-    player.innerHTML = `
-      <button class="btn-play" id="btn-${bloco.id}" onclick="togglePlay('${bloco.id}')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        Ouvir diálogo
-      </button>
-      <div class="progresso-wrap"><div class="progresso-fill" id="prog-${bloco.id}"></div></div>
-      <div class="voz-info" id="voz-${bloco.id}">🎙 Sorteando vozes...</div>
+function renderAula() {
+  const el = document.getElementById('texto');
+  el.innerHTML = '';
+  AULA.forEach((fala, i) => {
+    if (fala.tipo === 'pausa') {
+      const br = document.createElement('div');
+      br.className = 'quebra';
+      el.appendChild(br);
+      return;
+    }
+    const div = document.createElement('div');
+    div.className = 'fala ' + fala.papel + ' futura';
+    div.id = 'fala-' + i;
+    const label = {
+      professor: 'P',
+      aluno1: 'A1',
+      aluno2: 'A2',
+      aluno3: 'A3',
+      aluno4: 'A4'
+    }[fala.papel];
+    div.innerHTML = `
+      <div class="avatar">${label}</div>
+      <div class="balao">${renderTextoLegivel(fala.texto)}</div>
     `;
-    painel.appendChild(player);
-
-    paineisEl.appendChild(painel);
-  });
-
-  // Sorteia as vozes para cada bloco assim que renderiza
-  setTimeout(sortearVozesDeTodos, 300);
-  setTimeout(sortearVozesDeTodos, 1500);
-}
-renderTodos();
-
-function sortearVozesDeTodos() {
-  if (!vozesCarregadas) return;
-  BLOCOS.forEach(bloco => {
-    if (!vozesPorBloco[bloco.id]) {
-      vozesPorBloco[bloco.id] = sortearDuasVozes();
-    }
-  });
-  atualizarInfoVozes();
-}
-
-function atualizarInfoVozes() {
-  BLOCOS.forEach(bloco => {
-    const par = vozesPorBloco[bloco.id];
-    const el = document.getElementById('voz-' + bloco.id);
-    if (!el || !par) return;
-    if (par.A && par.B) {
-      el.innerHTML = `
-        <span class="tagA">A (explica):</span> ${par.A.name}<br>
-        <span class="tagB">B (reage):</span> ${par.B.name}
-      `;
-    } else {
-      el.textContent = '⚠️ Nenhuma voz pt-BR detectada';
-    }
+    el.appendChild(div);
   });
 }
+renderAula();
 
-/* ── Tabs ── */
-function trocarTab(v) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('ativa', t.dataset.v === v));
-  document.querySelectorAll('.painel').forEach(p => p.classList.toggle('ativo', p.id === 'painel-' + v));
-  if (tocando && tocando !== v) pararTudo();
+function destacarFala(idx) {
+  document.querySelectorAll('.fala').forEach(el => {
+    const numIdx = parseInt(el.id.replace('fala-', ''));
+    el.classList.remove('falando', 'falada', 'futura');
+    if (numIdx < idx) el.classList.add('falada');
+    else if (numIdx === idx) el.classList.add('falando');
+    else el.classList.add('futura');
+  });
+  const atual = document.getElementById('fala-' + idx);
+  if (atual) atual.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetDestaques() {
+  document.querySelectorAll('.fala').forEach(el => {
+    el.classList.remove('falando', 'falada');
+    el.classList.add('futura');
+  });
 }
 
 /* ── Player ── */
-function togglePlay(id) {
-  if (tocando === id) { pararTudo(); return; }
-  if (tocando) pararTudo();
-  tocarBloco(id);
+function togglePlay() {
+  if (tocando) { parar(); return; }
+  tocar();
 }
 
-function pararTudo() {
+function parar() {
   cancelar = true;
   synth.cancel();
-  if (tocando) {
-    setBtnEstado(tocando, false);
-    resetDestaques(tocando);
-    setProgresso(tocando, 0);
-  }
-  tocando = null;
+  tocando = false;
+  resetDestaques();
+  setBtnEstado(false);
+  setProgresso(0);
 }
 
-function setBtnEstado(id, playing) {
-  const btn = document.getElementById('btn-' + id);
-  if (!btn) return;
+function setBtnEstado(playing) {
+  const btn = document.getElementById('btnPlay');
   if (playing) {
     btn.className = 'btn-play tocando';
     btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -425,35 +445,12 @@ function setBtnEstado(id, playing) {
   } else {
     btn.className = 'btn-play';
     btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M8 5v14l11-7z"/></svg> Ouvir diálogo`;
+      <path d="M8 5v14l11-7z"/></svg> Ouvir aula`;
   }
 }
 
-function setProgresso(id, pct) {
-  const el = document.getElementById('prog-' + id);
-  if (el) el.style.width = pct + '%';
-}
-
-function resetDestaques(id) {
-  document.querySelectorAll('#' + id + '-f-0, [id^="' + id + '-f-"]').forEach(el => {
-    if (el.classList.contains('fala')) {
-      el.classList.remove('falando', 'falada');
-      el.classList.add('futura');
-    }
-  });
-}
-
-function destacarFala(id, idx) {
-  document.querySelectorAll('[id^="' + id + '-f-"]').forEach(el => {
-    if (!el.classList.contains('fala')) return;
-    const numIdx = parseInt(el.id.replace(id + '-f-', ''));
-    el.classList.remove('falando', 'falada', 'futura');
-    if (numIdx < idx) el.classList.add('falada');
-    else if (numIdx === idx) el.classList.add('falando');
-    else el.classList.add('futura');
-  });
-  const atual = document.getElementById(id + '-f-' + idx);
-  if (atual) atual.scrollIntoView({ behavior: 'smooth', block: 'center' });
+function setProgresso(pct) {
+  document.getElementById('prog').style.width = pct + '%';
 }
 
 /* ── Micro-pausas ── */
@@ -485,16 +482,16 @@ function falar(texto, rate, pitch, volume, voz) {
   });
 }
 
-async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz) {
+async function falarComMicroPausas(textoOriginal, perfil, voz) {
   const segmentos = dividirComMicroPausas(textoOriginal);
   for (const seg of segmentos) {
     if (cancelar) return;
     if (seg.tipo === 'pausaCurta') {
-      await esperar(V6B.microCurta);
+      await esperar(perfil.microCurta);
     } else if (seg.tipo === 'pausaLonga') {
-      await esperar(V6B.microLonga);
+      await esperar(perfil.microLonga);
     } else if (seg.tipo === 'fala') {
-      await falar(seg.texto, rate, pitch, volume, voz);
+      await falar(seg.texto, perfil.base.rate, perfil.base.pitch, perfil.base.volume, voz);
     }
   }
 }
@@ -503,6 +500,7 @@ function esperar(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/* Força o Safari a aceitar a troca de voz */
 async function forcarTrocaVoz(voz) {
   synth.cancel();
   await esperar(150);
@@ -510,104 +508,76 @@ async function forcarTrocaVoz(voz) {
   await esperar(250);
 }
 
-async function tocarBloco(id) {
-  const bloco = BLOCOS.find(b => b.id === id);
-  if (!bloco) return;
-
+async function tocar() {
   if (!vozesCarregadas) {
     carregarVozesComRetry(() => {
-      sortearVozesDeTodos();
-      tocarBloco(id);
+      elenco = sortearElenco();
+      atualizarElenco();
+      tocar();
     });
     return;
   }
-
-  // Garante que existe um par de vozes sorteado para este bloco
-  if (!vozesPorBloco[id]) {
-    vozesPorBloco[id] = sortearDuasVozes();
-    atualizarInfoVozes();
+  if (!elenco) {
+    elenco = sortearElenco();
+    atualizarElenco();
   }
-  const par = vozesPorBloco[id];
-  if (!par.A || !par.B) {
-    alert('Nenhuma voz pt-BR detectada.');
+  if (!elenco || !elenco.professor) {
+    alert('Nenhuma voz pt-BR detectada no dispositivo.');
     return;
   }
 
   cancelar = false;
-  tocando = id;
-  setBtnEstado(id, true);
-  resetDestaques(id);
+  tocando = true;
+  setBtnEstado(true);
 
-  const total = bloco.dialogo.filter(d => d.tipo !== 'pausa').length;
+  const total = AULA.filter(d => d.tipo !== 'pausa').length;
   let faladas = 0;
   let ultimaVoz = null;
 
-  for (let i = 0; i < bloco.dialogo.length; i++) {
+  for (let i = 0; i < AULA.length; i++) {
     if (cancelar) return;
-    const fala = bloco.dialogo[i];
+    const fala = AULA[i];
 
     if (fala.tipo === 'pausa') {
-      await esperar(V6B.pausas.pausa);
+      await esperar(PERFIS.professor.pausas.pausa);
       continue;
     }
 
-    const voz = (fala.voz === 'A') ? par.A : par.B;
+    const voz = elenco[fala.papel];
+    const perfil = PERFIS[fala.papel];
 
-    // Força troca de voz ao mudar de A para B (workaround iOS)
-    if (ultimaVoz !== fala.voz) {
+    // Workaround iOS: força troca de voz quando muda de papel
+    if (ultimaVoz !== voz) {
       await forcarTrocaVoz(voz);
       if (cancelar) return;
-      ultimaVoz = fala.voz;
+      ultimaVoz = voz;
     }
 
-    const pausaAntes = V6B.pausas[fala.tipo] || 0;
+    const pausaAntes = perfil.pausas[fala.tipo] || 0;
     if (pausaAntes > 0) await esperar(pausaAntes);
 
-    const rate   = V6B.ratePorTipo[fala.tipo]   ?? V6B.base.rate;
-    const pitch  = V6B.pitchPorTipo[fala.tipo]  ?? V6B.base.pitch;
-    const volume = V6B.volumePorTipo[fala.tipo] ?? V6B.base.volume;
-
-    destacarFala(id, i);
+    destacarFala(i);
     faladas++;
-    setProgresso(id, Math.round((faladas / total) * 100));
+    setProgresso(Math.round((faladas / total) * 100));
 
-    await falarComMicroPausas(fala.texto, rate, pitch, volume, voz);
+    await falarComMicroPausas(fala.texto, perfil, voz);
   }
 
-  if (cancelar) return;
-
-  resetDestaques(id);
-  setProgresso(id, 100);
-  setBtnEstado(id, false);
-
-  await esperar(600);
-
-  // MODO CONTÍNUO: emenda no próximo bloco (com NOVAS vozes sorteadas)
-  if (modoContinuo) {
-    const idxAtual = BLOCOS.findIndex(b => b.id === id);
-    const proximoIdx = idxAtual + 1;
-
-    if (proximoIdx < BLOCOS.length) {
-      const proximoBloco = BLOCOS[proximoIdx];
-      // Sorteia novas vozes para o próximo bloco
-      vozesPorBloco[proximoBloco.id] = sortearDuasVozes();
-      atualizarInfoVozes();
-
-      trocarTab(proximoBloco.id);
-      setProgresso(id, 0);
-      if (tocando === id) tocando = null;
-      setTimeout(() => tocarBloco(proximoBloco.id), 500);
-      return;
-    }
+  if (!cancelar) {
+    resetDestaques();
+    setProgresso(100);
+    setTimeout(() => {
+      setBtnEstado(false);
+      setProgresso(0);
+      tocando = false;
+    }, 800);
   }
-
-  setProgresso(id, 0);
-  if (tocando === id) tocando = null;
 }
 
 /* ── Init ── */
 carregarVozesComRetry(() => {
-  sortearVozesDeTodos();
+  elenco = sortearElenco();
+  atualizarElenco();
 });
 </script>
 </body>
