@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Loop de Vozes — RH</title>
+<title>Loop 2 Vozes — Felipe e Fernanda</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
@@ -100,8 +100,8 @@
 <body>
 
 <header>
-  <h1>👥 RH · Loop de Vozes</h1>
-  <p>Felipe → Fernanda → Luciana <span id="statusLoop" style="display:inline-flex;align-items:center;gap:4px;background:#0f3460;color:#93c5fd;font-size:.64rem;font-weight:700;padding:3px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;">iniciando...</span></p>
+  <h1>👥 RH · Loop 2 Vozes</h1>
+  <p>Felipe ↔ Fernanda <span id="statusLoop" style="display:inline-flex;align-items:center;gap:4px;background:#0f3460;color:#93c5fd;font-size:.64rem;font-weight:700;padding:3px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;">iniciando...</span></p>
 </header>
 
 <div class="diagnostico" id="diagnostico">🔍 Carregando vozes do iPhone...</div>
@@ -110,47 +110,39 @@
   <button class="tab ativa" data-v="b1" onclick="trocarTab('b1')">Bloco 1</button>
   <button class="tab" data-v="b2" onclick="trocarTab('b2')">Bloco 2</button>
   <button class="tab" data-v="b3" onclick="trocarTab('b3')">Bloco 3</button>
+  <button class="tab" data-v="b4" onclick="trocarTab('b4')">Bloco 4</button>
 </div>
 
 <div class="paineis" id="paineis"></div>
 
 <script>
 /* =====================================================
-   CONEXÃO REAL COM AS VOZES DO iPHONE
-   Resolve os bugs do Safari:
-   1. voiceschanged não dispara sozinho
-   2. addEventListener não existe no iOS 15
-   3. Troca de voz ignorada se não setar u.voice
+   CONEXÃO COM AS VOZES DO iPHONE
    ===================================================== */
-
 let todasAsVozes = [];
 let vozesResolvidas = [];
 let vozesCarregadas = false;
 
 function carregarVozesComRetry(callback) {
   let tentativas = 0;
-  const MAX_TENTATIVAS = 50; // 5 segundos
+  const MAX_TENTATIVAS = 50;
 
   function tentar() {
     tentativas++;
     const vozes = window.speechSynthesis.getVoices();
-
     if (vozes.length > 0) {
       todasAsVozes = vozes;
       vozesCarregadas = true;
       callback();
       return;
     }
-
     if (tentativas < MAX_TENTATIVAS) {
       setTimeout(tentar, 100);
     } else {
-      console.error('Vozes não carregaram após 5s');
       callback();
     }
   }
 
-  // Detecta se addEventListener existe (iOS 15 tem bug)
   if (window.speechSynthesis.addEventListener) {
     try {
       window.speechSynthesis.addEventListener('voiceschanged', tentar);
@@ -160,8 +152,6 @@ function carregarVozesComRetry(callback) {
   } else {
     window.speechSynthesis.onvoiceschanged = tentar;
   }
-
-  // Tenta imediatamente (pode já estar em cache)
   tentar();
 }
 
@@ -174,17 +164,15 @@ function buscarVoz(nome) {
 }
 
 function resolverVozes() {
+  // APENAS Felipe e Fernanda. Luciana foi removida.
   const felipe = buscarVoz('Felipe');
   const fernanda = buscarVoz('Fernanda');
-  const luciana = buscarVoz('Luciana');
 
   vozesResolvidas = [
-    { nome: 'Felipe',   voz: felipe,   genero: 'M' },
-    { nome: 'Fernanda', voz: fernanda, genero: 'F' },
-    { nome: 'Luciana',  voz: luciana,  genero: 'F' }
+    { nome: 'Felipe',   voz: felipe },
+    { nome: 'Fernanda', voz: fernanda }
   ];
 
-  // Diagnóstico na tela
   const diag = document.getElementById('diagnostico');
   let html = `<b>🔍 Diagnóstico:</b> ${todasAsVozes.length} vozes no iPhone · `;
   const ptBR = todasAsVozes.filter(v => v.lang === 'pt-BR' || v.lang === 'pt_BR');
@@ -201,37 +189,32 @@ function resolverVozes() {
 
   diag.innerHTML = html;
 
-  // Atualiza o status do loop
   const status = document.getElementById('statusLoop');
   const encontradas = vozesResolvidas.filter(r => r.voz).length;
-  if (encontradas === 3) {
-    status.textContent = '3/3 vozes ✓';
+  if (encontradas === 2) {
+    status.textContent = '2/2 vozes ✓';
     status.style.background = '#14532d';
     status.style.color = '#86efac';
-  } else if (encontradas > 0) {
-    status.textContent = `${encontradas}/3 vozes`;
+  } else if (encontradas === 1) {
+    status.textContent = '1/2 vozes';
     status.style.background = '#78350f';
     status.style.color = '#fcd34d';
   } else {
-    status.textContent = '0/3 vozes';
+    status.textContent = '0/2 vozes';
     status.style.background = '#7f1d1d';
     status.style.color = '#fca5a5';
   }
-
-  console.log('Vozes resolvidas:', vozesResolvidas.map(r => r.voz ? r.voz.name : `[${r.nome} não encontrada]`));
 
   return vozesResolvidas;
 }
 
 /* =====================================================
-   CONTEÚDO — 3 Blocos de RH
+   CONTEÚDO — 4 Blocos de RH
    ===================================================== */
 const BLOCOS = [
   {
-    id: "b1",
-    titulo: "Bloco 1",
-    heading: "O que é gestão de pessoas",
-    vozIndex: 0,
+    id: "b1", titulo: "Bloco 1", heading: "O que é gestão de pessoas",
+    vozIndex: 0, // Felipe
     unidades: [
       { tipo:"abertura",  texto:"Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
       { tipo:"definicao", texto:"Ela atrai, desenvolve, motiva | e mantém as pessoas na empresa." },
@@ -240,48 +223,47 @@ const BLOCOS = [
       { tipo:"definicao", texto:"Cuidava de folha de pagamento, ponto, férias e documentação. || Era o setor que resolvia papelada." },
       { tipo:"pausa" },
       { tipo:"definicao", texto:"Hoje o cenário mudou. || A gestão de pessoas passou a ser estratégica." },
-      { tipo:"definicao", texto:"Ela participa das decisões importantes da organização." },
-      { tipo:"pausa" },
       { tipo:"guarde",    texto:"Guarde isto." },
       { tipo:"guarde",    texto:"Gestão de pessoas é a área que cuida do ser humano no trabalho." }
     ]
   },
   {
-    id: "b2",
-    titulo: "Bloco 2",
-    heading: "Gestão estratégica de pessoas",
-    vozIndex: 1,
+    id: "b2", titulo: "Bloco 2", heading: "Gestão estratégica de pessoas",
+    vozIndex: 1, // Fernanda
     unidades: [
       { tipo:"abertura",  texto:"A gestão estratégica de pessoas é quando a área de recursos humanos deixa de agir só no operacional | e passa a participar do planejamento da organização." },
       { tipo:"pausa" },
       { tipo:"definicao", texto:"Na prática, significa alinhar as políticas de pessoas aos objetivos do negócio." },
       { tipo:"definicao", texto:"Se a empresa quer crescer, o setor de pessoas precisa preparar a equipe para esse crescimento." },
       { tipo:"definicao", texto:"Se a empresa quer inovar, precisa contratar e desenvolver pessoas com esse perfil." },
-      { tipo:"pausa" },
-      { tipo:"definicao", texto:"Uma gestão estratégica de pessoas trabalha em quatro frentes principais." },
-      { tipo:"definicao", texto:"Primeiro, atrai talentos. Segundo, desenvolve esses talentos." },
-      { tipo:"definicao", texto:"Terceiro, mantém as pessoas boas na empresa. || Quarto, garante que tudo isso esteja ligado à estratégia." },
-      { tipo:"pausa" },
       { tipo:"guarde",    texto:"Guarde isto." },
       { tipo:"guarde",    texto:"Gestão estratégica de pessoas é alinhar gente e negócio." }
     ]
   },
   {
-    id: "b3",
-    titulo: "Bloco 3",
-    heading: "Recrutamento",
-    vozIndex: 2,
+    id: "b3", titulo: "Bloco 3", heading: "Recrutamento",
+    vozIndex: 0, // Felipe de novo (ciclo de 2)
     unidades: [
       { tipo:"abertura",  texto:"Recrutamento é o processo de atrair candidatos para uma vaga." },
       { tipo:"definicao", texto:"É a etapa em que a empresa vai ao mercado buscar pessoas com potencial para ocupar determinada função." },
       { tipo:"pausa" },
       { tipo:"definicao", texto:"Recrutamento não é a mesma coisa que seleção. || Muita gente confunde." },
       { tipo:"definicao", texto:"Recrutamento atrai. Seleção escolhe. || São duas etapas diferentes, uma depois da outra." },
-      { tipo:"pausa" },
-      { tipo:"definicao", texto:"Existem dois tipos principais de recrutamento. || O recrutamento interno | e o recrutamento externo." },
-      { tipo:"pausa" },
       { tipo:"guarde",    texto:"Guarde isto." },
-      { tipo:"guarde",    texto:"Recrutamento é atrair. E a escolha entre interno e externo depende do momento da empresa e do tipo de vaga." }
+      { tipo:"guarde",    texto:"Recrutamento é atrair." }
+    ]
+  },
+  {
+    id: "b4", titulo: "Bloco 4", heading: "Seleção de pessoas",
+    vozIndex: 1, // Fernanda de novo (ciclo de 2)
+    unidades: [
+      { tipo:"abertura",  texto:"Seleção é o processo de escolher, entre os candidatos recrutados, aquele que tem mais chance de dar certo na vaga." },
+      { tipo:"pausa" },
+      { tipo:"definicao", texto:"Se o recrutamento atrai, a seleção filtra." },
+      { tipo:"definicao", texto:"Ela compara o perfil de cada candidato com o que a vaga exige. | E escolhe o mais adequado." },
+      { tipo:"definicao", texto:"Existem várias técnicas de seleção. || As principais são a entrevista, as provas de conhecimento, os testes psicológicos, as dinâmicas de grupo e a análise curricular." },
+      { tipo:"guarde",    texto:"Guarde isto." },
+      { tipo:"guarde",    texto:"Recrutamento atrai, seleção escolhe." }
     ]
   }
 ];
@@ -374,7 +356,6 @@ function renderTodos() {
 }
 renderTodos();
 
-/* Atualiza o rótulo de voz de cada bloco */
 function atualizarInfoVozes() {
   BLOCOS.forEach(bloco => {
     const r = vozesResolvidas[bloco.vozIndex];
@@ -385,9 +366,6 @@ function atualizarInfoVozes() {
       el.className = 'voz-info';
     } else if (r) {
       el.textContent = `⚠️ ${r.nome} não encontrada`;
-      el.className = 'voz-info erro';
-    } else {
-      el.textContent = '⚠️ Nenhuma voz pt-BR';
       el.className = 'voz-info erro';
     }
   });
@@ -457,7 +435,6 @@ function highlightFrase(id, idx) {
   }
 }
 
-/* ── Micro-pausas ── */
 function dividirComMicroPausas(texto) {
   const partesLongas = texto.split(/\s*\|\|\s*/);
   const segmentos = [];
@@ -470,6 +447,30 @@ function dividirComMicroPausas(texto) {
     });
   });
   return segmentos;
+}
+
+/* ── Workaround do iOS 26: força a troca de voz ──
+   1. Cancela tudo
+   2. Fala um espaço vazio com a voz nova (o iOS "grava" a voz)
+   3. Espera 250ms
+   4. Depois fala de verdade
+*/
+async function prepararVoz(voz) {
+  return new Promise(resolve => {
+    synth.cancel();
+    setTimeout(() => {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.lang = 'pt-BR';
+      u.volume = 0;      // inaudível
+      u.rate = 2.0;      // rápido para não atrasar
+      if (voz) u.voice = voz;
+      u.onend = () => resolve();
+      u.onerror = () => resolve();
+      synth.speak(u);
+      // fallback caso onend não dispare
+      setTimeout(resolve, 300);
+    }, 100);
+  });
 }
 
 async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz) {
@@ -486,7 +487,6 @@ async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz) {
   }
 }
 
-/* ── Fala com voz explícita (resolve Bug 2 do iOS) ── */
 function falar(texto, rate, pitch, volume, voz) {
   return new Promise(resolve => {
     const u = new SpeechSynthesisUtterance(texto);
@@ -494,7 +494,7 @@ function falar(texto, rate, pitch, volume, voz) {
     u.rate = rate;
     u.pitch = pitch;
     u.volume = volume ?? 1.0;
-    if (voz) u.voice = voz;  // OBRIGATÓRIO: seta a voz explicitamente
+    if (voz) u.voice = voz;
     u.onend = resolve;
     u.onerror = resolve;
     synth.speak(u);
@@ -505,7 +505,6 @@ async function tocarBloco(id) {
   const bloco = BLOCOS.find(b => b.id === id);
   if (!bloco) return;
 
-  // Garante que as vozes estão resolvidas
   if (!vozesCarregadas) {
     carregarVozesComRetry(() => {
       resolverVozes();
@@ -528,6 +527,10 @@ async function tocarBloco(id) {
     infoEl.textContent = `🎙 Tocando agora: ${voz.name}`;
     infoEl.className = 'voz-info tocando';
   }
+
+  // WORKAROUND iOS 26: força a voz antes de falar
+  await prepararVoz(voz);
+  if (cancelar) return;
 
   const total = bloco.unidades.filter(u => u.tipo !== 'pausa').length;
   let faladas = 0;
@@ -572,9 +575,7 @@ function esperar(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/* =====================================================
-   INICIALIZAÇÃO
-   ===================================================== */
+/* Inicialização */
 carregarVozesComRetry(() => {
   resolverVozes();
   atualizarInfoVozes();
