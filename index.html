@@ -49,8 +49,6 @@
     hyphens: auto;
     -webkit-hyphens: auto;
     transition: background .3s, color .3s, opacity .25s;
-    /* Sem scroll interno — a folha expande */
-    /* Sem flex:1 — altura cresce com o conteúdo */
   }
 
   /* Tema claro */
@@ -67,39 +65,51 @@
     color: #64748b;
     border-bottom-color: rgba(100, 116, 139, .2);
   }
-  body[data-tema="claro"] .progresso-paginas {
-    background: rgba(100, 116, 139, .15);
+  body[data-tema="claro"] .aba {
+    color: #64748b;
+  }
+  body[data-tema="claro"] .aba.ativa {
+    color: #7c3aed;
+    border-bottom-color: #7c3aed;
   }
   body[data-tema="claro"] .bolinha-pagina {
     background: rgba(100, 116, 139, .3);
   }
-  body[data-tema="claro"] .bolinha-pagina.ativa {
-    background: #7c3aed;
-  }
 
-  /* Barra de progresso da página (topo da folha) */
-  .progresso-paginas {
+  /* ── Abas de capítulo ─────────────── */
+  .abas-capitulos {
     display: flex;
     gap: 4px;
     margin: -8px -18px 12px -18px;
-    padding: 0 18px;
-    height: 3px;
+    padding: 0 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, .15);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
-  .progresso-paginas .segmento {
-    flex: 1;
-    height: 100%;
-    background: rgba(148, 163, 184, .15);
-    border-radius: 2px;
-    overflow: hidden;
-    position: relative;
+  .abas-capitulos::-webkit-scrollbar { display: none; }
+  .aba {
+    flex: 0 0 auto;
+    padding: 8px 10px;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #64748b;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: color .2s, border-color .2s;
+    touch-action: manipulation;
   }
-  .progresso-paginas .segmento .preenchimento {
-    position: absolute;
-    top: 0; left: 0; bottom: 0;
-    width: 0%;
-    background: linear-gradient(90deg, #7c3aed, #2563eb);
-    transition: width .3s ease;
+  .aba.ativa {
+    color: #a78bfa;
+    border-bottom-color: #7c3aed;
   }
+  .aba:active { opacity: .7; }
 
   /* Cabeçalho do capítulo */
   .titulo-capitulo {
@@ -110,7 +120,7 @@
     letter-spacing: .22em;
     text-transform: uppercase;
     color: #94a3b8;
-    margin: 0 0 14px 0;
+    margin: 0 0 10px 0;
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(148, 163, 184, .2);
   }
@@ -142,11 +152,7 @@
     transition: background .25s, color .25s;
     cursor: pointer;
   }
-
-  /* Espaço entre falas */
-  .fala::after {
-    content: ' ';
-  }
+  .fala::after { content: ' '; }
 
   .simbolo {
     font-weight: 700;
@@ -164,7 +170,6 @@
   .fala.aluno6 .simbolo   { color: #fb923c; }
   .fala.aluno7 .simbolo   { color: #c084fc; }
 
-  /* Fala atual: marca-texto sutil */
   .fala.falando {
     background: rgba(124, 58, 237, .22);
     border-radius: 3px;
@@ -173,10 +178,7 @@
     color: #f1f5f9;
     font-weight: 500;
   }
-  .fala.falando .simbolo {
-    font-size: 1.1em;
-    opacity: 1;
-  }
+  .fala.falando .simbolo { font-size: 1.1em; opacity: 1; }
 
   .fala.falada { opacity: .42; }
   .fala.futura { opacity: .92; }
@@ -189,11 +191,7 @@
     letter-spacing: .01em;
   }
 
-  /* Pausa entre blocos: linha em branco */
-  .quebra {
-    display: block;
-    height: 12px;
-  }
+  .quebra { display: block; height: 12px; }
 
   /* ============================================
      TOOLBAR
@@ -229,7 +227,7 @@
   .toolbar button:disabled { opacity: .35; cursor: not-allowed; }
 
   /* ============================================
-     PLAYER (com 5 botões)
+     PLAYER
      ============================================ */
   #playerFlutuante {
     position: fixed;
@@ -442,7 +440,6 @@
   }
 
   /* ── RESPONSIVIDADE ────────────────────────────── */
-
   @media (max-width: 390px) {
     .texto-bloco { padding: 13px 13px 16px; font-size: .95rem; }
     #playerFlutuante { width: 290px; padding: 8px 8px 10px; }
@@ -452,6 +449,7 @@
     .toolbar button { width: 38px; height: 38px; font-size: .78rem; }
     .conteudo { padding: 20px 16px 0; }
     .contador-pagina { font-size: .62rem; }
+    .aba { font-size: .62rem; padding: 7px 8px; }
   }
 
   @media (max-width: 340px) {
@@ -491,7 +489,7 @@
 <div id="playerFlutuante" role="region" aria-label="Controles de áudio">
   <div class="handle" id="handle" aria-label="Arraste para mover"></div>
   <div class="controles">
-    <button class="btn-ctrl btn-pagina btn-sec" id="btnPaginaAnterior" onclick="pularPagina(-1)" aria-label="Página anterior" title="Página anterior">
+    <button class="btn-ctrl btn-pagina btn-sec" id="btnPaginaAnterior" onclick="pularCapitulo(-1)" aria-label="Capítulo anterior" title="Capítulo anterior">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/>
       </svg>
@@ -511,7 +509,7 @@
         <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
       </svg>
     </button>
-    <button class="btn-ctrl btn-pagina btn-sec" id="btnPaginaProxima" onclick="pularPagina(1)" aria-label="Próxima página" title="Próxima página">
+    <button class="btn-ctrl btn-pagina btn-sec" id="btnPaginaProxima" onclick="pularCapitulo(1)" aria-label="Próximo capítulo" title="Próximo capítulo">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
         <path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"/>
       </svg>
@@ -519,7 +517,7 @@
   </div>
   <div class="rodape">
     <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">1.0×</button>
-    <span class="contador-pagina" id="contadorPagina">Página 1 / 3</span>
+    <span class="contador-pagina" id="contadorPagina">Bloco 1 / 3</span>
   </div>
 </div>
 
@@ -532,7 +530,7 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 const isMicrosoft = /Windows|Win32|Win64/.test(navigator.userAgent);
 
 /* =====================================================
-   PREFERÊNCIAS — LEITURA BLINDADA
+   PREFERÊNCIAS
    ===================================================== */
 const FONTES = [0.80, 0.88, 0.95, 1.02, 1.10, 1.20, 1.30, 1.45];
 
@@ -576,7 +574,7 @@ function alternarTema() {
 }
 
 /* =====================================================
-   FONTE — FALLBACK TRIPLO
+   FONTE
    ===================================================== */
 function acharIndiceFonte() {
   let melhor = 0;
@@ -731,92 +729,164 @@ const PERFIS = {
 };
 
 /* =====================================================
-   CONTEÚDO — CAPÍTULO 1 DIVIDIDO EM 3 PÁGINAS
+   CONTEÚDO — 3 CAPÍTULOS (1 página cada)
    ===================================================== */
-const CAPITULO_1 = {
-  titulo: 'Capítulo 1 — Gestão de Pessoas',
-  paginas: [
-    // PÁGINA 1 — O que é gestão de pessoas
-    [
+const CAPITULOS = [
+  // ─────────────────────────────────────────────
+  // BLOCO 1 — O QUE É GESTÃO DE PESSOAS
+  // ─────────────────────────────────────────────
+  {
+    titulo: 'Bloco 1 — O que é gestão de pessoas',
+    aula: [
       { papel:'professor', tipo:'abertura',
         texto:"Bom dia, turma. Hoje vamos entender o que é *gestão de pessoas*." },
       { papel:'aluno1', tipo:'pergunta',
         texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
       { papel:'professor', tipo:'definicao',
-        texto:"Boa pergunta. Gestão de pessoas é a área responsável pelo *ser humano* no trabalho." },
+        texto:"Boa pergunta. Gestão de pessoas é a área responsável por tudo que envolve o *ser humano* no trabalho." },
       { papel:'professor', tipo:'definicao',
-        texto:"Ela atrai, desenvolve, motiva | e *mantém* as pessoas dentro da empresa." },
+        texto:"Isso inclui atrair, desenvolver, motivar | e *manter* as pessoas dentro da empresa." },
       { papel:'aluno2', tipo:'confirmacao',
         texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
       { papel:'professor', tipo:'definicao',
-        texto:"*Exatamente.* Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
-      { papel:'aluno5', tipo:'pergunta',
-        texto:"E como isso funciona no dia a dia?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"No dia a dia, aparece em *cada decisão* sobre pessoas." }
-    ],
-    // PÁGINA 2 — Antes e depois
-    [
-      { papel:'aluno3', tipo:'pergunta',
-        texto:"Mas professor, isso sempre foi assim?" },
-      { papel:'professor', tipo:'definicao',
-        texto:"*Não.* Durante muito tempo, essa área foi vista apenas como operacional." },
+        texto:"*Exatamente.* Durante muito tempo, essa área foi vista apenas como operacional." },
       { papel:'professor', tipo:'definicao',
         texto:"Cuidava de folha de pagamento, ponto, férias | e documentação." },
       { papel:'aluno1', tipo:'confirmacao',
         texto:"Ah, o famoso setor que resolvia papelada." },
       { papel:'professor', tipo:'confirmacao',
         texto:"Isso mesmo. Era o setor da *papelada*." },
-      { papel:'aluno6', tipo:'pergunta',
-        texto:"E o que fazia alguém mudar de ideia?" },
+      { papel:'aluno5', tipo:'pergunta',
+        texto:"E o que fez o cenário mudar?" },
       { papel:'professor', tipo:'definicao',
-        texto:"A percepção de que *pessoas* fazem a diferença nos resultados." },
-      { papel:'aluno2', tipo:'pergunta',
-        texto:"E hoje, o que mudou?" },
+        texto:"Hoje o cenário mudou. A gestão de pessoas passou a ser *estratégica*." },
       { papel:'professor', tipo:'definicao',
-        texto:"Hoje o cenário mudou *completamente*. A gestão de pessoas passou a ser *estratégica*." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Ela participa das *decisões importantes* da organização." },
-      { papel:'aluno4', tipo:'confirmacao',
-        texto:"Então ela deixou de só resolver problemas e passou a construir resultados." },
-      { papel:'professor', tipo:'confirmacao',
-        texto:"*Exatamente.* Essa é a virada de chave." }
-    ],
-    // PÁGINA 3 — GP vs GRH + conclusão
-    [
-      { papel:'aluno7', tipo:'pergunta',
+        texto:"Ela participa das *decisões importantes* da organização. Ajuda a definir rumos, preparar equipes e garantir que a empresa tenha as *pessoas certas* nos lugares certos." },
+      { papel:'aluno3', tipo:'pergunta',
         texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
       { papel:'professor', tipo:'definicao',
         texto:"Tem. E é uma diferença *importante*." },
       { papel:'professor', tipo:'definicao',
-        texto:"Gestão de recursos humanos é o nome mais antigo." },
+        texto:"Gestão de recursos humanos é o nome mais antigo, ligado à ideia de que pessoas são *recursos*, como máquinas ou dinheiro." },
       { papel:'professor', tipo:'definicao',
-        texto:"Ligado à ideia de que pessoas são *recursos*. Como máquinas, como dinheiro." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Gestão de pessoas é o nome mais *moderno*." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Ela enxerga o ser humano como *parceiro* da organização. Não como recurso." },
-      { papel:'aluno1', tipo:'confirmacao',
-        texto:"Então não é só uma troca de nome." },
-      { papel:'professor', tipo:'definicao',
-        texto:"*Não.* É uma mudança de *mentalidade*." },
-      { papel:'professor', tipo:'definicao',
-        texto:"Antes, a pessoa era vista como custo. || Agora, é vista como *diferencial competitivo*." },
+        texto:"Gestão de pessoas é o nome mais *moderno*, que enxerga o ser humano como *parceiro* da organização, e não como simples recurso." },
+      { papel:'aluno4', tipo:'confirmacao',
+        texto:"Então essa mudança de nome reflete uma mudança de mentalidade." },
+      { papel:'professor', tipo:'confirmacao',
+        texto:"*Exatamente.* Antes, a pessoa era vista como custo. Agora, é vista como *diferencial competitivo*." },
       { papel:'professor', tipo:'guarde',
         texto:"*Guarde isto.*" },
       { papel:'professor', tipo:'guarde',
         texto:"Gestão de pessoas é a área que cuida do *ser humano* no trabalho." },
-      { papel:'aluno4', tipo:'guarde',
-        texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
-      { papel:'professor', tipo:'guarde',
-        texto:"E passa a *construir resultados*." },
       { papel:'aluno2', tipo:'guarde',
-        texto:"Agora ficou claro, professor." },
+        texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
       { papel:'professor', tipo:'conclusao',
-        texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
+        texto:"E passa a *construir resultados*. Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
     ]
-  ]
-};
+  },
+
+  // ─────────────────────────────────────────────
+  // BLOCO 2 — GESTÃO ESTRATÉGICA DE PESSOAS
+  // ─────────────────────────────────────────────
+  {
+    titulo: 'Bloco 2 — Gestão estratégica de pessoas',
+    aula: [
+      { papel:'professor', tipo:'abertura',
+        texto:"Vamos agora entender o que é *gestão estratégica de pessoas*." },
+      { papel:'aluno2', tipo:'pergunta',
+        texto:"Professor, o que muda quando ela passa a ser estratégica?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"É quando a área de recursos humanos deixa de agir só no *operacional* | e passa a participar do *planejamento* da organização." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Na prática, significa *alinhar* as políticas de pessoas aos objetivos do negócio." },
+      { papel:'aluno5', tipo:'pergunta',
+        texto:"Pode dar um exemplo?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"Se a empresa quer *crescer*, o setor de pessoas precisa preparar a equipe para esse crescimento." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Se quer *inovar*, precisa contratar e desenvolver pessoas com esse perfil." },
+      { papel:'aluno1', tipo:'pergunta',
+        texto:"E quais são as frentes de trabalho?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"São *quatro*. Primeiro, *atrai* talentos. Segundo, *desenvolve* esses talentos." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Terceiro, *mantém* as pessoas boas na empresa. Quarto, garante que tudo isso esteja ligado à *estratégia*." },
+      { papel:'aluno6', tipo:'pergunta',
+        texto:"E qual a diferença do modelo tradicional para o estratégico?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"No modelo *tradicional*, o setor de pessoal só *executa*. Paga, registra, controla." },
+      { papel:'professor', tipo:'definicao',
+        texto:"No modelo *estratégico*, o setor de pessoal *participa das decisões*. Antecipa necessidades. Propõe soluções." },
+      { papel:'aluno4', tipo:'confirmacao',
+        texto:"Então ele deixa de ser só operacional." },
+      { papel:'professor', tipo:'confirmacao',
+        texto:"*Exatamente.* Um exemplo ajuda a entender." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Imagine uma empresa que decidiu abrir uma filial em outra cidade." },
+      { papel:'professor', tipo:'definicao',
+        texto:"No modelo tradicional, o setor de pessoal só vai agir quando a filial já estiver montada, contratando quem aparecer." },
+      { papel:'professor', tipo:'definicao',
+        texto:"No modelo estratégico, participa *desde o começo*. Planeja quantas pessoas serão necessárias, que perfis, que treinamento, em que prazo." },
+      { papel:'professor', tipo:'guarde',
+        texto:"*Guarde isto:* gestão estratégica de pessoas é *alinhar gente e negócio*." },
+      { papel:'professor', tipo:'conclusao',
+        texto:"Não é só contratar e pagar. É *pensar no presente e no futuro* da organização." }
+    ]
+  },
+
+  // ─────────────────────────────────────────────
+  // BLOCO 3 — RECRUTAMENTO
+  // ─────────────────────────────────────────────
+  {
+    titulo: 'Bloco 3 — Recrutamento',
+    aula: [
+      { papel:'professor', tipo:'abertura',
+        texto:"Agora vamos falar sobre *recrutamento*." },
+      { papel:'aluno7', tipo:'pergunta',
+        texto:"Professor, o que é recrutamento?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"Recrutamento é o processo de *atrair candidatos* para uma vaga. É a etapa em que a empresa vai ao mercado buscar pessoas com potencial para ocupar determinada função." },
+      { papel:'aluno1', tipo:'pergunta',
+        texto:"E é a mesma coisa que seleção?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"*Não.* Muita gente confunde. *Recrutamento atrai. Seleção escolhe.*" },
+      { papel:'professor', tipo:'definicao',
+        texto:"São duas etapas *diferentes*, uma depois da outra." },
+      { papel:'aluno3', tipo:'pergunta',
+        texto:"E quais são os tipos de recrutamento?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"Existem *dois tipos principais*: o recrutamento *interno* e o recrutamento *externo*." },
+      { papel:'professor', tipo:'definicao',
+        texto:"O *interno* busca candidatos dentro da própria empresa. Pode ser por promoção, transferência ou remanejamento." },
+      { papel:'aluno5', tipo:'pergunta',
+        texto:"Quais são as vantagens do interno?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"*Motiva* quem já trabalha ali, aproveita quem já *conhece a cultura*, *custa menos* e é *mais rápido*." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Mas tem desvantagens. Pode gerar *acomodação*, porque as pessoas sabem que a vaga vai ser preenchida por alguém de dentro." },
+      { papel:'professor', tipo:'definicao',
+        texto:"E *fecha a porta* para ideias novas de fora." },
+      { papel:'aluno2', tipo:'pergunta',
+        texto:"E o recrutamento externo?" },
+      { papel:'professor', tipo:'definicao',
+        texto:"Busca candidatos *no mercado*. Anúncios, redes sociais, indicações, sites de emprego, agências." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Tem vantagens. Traz *sangue novo*, *novas ideias*, *novas experiências*." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Tem desvantagens. *Custa mais*, *demora mais*, e a pessoa precisa de tempo para se adaptar à cultura da empresa." },
+      { papel:'aluno4', tipo:'pergunta',
+        texto:"E existe um que mistura os dois?" },
+      { papel:'professor', tipo:'confirmacao',
+        texto:"Existe. O recrutamento *misto*, que combina os dois. É o *mais comum* nas organizações bem estruturadas." },
+      { papel:'professor', tipo:'definicao',
+        texto:"Primeiro, olham para dentro. Se não encontram, vão para fora." },
+      { papel:'professor', tipo:'guarde',
+        texto:"*Guarde isto:* recrutamento é *atrair*." },
+      { papel:'professor', tipo:'conclusao',
+        texto:"E a escolha entre interno e externo depende do *momento da empresa* e do *tipo de vaga*." }
+    ]
+  }
+];
 
 /* =====================================================
    ESTADO
@@ -825,13 +895,12 @@ let synth = window.speechSynthesis;
 let tocando = false;
 let pausado = false;
 let cancelar = false;
-let paginaAtual = 0;          // 0, 1, 2
-let indiceAtual = 0;          // índice na página atual
+let indiceCapitulo = 0;   // 0, 1, 2
+let indiceAtual = 0;      // índice da fala dentro do capítulo atual
 let velocidade = prefVelocidade;
 
-function getPaginas() { return CAPITULO_1.paginas; }
-function getTotalPaginas() { return getPaginas().length; }
-function getAulaAtual() { return getPaginas()[paginaAtual]; }
+function getAulaAtual() { return CAPITULOS[indiceCapitulo].aula; }
+function getTotalCapitulos() { return CAPITULOS.length; }
 
 /* =====================================================
    RENDER
@@ -842,45 +911,47 @@ function renderTextoLegivel(texto) {
   return t;
 }
 
-function renderPagina() {
+function renderCapitulo() {
   const el = document.getElementById('texto');
   if (!el) return;
   el.style.opacity = 0;
   setTimeout(function() {
     el.innerHTML = '';
-    const aula = getAulaAtual();
 
-    // Barra de progresso com segmentos
-    const progresso = document.createElement('div');
-    progresso.className = 'progresso-paginas';
-    for (let p = 0; p < getTotalPaginas(); p++) {
-      const seg = document.createElement('div');
-      seg.className = 'segmento';
-      const fill = document.createElement('div');
-      fill.className = 'preenchimento';
-      fill.id = 'progSeg-' + p;
-      seg.appendChild(fill);
-      progresso.appendChild(seg);
-    }
-    el.appendChild(progresso);
+    // Abas de capítulo
+    const abas = document.createElement('div');
+    abas.className = 'abas-capitulos';
+    CAPITULOS.forEach(function(cap, i) {
+      const btn = document.createElement('button');
+      btn.className = 'aba' + (i === indiceCapitulo ? ' ativa' : '');
+      btn.type = 'button';
+      btn.textContent = 'Bloco ' + (i + 1);
+      btn.addEventListener('click', function() {
+        if (i === indiceCapitulo) return;
+        irParaCapitulo(i);
+      });
+      abas.appendChild(btn);
+    });
+    el.appendChild(abas);
 
     // Título
     const titulo = document.createElement('div');
     titulo.className = 'titulo-capitulo';
-    titulo.textContent = CAPITULO_1.titulo;
+    titulo.textContent = CAPITULOS[indiceCapitulo].titulo;
     el.appendChild(titulo);
 
-    // Bolinhas indicadoras
+    // Bolinhas
     const bolinhas = document.createElement('div');
     bolinhas.className = 'bolinhas-pagina';
-    for (let p = 0; p < getTotalPaginas(); p++) {
+    for (let p = 0; p < getTotalCapitulos(); p++) {
       const b = document.createElement('div');
-      b.className = 'bolinha-pagina' + (p === paginaAtual ? ' ativa' : '');
+      b.className = 'bolinha-pagina' + (p === indiceCapitulo ? ' ativa' : '');
       bolinhas.appendChild(b);
     }
     el.appendChild(bolinhas);
 
     // Falas
+    const aula = getAulaAtual();
     aula.forEach(function(fala, i) {
       if (fala.tipo === 'pausa') {
         const br = document.createElement('div');
@@ -898,24 +969,9 @@ function renderPagina() {
     });
 
     el.style.opacity = 1;
-    atualizarProgressoTotal();
+    atualizarContadorPagina();
+    atualizarBotoesNavegacao();
   }, 180);
-}
-
-function atualizarProgressoTotal() {
-  // Cada segmento mostra o progresso da sua página
-  for (let p = 0; p < getTotalPaginas(); p++) {
-    const el = document.getElementById('progSeg-' + p);
-    if (!el) continue;
-    let pct = 0;
-    if (p < paginaAtual) pct = 100;
-    else if (p === paginaAtual) {
-      const total = getAulaAtual().filter(f => f.tipo !== 'pausa').length;
-      const atual = getAulaAtual().slice(0, indiceAtual + 1).filter(f => f.tipo !== 'pausa').length;
-      pct = Math.round((atual / total) * 100);
-    }
-    el.style.width = pct + '%';
-  }
 }
 
 function irParaFala(idx) {
@@ -929,7 +985,6 @@ function irParaFala(idx) {
 
   destacarFala(idx);
   atualizarBotoesNavegacao();
-  atualizarProgressoTotal();
 
   if (estavaTocando) {
     setTimeout(function() { tocarDeOndeParou(); }, 80);
@@ -963,7 +1018,6 @@ function destacarFala(idx) {
       atual.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
-  atualizarProgressoTotal();
 }
 
 function resetDestaques() {
@@ -974,30 +1028,34 @@ function resetDestaques() {
 }
 
 /* =====================================================
-   NAVEGAÇÃO DE PÁGINA
+   NAVEGAÇÃO DE CAPÍTULO
    ===================================================== */
-function pularPagina(direcao) {
-  const novaPagina = paginaAtual + direcao;
-  if (novaPagina < 0 || novaPagina >= getTotalPaginas()) return;
+function irParaCapitulo(novo) {
+  if (novo < 0 || novo >= getTotalCapitulos()) return;
+  if (novo === indiceCapitulo) return;
 
   const estavaTocando = tocando && !pausado;
   pararSilencioso();
 
-  paginaAtual = novaPagina;
+  indiceCapitulo = novo;
   indiceAtual = 0;
-  atualizarContadorPagina();
-  renderPagina();
 
-  mostrarToast('📄 Página ' + (paginaAtual + 1) + ' de ' + getTotalPaginas());
+  renderCapitulo();
+  mostrarToast('📖 ' + CAPITULOS[indiceCapitulo].titulo);
 
+  // Regra A: se estava tocando, continua tocando o novo capítulo
   if (estavaTocando) {
-    setTimeout(function() { tocarDeOndeParou(); }, 300);
+    setTimeout(function() { tocarDeOndeParou(); }, 350);
   }
+}
+
+function pularCapitulo(direcao) {
+  irParaCapitulo(indiceCapitulo + direcao);
 }
 
 function atualizarContadorPagina() {
   const el = document.getElementById('contadorPagina');
-  if (el) el.textContent = 'Página ' + (paginaAtual + 1) + ' / ' + getTotalPaginas();
+  if (el) el.textContent = 'Bloco ' + (indiceCapitulo + 1) + ' / ' + getTotalCapitulos();
 }
 
 /* =====================================================
@@ -1020,8 +1078,8 @@ function atualizarBotoesNavegacao() {
   const aula = getAulaAtual();
   const btnA = document.getElementById('btnAnterior');
   const btnP = document.getElementById('btnProximo');
-  const btnPA = document.getElementById('btnPaginaAnterior');
-  const btnPP = document.getElementById('btnPaginaProxima');
+  const btnCA = document.getElementById('btnPaginaAnterior');
+  const btnCP = document.getElementById('btnPaginaProxima');
 
   if (btnA && btnP) {
     const temAnterior = aula.slice(0, indiceAtual).some(function(f) { return f.tipo !== 'pausa'; });
@@ -1029,8 +1087,8 @@ function atualizarBotoesNavegacao() {
     btnA.disabled = !temAnterior;
     btnP.disabled = !temProximo;
   }
-  if (btnPA) btnPA.disabled = (paginaAtual === 0);
-  if (btnPP) btnPP.disabled = (paginaAtual === getTotalPaginas() - 1);
+  if (btnCA) btnCA.disabled = (indiceCapitulo === 0);
+  if (btnCP) btnCP.disabled = (indiceCapitulo === getTotalCapitulos() - 1);
 }
 
 /* =====================================================
@@ -1075,7 +1133,6 @@ function togglePlay() {
     tocarDeOndeParou();
     return;
   }
-  // Começa do início da página atual
   indiceAtual = 0;
   tocarDeOndeParou();
 }
@@ -1093,24 +1150,13 @@ function pularFrase(direcao) {
   let novo = indiceAtual + direcao;
   while (novo >= 0 && novo < aula.length && aula[novo].tipo === 'pausa') novo += direcao;
 
-  // Se saiu da página, muda de página
+  // Se saiu do capítulo, muda de capítulo
   if (novo < 0) {
-    if (paginaAtual > 0) {
-      pularPagina(-1);
-      // Vai para a última fala da nova página
-      setTimeout(function() {
-        const novaAula = getAulaAtual();
-        for (let k = novaAula.length - 1; k >= 0; k--) {
-          if (novaAula[k].tipo !== 'pausa') { indiceAtual = k; destacarFala(k); atualizarBotoesNavegacao(); break; }
-        }
-      }, 250);
-    }
+    if (indiceCapitulo > 0) pularCapitulo(-1);
     return;
   }
   if (novo >= aula.length) {
-    if (paginaAtual < getTotalPaginas() - 1) {
-      pularPagina(1);
-    }
+    if (indiceCapitulo < getTotalCapitulos() - 1) pularCapitulo(1);
     return;
   }
 
@@ -1235,26 +1281,18 @@ async function tocarDeOndeParou() {
     if (cancelar) return;
   }
 
-  // Fim da página
+  // Fim do capítulo (regra B: para e mostra mensagem)
   if (!cancelar) {
-    if (paginaAtual < getTotalPaginas() - 1) {
-      // Auto-avança para a próxima página
-      mostrarToast('📄 Próxima página...');
-      setBtnEstado(false);
-      tocando = false;
-      pausado = false;
-      setTimeout(function() {
-        pularPagina(1);
-        setTimeout(function() { tocarDeOndeParou(); }, 400);
-      }, 800);
+    resetDestaques();
+    setBtnEstado(false);
+    tocando = false;
+    pausado = false;
+    atualizarBotoesNavegacao();
+
+    if (indiceCapitulo < getTotalCapitulos() - 1) {
+      mostrarToast('✅ Fim do Bloco ' + (indiceCapitulo + 1) + ' — toque em ⇥ para o próximo');
     } else {
-      // Fim do capítulo
-      resetDestaques();
-      setBtnEstado(false);
-      tocando = false;
-      pausado = false;
-      atualizarBotoesNavegacao();
-      mostrarToast('✅ Fim do capítulo');
+      mostrarToast('✅ Fim do último bloco');
     }
   }
 }
@@ -1502,7 +1540,6 @@ function preAquecerVozes() {
 aplicarTema();
 aplicarFonte();
 atualizarBtnVel();
-atualizarContadorPagina();
 
 const btnTema = document.getElementById('btnTema');
 const btnMenos = document.getElementById('btnFonteMenos');
@@ -1512,7 +1549,7 @@ if (btnTema)  btnTema.addEventListener('click', alternarTema);
 if (btnMenos) btnMenos.addEventListener('click', function() { ajustarFonte(-1); });
 if (btnMais)  btnMais.addEventListener('click', function() { ajustarFonte(1); });
 
-renderPagina();
+renderCapitulo();
 
 carregarVozes(function() {
   const ptBR = vozesPtBR();
@@ -1526,7 +1563,6 @@ carregarVozes(function() {
   elenco = distribuirElenco(ptBR);
   ajustarPerfilProfessor();
   atualizarBotoesNavegacao();
-  atualizarProgressoTotal();
   atualizarDebug();
 });
 
