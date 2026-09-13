@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Sala de Aula — Gestão de Pessoas | RH</title>
+<title>Sala de Aula — Gestão de Pessoas | Concurso</title>
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html{-webkit-text-size-adjust:100%}
@@ -37,13 +37,11 @@
     padding-bottom:calc(env(safe-area-inset-bottom) + 140px);-webkit-font-smoothing:antialiased;
   }
 
-  /* ─── Tipografia comum (títulos pequenos) ─── */
   .app-titulo,.folha-titulo,.drawer-titulo,.secao-titulo{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
     font-weight:700;text-transform:uppercase;letter-spacing:.22em;
   }
 
-  /* ─── Header ─── */
   .app-header{
     position:sticky;top:0;z-index:100;
     padding:calc(env(safe-area-inset-top) + 12px) 18px 12px;
@@ -53,7 +51,6 @@
   }
   .app-titulo{font-size:.68rem;color:var(--text-dim);opacity:.8}
 
-  /* ─── Botões de ícone (menu, fechar, ctrl) ─── */
   .btn-icon{
     width:42px;height:42px;border-radius:50%;
     border:1px solid var(--border);background:var(--surface);color:var(--text);
@@ -65,7 +62,6 @@
   .btn-icon:active{transform:scale(.92)}
   .btn-icon.sm{width:36px;height:36px}
 
-  /* ─── Conteúdo / Folha ─── */
   .conteudo{flex:1;padding:0 18px;display:flex;flex-direction:column;max-width:720px;margin:0 auto;width:100%}
   .folha{
     background:var(--page-bg);border:1px solid var(--page-border);border-radius:var(--r-lg);
@@ -89,7 +85,6 @@
   }
   .bolinha.ativa{background:var(--accent);transform:scale(1.5);box-shadow:0 0 8px var(--accent-glow)}
 
-  /* ─── Falas ─── */
   .fala{
     display:inline;margin:0;padding:0;transition:background .3s,color .3s;
     cursor:pointer;border-radius:3px;
@@ -115,7 +110,6 @@
   .enfase{color:var(--enfase);font-weight:700;font-style:italic;letter-spacing:.01em}
   .quebra{display:block;height:14px}
 
-  /* ─── Overlay / Drawer ─── */
   .overlay{
     position:fixed;inset:0;background:rgba(0,0,0,.55);
     backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
@@ -137,7 +131,6 @@
   .secao{margin-bottom:26px}
   .secao-titulo{font-size:.58rem;letter-spacing:.2em;color:var(--text-faint);margin-bottom:12px;padding-left:2px}
 
-  /* ─── Toggle tema ─── */
   .toggle-linha{
     display:flex;align-items:center;justify-content:space-between;
     padding:12px 14px;background:var(--surface);border:1px solid var(--border);
@@ -163,7 +156,6 @@
   .switch.ativo{background:var(--accent)}
   .switch.ativo::after{transform:translateX(18px)}
 
-  /* ─── Fonte ─── */
   .fonte-controle{
     display:flex;align-items:center;gap:12px;padding:8px 14px;
     background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);
@@ -186,7 +178,6 @@
     border-radius:2px;transition:width .3s var(--transition);
   }
 
-  /* ─── Lista de blocos ─── */
   .blocos-lista{display:flex;flex-direction:column;gap:6px}
   .bloco-item{
     display:flex;align-items:center;gap:12px;padding:14px 16px;
@@ -212,7 +203,6 @@
   .bloco-check{color:var(--accent);font-size:1rem;flex-shrink:0;opacity:0;transition:opacity .2s}
   .bloco-item.ativo .bloco-check{opacity:1}
 
-  /* ─── Player ─── */
   #player{
     position:fixed;bottom:calc(env(safe-area-inset-bottom) + 20px);left:50%;transform:translateX(-50%);
     width:min(340px,calc(100vw - 32px));background:var(--bg-elev);
@@ -261,7 +251,6 @@
     color:var(--text-faint);letter-spacing:.05em;
   }
 
-  /* ─── Toast ─── */
   .toast{
     position:fixed;bottom:calc(env(safe-area-inset-bottom) + 120px);left:50%;
     transform:translateX(-50%) translateY(20px);
@@ -276,7 +265,6 @@
   }
   .toast.ativo{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* ─── Debug ─── */
   #debugPanel{
     position:fixed;top:12px;left:12px;right:12px;background:rgba(0,0,0,.95);
     border:1px solid #334155;border-radius:12px;padding:14px;color:#cbd5e1;
@@ -419,7 +407,6 @@
 <script>
 'use strict';
 
-/* ══════════ AMBIENTE ══════════ */
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const synth = window.speechSynthesis || null;
@@ -545,12 +532,11 @@ const vozesPtBR = () => todasAsVozes.filter(v => {
   return l === 'pt-br' || l.startsWith('pt-br');
 });
 
-/* ══════════ PERFIS (gerados de tabela compacta) ══════════ */
+/* ══════════ PERFIS ══════════ */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
 const SIMBOLOS = { professor:'§', aluno1:'▸', aluno2:'◂', aluno3:'›',
                    aluno4:'‹', aluno5:'▴', aluno6:'●', aluno7:'▾' };
 
-// [rate, pitch, microCurta, microLonga]
 const VOZ_BASE = {
   professor:[0.90, 0.75, 180, 300],
   aluno1:   [1.22, 1.38,  55, 110],
@@ -575,17 +561,17 @@ for (const [papel, [rate, pitch, mc, ml]] of Object.entries(VOZ_BASE)) {
       confirmacao: Math.round(mc * 2.2),
       guarde:      Math.round(mc * 5.8),
       conclusao:   Math.round(mc * 4.5),
+      atencao_banca: Math.round(mc * 4.0),
       pausa:       Math.round(ml * 2.0)
     }
   };
 }
-// Ajuste específico para o professor (pausas mais longas)
 Object.assign(PERFIS.professor.pausas, {
   abertura:900, definicao:460, pergunta:300, confirmacao:400,
-  guarde:1050, conclusao:820, pausa:640
+  guarde:1050, conclusao:820, atencao_banca:700, pausa:640
 });
 
-/* ══════════ CONTEÚDO (expandido) ══════════ */
+/* ══════════ CONTEÚDO ══════════ */
 const CAPITULOS = [
 {
   titulo:'Bloco 1',
@@ -595,41 +581,67 @@ const CAPITULOS = [
 
     { papel:'aluno1', tipo:'pergunta', texto:"Professor, a gente usa RH e gestão de pessoas como se fosse a mesma coisa. Tem diferença mesmo?" },
     { papel:'professor', tipo:'definicao', texto:"Os dois nomes costumam se referir à mesma área, mas a expressão *gestão de pessoas* carrega uma mudança de olhar. Quando falamos apenas em recursos humanos, ainda parece que a pessoa é um recurso que a empresa utiliza. Já a gestão de pessoas reforça que estamos falando de profissionais que pensam, aprendem, colaboram e influenciam resultados." },
-    { papel:'aluno2', tipo:'confirmacao', texto:"Então o nome muda a forma de enxergar quem trabalha na organização." },
-    { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A área continua cuidando de processos administrativos, mas passa a se preocupar também com condições de trabalho, desenvolvimento, respeito e segurança. Não é só administrar gente. É criar condições para que as pessoas trabalhem melhor." },
 
-    { papel:'aluno3', tipo:'pergunta', texto:"Quais são os principais processos dessa área?" },
-    { papel:'professor', tipo:'definicao', texto:"Podemos pensar em um ciclo. A organização planeja quantas pessoas precisa e quais competências serão necessárias. Depois recruta e seleciona, integra os novos profissionais, oferece treinamento, acompanha o desempenho, cuida da remuneração e dos benefícios, e promove saúde, segurança e qualidade de vida." },
-    { papel:'aluno4', tipo:'pergunta', texto:"E esse ciclo termina quando a pessoa deixa a empresa?" },
-    { papel:'professor', tipo:'definicao', texto:"O desligamento também faz parte. A empresa precisa conduzir esse momento com respeito, cumprir suas obrigações e, sempre que possível, aprender com os motivos da saída." },
-    { papel:'professor', tipo:'definicao', texto:"Uma rotatividade muito alta costuma ser um sinal de alerta. Imagine uma loja que perde três vendedores em seis meses. Pode ser salário baixo, liderança ruim, falta de perspectiva ou clima pesado. O número sozinho não explica tudo, mas mostra que algo precisa ser investigado." },
+    { papel:'aluno2', tipo:'pergunta', texto:"E como essa mudança aconteceu historicamente?" },
+    { papel:'professor', tipo:'definicao', texto:"Podemos pensar em três grandes momentos. Na Era Industrial, o foco era o departamento pessoal, que cuidava de admissão, folha e cumprimento da legislação. Na Era Neoclássica, surge a administração de recursos humanos, com preocupação em selecionar, treinar e integrar. E na Era da Informação, a área passa a ser vista como gestão de pessoas, com foco em competências, desenvolvimento e alinhamento à estratégia." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* é comum a prova afirmar que a expressão gestão de pessoas surgiu como simples sinônimo de administração de recursos humanos. Não é. Ela representa uma mudança de enfoque, do recurso para a pessoa como agente ativo." },
+
+    { papel:'aluno3', tipo:'pergunta', texto:"Então qual é o conceito formal de gestão de pessoas?" },
+    { papel:'professor', tipo:'definicao', texto:"Gestão de pessoas é o conjunto de políticas e práticas que orientam a relação entre a organização e as pessoas que nela trabalham, com o objetivo de alinhar expectativas, desenvolver capacidades e alcançar resultados de forma ética e sustentável." },
+
+    { papel:'aluno4', tipo:'pergunta', texto:"E quais são os objetivos da gestão de pessoas?" },
+    { papel:'professor', tipo:'definicao', texto:"Ajudar a organização a alcançar seus objetivos, proporcionar competitividade, desenvolver pessoas, aumentar satisfação no trabalho, manter um ambiente ético e garantir que as políticas sejam coerentes com os valores da organização." },
+
+    { papel:'aluno5', tipo:'pergunta', texto:"Quais são os principais processos dessa área?" },
+    { papel:'professor', tipo:'definicao', texto:"Podemos pensar em seis processos clássicos. *Agregar* pessoas: recrutamento e seleção. *Aplicar* pessoas: análise e descrição de cargos e alocação. *Recompensar*: remuneração e benefícios. *Desenvolver*: treinamento e avaliação. *Manter*: qualidade de vida, higiene e segurança. E *monitorar*: sistemas de informação e indicadores." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* decore a sequência: agregar, aplicar, recompensar, desenvolver, manter e monitorar. É comum a banca trocar a ordem ou trocar um processo por outro que não pertence à lista. Por exemplo, colocar selecionar como processo separado quando ele faz parte de agregar." },
+
+    { papel:'aluno6', tipo:'pergunta', texto:"E como entra o planejamento de pessoas nesse ciclo?" },
+    { papel:'professor', tipo:'definicao', texto:"O planejamento de pessoas é o que antecede o agregar. Ele estima quantas pessoas e quais competências a organização vai precisar, em determinado período, para atingir seus objetivos. Pode ser quantitativo, quando olha número de vagas, ou qualitativo, quando olha competências e perfis." },
+
+    { papel:'aluno1', tipo:'pergunta', texto:"E o que é análise e descrição de cargos?" },
+    { papel:'professor', tipo:'definicao', texto:"Análise de cargo é o estudo do que o cargo exige, quais tarefas, responsabilidades e condições estão envolvidas. Descrição de cargo é o registro escrito desse estudo: título, atividades, requisitos, subordinação. É a base para recrutar, selecionar, treinar, avaliar e remunerar com justiça." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* análise de cargo é o estudo; descrição de cargo é o registro. A banca costuma tratar os dois como sinônimos." },
 
     { papel:'aluno5', tipo:'pergunta', texto:"Qual é a diferença entre treinamento e desenvolvimento?" },
-    { papel:'professor', tipo:'definicao', texto:"Treinamento normalmente responde a uma necessidade mais imediata. Por exemplo: ensinar alguém a usar um sistema novo ou um procedimento específico. Já o desenvolvimento é mais amplo. Ele prepara a pessoa para desafios futuros, novas responsabilidades e crescimento profissional. A avaliação de desempenho também faz parte desse processo: não deve ser apenas uma nota, mas servir para orientar melhorias e reconhecer contribuições." },
-    { papel:'aluno1', tipo:'confirmacao', texto:"Então ensinar o sistema é treinamento. Preparar alguém para liderar uma equipe no futuro é desenvolvimento." },
-    { papel:'professor', tipo:'confirmacao', texto:"Muito bem. Os dois são importantes, mas respondem a momentos diferentes. Uma organização precisa treinar para resolver problemas atuais e desenvolver para construir capacidades futuras." },
+    { papel:'professor', tipo:'definicao', texto:"Treinamento normalmente responde a uma necessidade mais imediata. Por exemplo: ensinar alguém a usar um sistema novo. Já o desenvolvimento é mais amplo. Ele prepara a pessoa para desafios futuros, novas responsabilidades e crescimento profissional." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* treinamento tem foco no presente e no cargo atual; desenvolvimento tem foco no futuro e na carreira. A banca costuma inverter esses focos." },
 
-    { papel:'aluno6', tipo:'pergunta', texto:"Quem é responsável por tudo isso? Só o RH?" },
-    { papel:'professor', tipo:'definicao', texto:"Não. O RH cria políticas, processos e oferece suporte especializado. Mas a liderança participa diretamente. É o gestor quem orienta o trabalho no dia a dia, dá retorno, distribui responsabilidades e percebe dificuldades da equipe." },
-    { papel:'aluno2', tipo:'pergunta', texto:"E o próprio profissional também tem responsabilidade nisso?" },
-    { papel:'professor', tipo:'definicao', texto:"Sim. A gestão de pessoas é uma responsabilidade compartilhada. A organização precisa oferecer condições justas e claras. A liderança precisa conduzir bem a equipe. E o profissional também precisa participar do próprio desenvolvimento, cumprir acordos e buscar melhorar seu trabalho." },
+    { papel:'aluno2', tipo:'pergunta', texto:"E a avaliação de desempenho? Como ela funciona?" },
+    { papel:'professor', tipo:'definicao', texto:"A avaliação de desempenho compara o que foi esperado com o que foi entregue. Ela serve para orientar melhorias, reconhecer contribuições e planejar desenvolvimento. Não deve ser apenas uma nota nem um instrumento de punição." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* avaliação de desempenho não é sinônimo de avaliação de potencial. Desempenho olha o passado e o presente; potencial olha o futuro." },
 
-    // ── NOVO: exemplo de call center ──
-    { papel:'aluno3', tipo:'pergunta', texto:"Professor, tem um exemplo mais concreto dessa responsabilidade compartilhada?" },
-    { papel:'professor', tipo:'definicao', texto:"Imagine um call center com alta rotatividade. A organização pode oferecer pausas adequadas e metas realistas. A liderança pode ouvir os atendentes e ajustar escalas. E o próprio atendente pode sinalizar dificuldades e participar dos treinamentos. Se apenas um lado se esforça, o resultado não se sustenta." },
+    { papel:'aluno3', tipo:'pergunta', texto:"E o feedback? Ele entra onde?" },
+    { papel:'professor', tipo:'definicao', texto:"O feedback é a devolutiva contínua sobre o trabalho. Pode ser formal ou informal. Ele só faz sentido quando é específico, respeitoso e orientado para a melhoria." },
 
-    // ── NOVO: avaliação 360 ──
-    { papel:'aluno5', tipo:'pergunta', texto:"E como funciona a avaliação 360 graus? Ela entra onde?" },
-    { papel:'professor', tipo:'definicao', texto:"A avaliação 360 graus reúne percepções de várias fontes: o próprio profissional, colegas, liderança e, às vezes, clientes. Ela não substitui a avaliação formal, mas amplia o olhar. O cuidado é usar esse retorno para desenvolvimento, não para punição." },
+    { papel:'aluno4', tipo:'pergunta', texto:"E a avaliação 360 graus?" },
+    { papel:'professor', tipo:'definicao', texto:"A avaliação 360 graus reúne percepções de várias fontes: o próprio profissional, colegas, liderança e, às vezes, clientes. Ela amplia o olhar, mas não substitui a avaliação formal. O cuidado é usá-la para desenvolvimento, não para punição." },
 
-    { papel:'aluno7', tipo:'pergunta', texto:"Como a empresa sabe se está fazendo uma boa gestão de pessoas?" },
-    { papel:'professor', tipo:'definicao', texto:"Ela precisa olhar evidências. Pode acompanhar rotatividade, absenteísmo, participação em treinamentos, desempenho das equipes, qualidade das contratações e a percepção das pessoas sobre o ambiente de trabalho. Nenhum indicador explica tudo sozinho, mas vários sinais juntos ajudam a compreender a realidade." },
-    { papel:'aluno3', tipo:'pergunta', texto:"Uma empresa pode ter bons resultados financeiros e, mesmo assim, fazer uma gestão ruim de pessoas?" },
-    { papel:'professor', tipo:'definicao', texto:"Pode. Resultados imediatos não justificam desrespeito, discriminação, excesso de pressão ou falta de segurança. Uma gestão responsável precisa equilibrar desempenho, ética, sustentabilidade e cuidado com as pessoas." },
+    { papel:'aluno1', tipo:'pergunta', texto:"E remuneração e benefícios? Como a banca costuma cobrar?" },
+    { papel:'professor', tipo:'definicao', texto:"Remuneração é o que a pessoa recebe pelo trabalho: salário base, variáveis, comissões, prêmios. Benefícios são vantagens adicionais, como vale-transporte, plano de saúde, alimentação. A remuneração pode ser fixa ou variável." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* remuneração total é o somatório de salário base mais variáveis mais benefícios. A banca costuma tratar salário base como sinônimo de remuneração total." },
 
-    // ── NOVO: indicadores combinados ──
-    { papel:'aluno6', tipo:'pergunta', texto:"Se a rotatividade cai, mas o absenteísmo sobe, o que isso indica?" },
-    { papel:'professor', tipo:'definicao', texto:"Pode indicar que as pessoas estão permanecendo, mas adoecendo ou desmotivadas. Os indicadores precisam ser lidos em conjunto. Um número isolado esconde o contexto. Por isso, a área costuma cruzar rotatividade, absenteísmo, clima e desempenho antes de concluir qualquer coisa." },
+    { papel:'aluno7', tipo:'pergunta', texto:"E qualidade de vida no trabalho?" },
+    { papel:'professor', tipo:'definicao', texto:"Qualidade de vida no trabalho é o conjunto de condições que tornam o ambiente saudável, seguro e respeitoso. Envolve desde ergonomia e jornada até relações interpessoais e equilíbrio entre vida pessoal e profissional. Não é só benefício, é condição de trabalho." },
+
+    { papel:'aluno6', tipo:'pergunta', texto:"E turnover e absenteísmo? Como a prova cobra isso?" },
+    { papel:'professor', tipo:'definicao', texto:"Turnover é a rotatividade: entrada e saída de pessoas. Absenteísmo é a ausência ao trabalho, justificada ou não. Os dois são indicadores. Turnover alto pode indicar problemas de gestão, clima, salário ou mercado. Absenteísmo alto pode indicar desmotivação, doença ou falta de condições." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* turnover não é sinônimo de absenteísmo. Turnover é saída; absenteísmo é ausência. A banca costuma trocar os dois." },
+
+    { papel:'aluno3', tipo:'pergunta', texto:"E os indicadores de RH?" },
+    { papel:'professor', tipo:'definicao', texto:"Indicadores são medidas que ajudam a acompanhar a gestão. Os mais cobrados são: rotatividade, absenteísmo, tempo de preenchimento de vaga, custo por contratação, participação em treinamentos, desempenho das equipes e percepção das pessoas sobre o ambiente." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* indicador isolado não explica tudo. A banca costuma afirmar que rotatividade alta sempre significa problema. Não é verdade: pode ser uma mudança planejada." },
+
+    { papel:'aluno4', tipo:'pergunta', texto:"E ética na gestão de pessoas?" },
+    { papel:'professor', tipo:'definicao', texto:"Ética na gestão de pessoas é agir com respeito, transparência, justiça e responsabilidade. Envolve evitar discriminação, proteger dados, dar retorno adequado, cumprir acordos e tratar as pessoas com dignidade em todos os momentos, inclusive no desligamento." },
+
+    { papel:'professor', tipo:'definicao', texto:"Agora, como isso pode aparecer na prova. Primeira situação: a banca afirma que a gestão de pessoas se limita a recrutar, selecionar e demitir. Está correta ou incorreta?" },
+    { papel:'professor', tipo:'definicao', texto:"Segunda: a banca diz que treinamento e desenvolvimento são sinônimos. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Terceira: a banca afirma que turnover e absenteísmo medem a mesma coisa. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Quarta: a banca diz que a avaliação 360 graus substitui a avaliação formal. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Quinta: a banca afirma que descrição de cargos é a mesma coisa que análise de cargos. Está correta?" },
+
+    { papel:'professor', tipo:'definicao', texto:"Pegadinhas da banca neste bloco: primeira, confundir RH com gestão de pessoas como se fossem sinônimos puros. Segunda, trocar a ordem dos seis processos. Terceira, inverter treinamento e desenvolvimento. Quarta, tratar turnover como absenteísmo. Quinta, dizer que a avaliação 360 substitui a formal. Sexta, afirmar que indicador isolado explica tudo." },
 
     { papel:'aluno4', tipo:'guarde', texto:"Então gestão de pessoas não é apenas colocar a pessoa certa na vaga. É acompanhar toda a relação dela com o trabalho." },
     { papel:'professor', tipo:'guarde', texto:"Guarde esta ideia: gestão de pessoas envolve planejar, atrair, integrar, desenvolver, reconhecer, proteger e, quando necessário, conduzir o desligamento das pessoas com responsabilidade." },
@@ -642,60 +654,72 @@ const CAPITULOS = [
   aula:[
     { papel:'professor', tipo:'abertura', texto:"Agora vamos aprofundar a gestão estratégica de pessoas. No bloco anterior, vimos os processos que acompanham a trajetória do profissional. A pergunta central agora é: como transformar os objetivos da organização em decisões concretas sobre pessoas, competências, liderança e trabalho?" },
 
-    { papel:'aluno2', tipo:'pergunta', texto:"Professor, o que exatamente significa alinhar pessoas e negócio?" },
-    { papel:'professor', tipo:'definicao', texto:"Significa compreender o que a organização pretende alcançar e verificar quais comportamentos, conhecimentos, estruturas e profissionais serão necessários para isso. Se a empresa quer crescer, precisa planejar equipes. Se quer inovar, precisa criar espaço para aprendizagem e novas ideias." },
+    { papel:'aluno2', tipo:'pergunta', texto:"Professor, qual é a diferença entre RH tradicional e gestão estratégica de pessoas?" },
+    { papel:'professor', tipo:'definicao', texto:"No RH tradicional, a área executa tarefas depois que a decisão já foi tomada: contrata, demite, cumpre a legislação. Na gestão estratégica, ela participa da decisão: antecipa necessidades, avalia competências, propõe alternativas e mede resultados. A diferença não está no nome, está no momento em que a área é chamada." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* gestão estratégica de pessoas não substitui o RH tradicional. Ela incorpora as funções operacionais e acrescenta a dimensão estratégica. A banca costuma afirmar que a área estratégica abandona as funções operacionais." },
+
     { papel:'aluno5', tipo:'pergunta', texto:"Então a estratégia de pessoas só começa depois que a estratégia da empresa já está pronta?" },
     { papel:'professor', tipo:'definicao', texto:"Não necessariamente. A área de pessoas deve participar da construção e da execução da estratégia. Uma decisão de expansão, por exemplo, só será viável se houver profissionais em quantidade suficiente, com as competências certas e preparados no prazo necessário." },
 
     { papel:'aluno1', tipo:'pergunta', texto:"Como seria esse planejamento no caso de uma nova filial?" },
     { papel:'professor', tipo:'definicao', texto:"Primeiro, a empresa analisa o projeto e identifica as funções necessárias. Depois estima quantas pessoas serão contratadas, quais profissionais podem ser transferidos, que conhecimentos já existem e quais lacunas precisam ser preenchidas." },
-    { papel:'professor', tipo:'definicao', texto:"Em seguida define prazos, orçamento, treinamento e responsáveis. Também precisa pensar na integração da nova equipe, na liderança da filial e na forma de acompanhar os resultados depois da abertura. Sem esse planejamento, a filial pode abrir com gente despreparada ou em número insuficiente." },
+    { papel:'professor', tipo:'definicao', texto:"Em seguida define prazos, orçamento, treinamento e responsáveis. Também precisa pensar na integração da nova equipe, na liderança da filial e na forma de acompanhar os resultados depois da abertura." },
 
-    // ── NOVO: caso prático de expansão ──
-    { papel:'aluno3', tipo:'pergunta', texto:"E se a empresa descobrir, no meio do caminho, que não terá gente suficiente a tempo?" },
-    { papel:'professor', tipo:'definicao', texto:"Ela pode rever o cronograma, antecipar contratações, formar parcerias com instituições de ensino, remanejar profissionais de outras unidades ou treinar internamente com mais intensidade. A decisão final combina prazo, custo e risco. Não existe resposta única." },
+    { papel:'aluno3', tipo:'pergunta', texto:"E o que é planejamento da força de trabalho?" },
+    { papel:'professor', tipo:'definicao', texto:"É o processo de estimar quantas pessoas e quais competências a organização vai precisar em determinado período. Ele responde a três perguntas: quantas pessoas, com quais competências e em quanto tempo. Pode ser de curto, médio ou longo prazo." },
 
     { papel:'aluno6', tipo:'pergunta', texto:"O que são competências nesse contexto?" },
-    { papel:'professor', tipo:'definicao', texto:"Competências são a combinação de conhecimentos, habilidades e atitudes que permite realizar um trabalho com qualidade. Para uma função de atendimento, por exemplo, podem ser necessárias comunicação, escuta, conhecimento do produto e capacidade de resolver problemas." },
+    { papel:'professor', tipo:'definicao', texto:"Competências são a combinação de conhecimentos, habilidades e atitudes que permite realizar um trabalho com qualidade. Essa combinação é conhecida pela sigla CHA: C de conhecimento, H de habilidade e A de atitude." },
     { papel:'aluno3', tipo:'pergunta', texto:"E basta contratar pessoas que já tenham todas essas competências?" },
-    { papel:'professor', tipo:'definicao', texto:"Nem sempre. A organização pode contratar algumas competências e desenvolver outras. Essa decisão depende do prazo, do orçamento, da disponibilidade no mercado e da capacidade de aprendizagem das pessoas. Uma boa estratégia não olha apenas para o que falta hoje, mas também para o potencial de desenvolvimento." },
+    { papel:'professor', tipo:'definicao', texto:"Nem sempre. A organização pode contratar algumas competências e desenvolver outras. Essa decisão depende do prazo, do orçamento, da disponibilidade no mercado e da capacidade de aprendizagem das pessoas." },
 
-    // ── NOVO: matriz de competências ──
-    { papel:'aluno4', tipo:'pergunta', texto:"Existe alguma ferramenta para organizar isso?" },
-    { papel:'professor', tipo:'definicao', texto:"Sim. Uma delas é a matriz de competências, que cruza funções e competências, mostrando o que já existe, o que falta e quem pode ser desenvolvido. Ela ajuda a priorizar treinamentos e a planejar movimentações internas com mais clareza." },
+    { papel:'aluno4', tipo:'pergunta', texto:"E o que é gap de competências?" },
+    { papel:'professor', tipo:'definicao', texto:"Gap é a lacuna entre o que a organização precisa e o que ela tem hoje. Identificar o gap é o primeiro passo para decidir entre contratar, treinar, remanejar ou terceirizar. Sem esse diagnóstico, o planejamento vira chute." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* CHA é a sigla de Conhecimentos, Habilidades e Atitudes. A banca costuma trocar atitude por aptidão ou ação. Fique atento." },
 
     { papel:'aluno4', tipo:'pergunta', texto:"Qual é a relação entre estratégia de pessoas e cultura organizacional?" },
     { papel:'professor', tipo:'definicao', texto:"A cultura é formada pelos valores e comportamentos que se repetem e são reconhecidos dentro da organização. Se uma empresa diz que valoriza colaboração, mas recompensa apenas resultados individuais, existe uma contradição entre o discurso e a prática." },
-    { papel:'aluno7', tipo:'confirmacao', texto:"Então uma política de pessoas pode fracassar se não combinar com a forma como a empresa realmente funciona." },
-    { papel:'professor', tipo:'confirmacao', texto:"Exatamente. A estratégia precisa ser coerente com a liderança, os processos, os incentivos e as decisões do cotidiano. Não adianta falar em desenvolvimento se ninguém recebe retorno ou tempo para aprender." },
+    { papel:'aluno7', tipo:'pergunta', texto:"E qual é a diferença entre cultura e clima organizacional?" },
+    { papel:'professor', tipo:'definicao', texto:"Cultura é o conjunto de valores, crenças e comportamentos que a organização carrega ao longo do tempo. É mais profunda e mais estável. Clima é a percepção momentânea que as pessoas têm do ambiente de trabalho. É mais superficial e muda com mais facilidade." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* cultura é duradoura, clima é passageiro. A banca costuma inverter: dizer que clima é duradouro e cultura é momentânea. Está errado." },
 
     { papel:'aluno1', tipo:'pergunta', texto:"Como medir se a estratégia de pessoas está dando resultado?" },
     { papel:'professor', tipo:'definicao', texto:"A empresa pode acompanhar indicadores. O tempo para preencher uma vaga mostra a eficiência do recrutamento. A rotatividade indica quantas pessoas deixam a organização. O absenteísmo mostra faltas e afastamentos. Também podemos acompanhar desempenho, conclusão de treinamentos e percepção das equipes." },
     { papel:'aluno2', tipo:'pergunta', texto:"Um indicador alto ou baixo já mostra que existe um problema?" },
-    { papel:'professor', tipo:'definicao', texto:"Não automaticamente. O indicador é um sinal que precisa ser interpretado. Uma rotatividade alta pode ocorrer por salários pouco competitivos, liderança inadequada, mercado aquecido ou uma mudança planejada. É preciso investigar as causas antes de decidir." },
+    { papel:'professor', tipo:'definicao', texto:"Não automaticamente. O indicador é um sinal que precisa ser interpretado. Uma rotatividade alta pode ocorrer por salários pouco competitivos, liderança inadequada, mercado aquecido ou uma mudança planejada." },
 
-    // ── NOVO: People Analytics ──
     { papel:'aluno5', tipo:'pergunta', texto:"Ouvi falar em People Analytics. É isso que estamos discutindo?" },
     { papel:'professor', tipo:'definicao', texto:"People Analytics é o uso de dados para apoiar decisões sobre pessoas. Ele não substitui a escuta e o julgamento humano, mas ajuda a identificar padrões. Por exemplo: cruzar desempenho, tempo de casa e participação em treinamentos pode revelar quem está pronto para assumir uma nova função." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* People Analytics é ferramenta de apoio à decisão, não substituto do julgamento humano. A banca costuma afirmar que ele elimina a subjetividade. Não elimina." },
+
+    { papel:'aluno6', tipo:'pergunta', texto:"E como a área de pessoas se conecta a metodologias como OKR?" },
+    { papel:'professor', tipo:'definicao', texto:"Os OKRs traduzem objetivos em resultados-chave mensuráveis. A área de pessoas pode ter seus próprios OKRs, alinhados aos da organização. Por exemplo: reduzir em vinte por cento o tempo de preenchimento de vagas sem perder qualidade. Mas atenção: OKR é ferramenta de gestão, não substitui os conceitos clássicos de planejamento e avaliação." },
 
     { papel:'aluno5', tipo:'pergunta', texto:"Qual seria a diferença entre o modelo tradicional e o estratégico em uma situação de crise?" },
     { papel:'professor', tipo:'definicao', texto:"No modelo tradicional, o setor pode apenas executar a decisão depois que ela foi tomada. No modelo estratégico, participa da análise: avalia competências críticas, alternativas de treinamento, reorganização do trabalho, comunicação com a equipe e impactos sobre a saúde e o desempenho." },
     { papel:'professor', tipo:'definicao', texto:"Imagine uma empresa que precisa reduzir custos. No modelo tradicional, o RH só cumpre a ordem de demitir. No modelo estratégico, ajuda a avaliar se é possível realocar pessoas, treinar para novas funções ou redistribuir o trabalho antes de tomar a decisão final." },
 
-    // ── NOVO: OKRs e metas ──
-    { papel:'aluno6', tipo:'pergunta', texto:"E como a área de pessoas se conecta a metodologias como OKR?" },
-    { papel:'professor', tipo:'definicao', texto:"Os OKRs traduzem objetivos em resultados-chave mensuráveis. A área de pessoas pode ter seus próprios OKRs, alinhados aos da organização. Por exemplo: reduzir em vinte por cento o tempo de preenchimento de vagas sem perder qualidade, ou aumentar a participação em treinamentos obrigatórios." },
+    { papel:'aluno3', tipo:'pergunta', texto:"Então qual é o papel estratégico da área de gestão de pessoas?" },
+    { papel:'professor', tipo:'definicao', texto:"É antecipar necessidades, propor alternativas, medir resultados e ajustar o plano. A área deixa de ser apenas executora e passa a ser parceira da estratégia, sem abandonar as funções operacionais que garantem o funcionamento da organização." },
+
+    { papel:'professor', tipo:'definicao', texto:"Como isso pode aparecer na prova. Primeira: a banca afirma que a gestão estratégica de pessoas elimina as funções operacionais. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Segunda: a banca diz que cultura e clima organizacional são sinônimos. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Terceira: a banca afirma que CHA significa Conhecimentos, Habilidades e Atitudes. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Quarta: a banca diz que gap de competências é a diferença entre o que a empresa precisa e o que ela tem. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Quinta: a banca afirma que People Analytics elimina a subjetividade nas decisões. Está correta?" },
+
+    { papel:'professor', tipo:'definicao', texto:"Pegadinhas da banca neste bloco: primeira, dizer que gestão estratégica abandona o operacional. Segunda, inverter cultura e clima. Terceira, trocar atitude por aptidão no CHA. Quarta, afirmar que People Analytics elimina a subjetividade. Quinta, dizer que OKR substitui o planejamento clássico. Sexta, afirmar que indicador isolado explica tudo." },
 
     { papel:'aluno6', tipo:'guarde', texto:"Então estratégia não é fazer um documento bonito. É tomar decisões de pessoas conectadas a um objetivo e acompanhar se funcionaram." },
     { papel:'professor', tipo:'guarde', texto:"Perfeito. O ciclo estratégico é diagnosticar, planejar, executar, medir e ajustar. Se a realidade mudar, o plano também precisa ser revisto." },
-    { papel:'professor', tipo:'conclusao', texto:"Gestão estratégica de pessoas é, portanto, antecipar necessidades e transformar objetivos organizacionais em ações responsáveis sobre trabalho, competências e desenvolvimento. Ela aproxima a gestão de pessoas das decisões importantes sem reduzir o ser humano a um número ou indicador. No próximo bloco, vamos aplicar esse planejamento a uma etapa concreta: o recrutamento." }
+    { papel:'professor', tipo:'conclusao', texto:"Gestão estratégica de pessoas é, portanto, antecipar necessidades e transformar objetivos organizacionais em ações responsáveis sobre trabalho, competências e desenvolvimento. Ela aproxima a gestão de pessoas das decisões importantes sem reduzir o ser humano a um número ou indicador. No próximo bloco, vamos aplicar esse planejamento a uma etapa concreta: o recrutamento e a seleção." }
   ]
 },
 {
   titulo:'Bloco 3',
-  subtitulo:'Recrutamento e atração de talentos',
+  subtitulo:'Recrutamento e seleção',
   aula:[
-    { papel:'professor', tipo:'abertura', texto:"Neste bloco, vamos aplicar o que estudamos. No primeiro bloco, vimos que o recrutamento faz parte do ciclo de gestão de pessoas. No segundo, entendemos que ele precisa responder à estratégia da organização. Agora vamos aprofundar o processo inteiro, desde a identificação da necessidade até a chegada dos candidatos à etapa de seleção." },
+    { papel:'professor', tipo:'abertura', texto:"Neste bloco, vamos aplicar o que estudamos. No primeiro bloco, vimos que o recrutamento faz parte do ciclo de gestão de pessoas. No segundo, entendemos que ele precisa responder à estratégia da organização. Agora vamos aprofundar o processo inteiro, desde a identificação da necessidade até a decisão final da seleção." },
 
     { papel:'aluno7', tipo:'pergunta', texto:"Professor, o recrutamento começa quando a empresa publica a vaga?" },
     { papel:'professor', tipo:'definicao', texto:"Não. Antes de publicar, a empresa precisa confirmar que existe uma necessidade real, entender por que a vaga surgiu e analisar se o trabalho pode ser reorganizado ou desenvolvido internamente. Publicar uma vaga sem esse cuidado é um dos erros mais comuns." },
@@ -704,6 +728,7 @@ const CAPITULOS = [
 
     { papel:'aluno3', tipo:'pergunta', texto:"Qual é a diferença entre requisito e competência?" },
     { papel:'professor', tipo:'definicao', texto:"Requisito é uma condição necessária ou desejável para a vaga, como determinada formação ou experiência. Competência é a capacidade de aplicar conhecimentos, habilidades e atitudes no trabalho. Os dois devem estar relacionados às atividades reais do cargo." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* requisito é o que se exige; competência é o que se aplica. A banca costuma tratar os dois como sinônimos." },
 
     { papel:'aluno5', tipo:'pergunta', texto:"E como a empresa decide se fará recrutamento interno ou externo?" },
     { papel:'professor', tipo:'definicao', texto:"No recrutamento interno, a organização procura entre seus próprios profissionais. Pode promover, transferir ou remanejar alguém. Essa opção aproveita conhecimento da cultura, pode motivar a equipe e costuma ser mais rápida, mas reduz a entrada de perspectivas novas." },
@@ -712,47 +737,71 @@ const CAPITULOS = [
     { papel:'aluno4', tipo:'confirmacao', texto:"Então o recrutamento misto permite olhar para dentro e para fora ao mesmo tempo." },
     { papel:'professor', tipo:'confirmacao', texto:"Sim. Ele combina as duas fontes. A escolha depende da urgência, da estratégia, do perfil da vaga, das possibilidades de desenvolvimento e das condições do mercado de trabalho." },
 
-    // ── NOVO: funil de recrutamento ──
-    { papel:'aluno6', tipo:'pergunta', texto:"Professor, ouvi falar em funil de recrutamento. O que é isso?" },
-    { papel:'professor', tipo:'definicao', texto:"É uma forma de visualizar as etapas do processo. No topo ficam as pessoas que veem a vaga; depois vêm as que se candidatam; em seguida, as que passam pela triagem; depois as entrevistadas; e, no final, as contratadas. Cada etapa perde volume, e a empresa analisa onde está perdendo mais gente." },
+    { papel:'aluno6', tipo:'pergunta', texto:"Professor, dá para resumir as vantagens e desvantagens de cada modalidade?" },
+    { papel:'professor', tipo:'definicao', texto:"Vamos lá. *Interno:* vantagens são o conhecimento da cultura, a motivação da equipe, o custo menor e a rapidez. Desvantagens são a redução de novas ideias e o risco de conflito quando a promoção não acontece. *Externo:* vantagens são a renovação, a entrada de novas experiências e o alcance maior de candidatos. Desvantagens são o custo mais alto, o tempo maior e a necessidade de integração. *Misto:* combina as duas fontes e costuma ser o mais equilibrado." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* não existe modalidade sempre melhor. A escolha depende do contexto. A banca costuma afirmar que o recrutamento interno é sempre preferível. Não é." },
 
-    { papel:'aluno6', tipo:'pergunta', texto:"Quais canais a empresa pode usar para encontrar candidatos?" },
-    { papel:'professor', tipo:'definicao', texto:"Pode usar o próprio site, redes profissionais, sites de emprego, instituições de ensino, agências, banco de talentos, programas de indicação e ações voltadas a grupos específicos. O canal deve combinar com o perfil que a empresa precisa alcançar." },
+    { papel:'aluno6', tipo:'pergunta', texto:"E quais são as fontes e técnicas de recrutamento?" },
+    { papel:'professor', tipo:'definicao', texto:"As fontes podem ser internas, como banco de talentos e indicação de colaboradores, ou externas, como site da empresa, redes profissionais, sites de emprego, instituições de ensino, agências e programas de indicação. As técnicas incluem anúncio, cartaz, palestra em escolas, contato com associações e uso de redes sociais profissionais." },
+
     { papel:'aluno7', tipo:'pergunta', texto:"Uma boa divulgação é suficiente para garantir bons candidatos?" },
     { papel:'professor', tipo:'definicao', texto:"Não. A descrição da vaga precisa ser clara e realista. Deve informar atividades, requisitos, local ou modalidade de trabalho, faixa de horário quando necessário e etapas do processo. É importante diferenciar a descrição do cargo do perfil profissional: a descrição mostra o que será feito; o perfil mostra quais conhecimentos, habilidades e atitudes são necessários para realizar o trabalho." },
-    { papel:'professor', tipo:'definicao', texto:"Compare duas vagas. Uma diz apenas: “precisa de pessoa jovem, dinâmica e com boa aparência”. Outra descreve: “atender clientes com clareza, registrar informações com organização e cumprir o horário comercial”. A segunda atrai candidatos mais adequados e evita discriminação." },
+    { papel:'professor', tipo:'definicao', texto:"Compare duas vagas. Uma diz apenas: precisa de pessoa jovem, dinâmica e com boa aparência. Outra descreve: atender clientes com clareza, registrar informações com organização e cumprir o horário comercial. A segunda atrai candidatos mais adequados e evita discriminação." },
 
-    // ── NOVO: employer branding ──
     { papel:'aluno1', tipo:'pergunta', texto:"E o que é employer branding? Tem a ver com isso?" },
     { papel:'professor', tipo:'definicao', texto:"Tem. Employer branding é a forma como a organização é percebida por quem trabalha nela e por quem poderia trabalhar. Uma boa reputação ajuda a atrair candidatos alinhados à cultura. Uma reputação ruim espanta gente qualificada, mesmo quando o salário é competitivo." },
 
     { papel:'aluno1', tipo:'pergunta', texto:"O que há de errado em pedir uma pessoa jovem, com boa aparência e dinâmica?" },
     { papel:'professor', tipo:'definicao', texto:"Esses critérios podem ser subjetivos, discriminatórios ou não ter relação com o trabalho. É melhor descrever a competência necessária. Por exemplo: capacidade de atender o público com clareza, organização para registrar informações e disponibilidade para o horário informado." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* critérios subjetivos e discriminatórios são vedados. A banca costuma cobrar isso na forma de vaga que pede aparência, idade ou estado civil." },
+
     { papel:'aluno3', tipo:'pergunta', texto:"Como a empresa deve tratar os dados e as informações dos candidatos?" },
-    { papel:'professor', tipo:'definicao', texto:"Deve coletar apenas informações necessárias, explicar a finalidade do uso, restringir o acesso e proteger os dados. Também precisa comunicar o processo com respeito, evitar promessas que não poderá cumprir e dar retorno sempre que possível." },
+    { papel:'professor', tipo:'definicao', texto:"Deve coletar apenas informações necessárias, explicar a finalidade do uso, restringir o acesso e proteger os dados. Também precisa comunicar o processo com respeito, evitar promessas que não poderá cumprir e dar retorno sempre que possível. Isso dialoga com a Lei Geral de Proteção de Dados, a LGPD." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* a LGPD se aplica ao recrutamento. A banca costuma cobrar que dados sensíveis não podem ser exigidos sem necessidade. Idade, estado civil, religião e aparência não são requisitos válidos por si." },
 
     { papel:'aluno5', tipo:'pergunta', texto:"Depois que os currículos chegam, a empresa já está fazendo seleção?" },
     { papel:'professor', tipo:'definicao', texto:"A triagem inicial começa a aproximar o recrutamento da seleção, mas os conceitos continuam diferentes. Recrutamento é o esforço para atrair e formar um conjunto de candidatos. Seleção é a comparação dos candidatos com critérios definidos para escolher quem melhor atende à vaga." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* recrutamento atrai; seleção escolhe. A banca costuma inverter as definições." },
     { papel:'aluno2', tipo:'confirmacao', texto:"Então recrutar é trazer pessoas qualificadas para o processo, e selecionar é avaliar e decidir." },
     { papel:'professor', tipo:'confirmacao', texto:"Exatamente. Uma seleção bem feita depende de um recrutamento bem planejado, porque não é possível escolher adequadamente se a empresa não atrai candidatos suficientes ou se divulga a vaga para o público errado." },
 
-    // ── NOVO: entrevista por competências ──
-    { papel:'aluno4', tipo:'pergunta', texto:"E como funciona uma entrevista por competências?" },
-    { papel:'professor', tipo:'definicao', texto:"Ela parte de situações concretas. Em vez de perguntar apenas o que a pessoa faria, pede exemplos do que já fez. Por exemplo: “conte uma situação em que você precisou resolver um conflito com um cliente”. Assim, a empresa avalia comportamento real, não só discurso." },
+    { papel:'aluno6', tipo:'pergunta', texto:"E quais são as principais técnicas de seleção?" },
+    { papel:'professor', tipo:'definicao', texto:"As mais cobradas são: entrevista, prova escrita ou prática, testes psicológicos, testes de personalidade, dinâmicas de grupo, simulações e assessment center. Cada uma tem um propósito. A entrevista é a técnica mais usada, mas não deve ser a única." },
 
-    { papel:'aluno4', tipo:'pergunta', texto:"Como saber se o recrutamento foi eficiente?" },
+    { papel:'aluno4', tipo:'pergunta', texto:"E como funciona uma entrevista estruturada?" },
+    { papel:'professor', tipo:'definicao', texto:"A entrevista estruturada segue um roteiro com perguntas definidas antes, e critérios de avaliação claros. Ela reduz a subjetividade e permite comparar candidatos com mais justiça. É diferente da entrevista livre, em que cada conversa segue um caminho." },
+
+    { papel:'aluno4', tipo:'pergunta', texto:"E a entrevista por competências?" },
+    { papel:'professor', tipo:'definicao', texto:"Ela parte de situações concretas. Em vez de perguntar apenas o que a pessoa faria, pede exemplos do que já fez. Por exemplo: conte uma situação em que você precisou resolver um conflito com um cliente. Assim, a empresa avalia comportamento real, não só discurso." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* entrevista estruturada é sobre roteiro; entrevista por competências é sobre comportamento passado. As duas podem ser combinadas, mas não são sinônimos." },
+
+    { papel:'aluno4', tipo:'pergunta', texto:"Como saber se o recrutamento e a seleção foram eficientes?" },
     { papel:'professor', tipo:'definicao', texto:"A empresa pode analisar quantos candidatos aderentes foram atraídos, quanto tempo levou para preencher a vaga, qual foi o custo, quais canais trouxeram melhores resultados e se as pessoas contratadas permaneceram e tiveram bom desempenho." },
 
-    // ── NOVO: métricas de recrutamento ──
     { papel:'aluno6', tipo:'pergunta', texto:"Essas métricas têm nomes específicos?" },
-    { papel:'professor', tipo:'definicao', texto:"Sim. O tempo médio entre abrir e fechar a vaga é chamado de time-to-hire. A origem dos candidatos que avançam é o source-of-hire. A qualidade da contratação pode ser medida pela retenção e pelo desempenho depois de alguns meses. Cada empresa escolhe as métricas que fazem sentido para sua realidade." },
+    { papel:'professor', tipo:'definicao', texto:"Sim. O tempo médio entre abrir e fechar a vaga costuma ser chamado de time-to-fill ou time-to-hire. Cuidado: os dois termos podem ter definições diferentes conforme a organização. Em algumas, time-to-fill conta da abertura até a contratação; em outras, time-to-hire conta da abertura até a aceitação da proposta. O importante é a empresa definir claramente o que está medindo." },
+    { papel:'professor', tipo:'atencao_banca', texto:"*Atenção à banca:* a banca pode tratar time-to-fill e time-to-hire como sinônimos. Em sentido estrito, podem ter definições diferentes. O mais seguro é entender o conceito geral de tempo de preenchimento de vaga." },
 
     { papel:'aluno6', tipo:'guarde', texto:"Então o recrutamento não termina simplesmente quando alguém é contratado. A empresa também precisa avaliar a qualidade do processo." },
     { papel:'professor', tipo:'guarde', texto:"Isso mesmo. Guarde esta sequência: identificar a necessidade, analisar o cargo, definir o perfil, escolher os canais, divulgar, atrair candidatos e encaminhá-los para uma seleção justa e coerente." },
+
+    { papel:'professor', tipo:'definicao', texto:"Como isso pode aparecer na prova. Primeira: a banca afirma que recrutamento e seleção são sinônimos. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Segunda: a banca diz que o recrutamento interno é sempre preferível ao externo. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Terceira: a banca afirma que a entrevista estruturada segue um roteiro definido. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Quarta: a banca diz que a entrevista por competências pede exemplos de situações passadas. Está correta?" },
+    { papel:'professor', tipo:'definicao', texto:"Quinta: a banca afirma que a LGPD não se aplica ao recrutamento. Está correta?" },
+
+    { papel:'professor', tipo:'definicao', texto:"Pegadinhas da banca neste bloco: primeira, tratar recrutamento e seleção como sinônimos. Segunda, dizer que interno é sempre melhor. Terceira, confundir entrevista estruturada com entrevista por competências. Quarta, achar que a LGPD não se aplica. Quinta, tratar time-to-fill e time-to-hire como sinônimos absolutos. Sexta, aceitar critérios subjetivos como válidos. Sétima, confundir requisito com competência." },
+
     { papel:'professor', tipo:'conclusao', texto:"Recrutar não é procurar qualquer pessoa para preencher rapidamente uma vaga. É construir uma ponte entre uma necessidade real da organização e profissionais que possam contribuir, aprendendo e trabalhando em condições claras, éticas e compatíveis com a função." },
-    { papel:'professor', tipo:'conclusao', texto:"Percebam a integração: a gestão de pessoas define o cuidado com a trajetória profissional; a estratégia mostra que as decisões precisam atender aos objetivos do negócio; e o recrutamento transforma essa necessidade em uma ação concreta." },
-    { papel:'aluno7', tipo:'guarde', texto:"Se eu receber uma questão longa, devo começar pelo conceito de gestão de pessoas, relacioná-lo à estratégia e depois mostrar como o recrutamento atende à necessidade identificada." },
-    { papel:'professor', tipo:'guarde', texto:"Exatamente. Uma resposta completa não apresenta conceitos isolados. Ela explica o conceito, mostra a relação entre eles, aplica a uma situação e avalia consequências e cuidados. Essa é a lógica que vamos usar para revisar todo o conteúdo." }
+    { papel:'professor', tipo:'conclusao', texto:"Percebam a integração: a gestão de pessoas define o cuidado com a trajetória profissional; a estratégia mostra que as decisões precisam atender aos objetivos do negócio; e o recrutamento e a seleção transformam essa necessidade em uma ação concreta." },
+
+    // ── REVISÃO GERAL DOS 3 BLOCOS ──
+    { papel:'professor', tipo:'guarde', texto:"Antes de encerrar, vamos fazer uma revisão geral dos três blocos. No Bloco 1, mantivemos toda a base original: conceito de gestão de pessoas, seis processos, treinamento e desenvolvimento, avaliação, remuneração, qualidade de vida, turnover, absenteísmo e ética. Acrescentamos a evolução histórica, os objetivos formais, o planejamento de pessoas, a análise e descrição de cargos, os indicadores e a LGPD no nível introdutório." },
+    { papel:'professor', tipo:'guarde', texto:"No Bloco 2, mantivemos o diálogo sobre alinhamento estratégico, competências, cultura, indicadores e crise. Acrescentamos a diferença entre RH tradicional e gestão estratégica, o planejamento da força de trabalho, o CHA, o gap de competências, a diferença entre cultura e clima, o People Analytics de forma objetiva e o papel estratégico da área." },
+    { papel:'professor', tipo:'guarde', texto:"No Bloco 3, mantivemos todo o conteúdo original sobre recrutamento. Acrescentamos a distinção clara entre requisito e competência, as vantagens e desvantagens das três modalidades, as fontes e técnicas, o employer branding, o recrutamento versus seleção, as técnicas de seleção, a entrevista estruturada, a entrevista por competências, os critérios objetivos, os indicadores e a LGPD aplicada ao recrutamento." },
+    { papel:'professor', tipo:'guarde', texto:"Conceitos que você precisa dominar para a prova: primeiro, a sequência dos seis processos de gestão de pessoas. Segundo, a diferença entre treinamento e desenvolvimento. Terceiro, a diferença entre cultura e clima. Quarto, o CHA. Quinto, a diferença entre recrutamento e seleção. Sexto, a diferença entre entrevista estruturada e por competências. Sétimo, a LGPD aplicada ao recrutamento. Oitavo, a leitura correta dos indicadores. Nono, a diferença entre turnover e absenteísmo. Décimo, a diferença entre requisito e competência." },
+    { papel:'professor', tipo:'conclusao', texto:"Com isso, você tem o material completo, em formato de diálogo, pronto para escutar, com atenção às bancas, situações de prova e pegadinhas. Bons estudos." }
   ]
 }
 ];
@@ -792,7 +841,6 @@ function renderCapitulo() {
   setTimeout(() => {
     el.innerHTML = '';
 
-    // Header
     const header = document.createElement('div');
     header.className = 'folha-header';
     const titulo = document.createElement('div');
@@ -810,7 +858,6 @@ function renderCapitulo() {
     header.appendChild(bolinhas);
     el.appendChild(header);
 
-    // Falas
     aulaAtual().forEach((fala, i) => {
       if (fala.tipo === 'pausa') {
         const br = document.createElement('div');
@@ -1162,7 +1209,7 @@ handle.addEventListener('touchstart', iniciarArraste, { passive: false });
 document.addEventListener('touchmove', moverArraste, { passive: false });
 document.addEventListener('touchend', soltarArraste);
 
-/* ══════════ DEBUG (3 toques) ══════════ */
+/* ══════════ DEBUG ══════════ */
 let toques = [];
 function registrarToque() {
   if (moveu) return;
@@ -1283,7 +1330,7 @@ function ajustarPerfilProfessor() {
     PERFIS.professor.pitchEnfase = 0.68;
     Object.assign(PERFIS.professor.pausas, {
       abertura:950, definicao:490, pergunta:320, confirmacao:420,
-      guarde:1120, conclusao:860, pausa:670
+      guarde:1120, conclusao:860, atencao_banca:780, pausa:670
     });
   } else {
     PERFIS.professor.rate = 0.88;
