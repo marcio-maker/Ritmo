@@ -221,7 +221,8 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 let todasAsVozes = [];
 let elenco = null;
 let vozesCarregadas = false;
-let modoIOS = false; // true quando usamos a mesma voz com pitch/rate variados
+let modoIOS = false;
+let vozesDisponiveis = [];
 
 function carregarVozes(callback) {
   let jaChamou = false;
@@ -309,10 +310,10 @@ const PERFIS = {
     pausas: { abertura:900, definicao:420, pergunta:300, confirmacao:380, guarde:1000, conclusao:800, pausa:650 }
   },
   // Agudo + rápido
-  aluno1: { rate:1.18, pitch:1.55, volume:0.92, microCurta:70,  microLonga:140, rateEnfase:1.08, pitchEnfase:1.50,
+  aluno1: { rate:1.18, pitch:1.28, volume:0.92, microCurta:70,  microLonga:140, rateEnfase:1.08, pitchEnfase:1.24,
     pausas:{ abertura:200, definicao:160, pergunta:220, confirmacao:160, guarde:240, conclusao:220, pausa:340 } },
   // Grave + lento
-  aluno2: { rate:0.76, pitch:0.65, volume:0.92, microCurta:180, microLonga:250, rateEnfase:0.70, pitchEnfase:0.62,
+  aluno2: { rate:0.76, pitch:0.78, volume:0.92, microCurta:180, microLonga:250, rateEnfase:0.70, pitchEnfase:0.75,
     pausas:{ abertura:300, definicao:260, pergunta:280, confirmacao:240, guarde:320, conclusao:300, pausa:440 } },
   // Médio-agudo
   aluno3: { rate:1.04, pitch:1.28, volume:0.92, microCurta:100, microLonga:170, rateEnfase:0.96, pitchEnfase:1.24,
@@ -321,13 +322,13 @@ const PERFIS = {
   aluno4: { rate:0.82, pitch:0.85, volume:0.92, microCurta:170, microLonga:240, rateEnfase:0.74, pitchEnfase:0.82,
     pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:320, conclusao:300, pausa:420 } },
   // Muito agudo + muito rápido
-  aluno5: { rate:1.24, pitch:1.65, volume:0.92, microCurta:60,  microLonga:130, rateEnfase:1.14, pitchEnfase:1.60,
+  aluno5: { rate:1.24, pitch:1.38, volume:0.92, microCurta:60,  microLonga:130, rateEnfase:1.14, pitchEnfase:1.34,
     pausas:{ abertura:180, definicao:150, pergunta:200, confirmacao:150, guarde:220, conclusao:200, pausa:320 } },
   // Médio neutro
   aluno6: { rate:0.92, pitch:1.10, volume:0.92, microCurta:110, microLonga:180, rateEnfase:0.85, pitchEnfase:1.05,
     pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } },
   // Grave + muito lento (cético)
-  aluno7: { rate:0.74, pitch:0.72, volume:0.92, microCurta:200, microLonga:280, rateEnfase:0.68, pitchEnfase:0.70,
+  aluno7: { rate:0.74, pitch:0.80, volume:0.92, microCurta:200, microLonga:280, rateEnfase:0.68, pitchEnfase:0.77,
     pausas:{ abertura:320, definicao:280, pergunta:300, confirmacao:260, guarde:340, conclusao:320, pausa:460 } }
 };
 
@@ -660,53 +661,8 @@ function esperar(ms) {
    ===================================================== */
 async function trocarVoz(vozAntiga, vozNova) {
   const debugEl = document.getElementById('debugTroca');
-
-  // Modo IOS: mesma voz, não troca. Só aplica pitch/rate por fala.
-  if (modoIOS) {
-    if (debugEl) {
-      debugEl.textContent = `iOS: mesma voz base · variação por pitch/rate`;
-    }
-    return;
-  }
-
-  if (debugEl) {
-    debugEl.textContent = `Trocando: ${vozAntiga ? vozAntiga.name : '—'} → ${vozNova.name}`;
-  }
-
-  if (!isIOS) {
-    try { synth.cancel(); } catch(e) {}
-    await esperar(50);
-    mostrarBadge(`🎙️ ${vozNova.name}`);
-    return;
-  }
-
-  // iOS com vozes distintas (raro, mas pode acontecer)
-  if (vozAntiga && vozAntiga !== vozNova) {
-    try {
-      const u = new SpeechSynthesisUtterance(' ');
-      u.voice = vozAntiga;
-      u.volume = 0.01;
-      u.rate = 2.5;
-      synth.speak(u);
-      await esperar(120);
-    } catch(e) {}
-  }
-
-  try { synth.cancel(); } catch(e) {}
-  await esperar(80);
-
-  try {
-    const u = new SpeechSynthesisUtterance('.');
-    u.voice = vozNova;
-    u.volume = 0.01;
-    u.rate = 1.5;
-    synth.speak(u);
-    await esperar(180);
-  } catch(e) {}
-
-  try { synth.cancel(); } catch(e) {}
-  await esperar(80);
-
+  if (!vozNova) return;
+  if (debugEl) debugEl.textContent = `Próxima voz: ${vozNova.name}`;
   mostrarBadge(`🎙️ ${vozNova.name}`);
 }
 
@@ -919,7 +875,7 @@ function atualizarDebug() {
   el.innerHTML = linhas + `<div style="margin-top:8px;color:#94a3b8">
     Vozes únicas: ${unicas} · pt-BR disponíveis: ${vozesPtBR().length}<br>
     Total exposto pelo navegador: ${todasAsVozes.length}<br>
-    Modo: ${modoIOS ? 'iOS (pitch/rate)' : 'Desktop (vozes distintas)'}
+    Modo: ${isIOS ? 'iPhone/Safari (vozes + pitch/rate)' : 'Desktop (vozes distintas)'}
   </div>` + aviso;
 }
 
@@ -930,41 +886,50 @@ function fecharDebug() {
 /* =====================================================
    ELENCO
    ===================================================== */
+function embaralhar(lista) {
+  const a = [...lista];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function distribuirElenco(vozes) {
-  if (vozes.length === 0) return null;
+  if (!vozes.length) return null;
 
-  // Se só há 1 voz, todos usam ela — modoIOS liga
-  if (vozes.length === 1) {
-    modoIOS = true;
-    const e = { professor: vozes[0] };
-    PAPEIS_ALUNO.forEach(p => { e[p] = vozes[0]; });
-    return e;
-  }
+  vozesDisponiveis = [...vozes];
 
-  // iOS com poucas vozes: usa a melhor disponível para todos
-  if (isIOS && vozes.length < 3) {
-    modoIOS = true;
-    const melhor = vozes.find(v => /felipe|luciana/i.test(v.name)) || vozes[0];
-    const e = { professor: melhor };
-    PAPEIS_ALUNO.forEach(p => { e[p] = melhor; });
-    return e;
-  }
+  // O nome da voz é apenas uma heurística: o Safari não informa gênero.
+  const masculinas = vozes.filter(v =>
+    /daniel|felipe|ricardo|lucas|joão|joao|carlos|pedro|paulo|thiago|mateus|gustavo|arthur|antonio|antônio|male|homem/i.test(v.name)
+  );
+  const femininas = vozes.filter(v =>
+    /luciana|fernanda|camila|joana|helena|mariana|ana|beatriz|carolina|female|mulher/i.test(v.name)
+  );
 
-  // Desktop ou iOS com 3+ vozes: distribui normalmente
-  modoIOS = false;
-  const normais = vozes.filter(v => !/siri/i.test(v.name));
-  const siris   = vozes.filter(v => /siri/i.test(v.name));
-  const ordenadas = [...normais, ...siris];
+  // 1 voz mentora para o professor.
+  const mentorPool = masculinas.length ? masculinas : vozes;
+  const professor = embaralhar(mentorPool)[0];
 
-  let professor = ordenadas.find(v => /felipe/i.test(v.name))
-              || ordenadas.find(v => !/siri/i.test(v.name))
-              || ordenadas[0];
-
-  const restantes = ordenadas.filter(v => v !== professor);
+  // Demais personagens começam com vozes embaralhadas.
+  const restantes = embaralhar(vozes.filter(v => v !== professor));
   const e = { professor };
+
   PAPEIS_ALUNO.forEach((papel, i) => {
-    e[papel] = restantes[i % restantes.length] || professor;
+    e[papel] = restantes.length ? restantes[i % restantes.length] : professor;
   });
+
+  // Se houver vozes femininas reais, distribui algumas entre as alunas.
+  if (femininas.length) {
+    const poolFem = embaralhar(femininas.filter(v => v !== professor));
+    ['aluno1','aluno3','aluno5','aluno6'].forEach((papel, i) => {
+      if (poolFem[i]) e[papel] = poolFem[i];
+    });
+  }
+
+  // No iPhone, pitch/rate complementam a diferenciação quando há repetição.
+  modoIOS = isIOS;
   return e;
 }
 
