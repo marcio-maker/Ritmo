@@ -9,18 +9,112 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Georgia, serif;
-    background: #0f172a; color: #cbd5e1;
+    background: #0f172a;
+    color: #cbd5e1;
     min-height: 100dvh;
     padding: env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 130px);
-    display: flex; flex-direction: column;
+    display: flex;
+    flex-direction: column;
     overflow-x: hidden;
   }
-  .conteudo { flex: 1; padding: 24px 22px 0; display: flex; flex-direction: column; }
-  .texto-bloco { flex: 1; font-size: 1.02rem; line-height: 1.85; color: #cbd5e1; }
-  .fala { margin-bottom: 14px; transition: opacity .25s, background .25s; }
-  .simbolo { font-weight: 700; margin-right: 8px; font-size: 1.1em; opacity: .85; }
+
+  .conteudo {
+    flex: 1;
+    padding: 24px 22px 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ============================================
+     CARD — página de livro
+     ============================================ */
+  .texto-bloco {
+    flex: 1;
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: #cbd5e1;
+    background: rgba(148, 163, 184, .06);
+    border: 1px solid rgba(148, 163, 184, .12);
+    border-radius: 14px;
+    padding: 16px 18px 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+    min-height: 200px;
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    transition: background .3s, color .3s;
+  }
+
+  /* Tema claro */
+  body[data-tema="claro"] .texto-bloco {
+    background: #f8fafc;
+    color: #1e293b;
+  }
+  body[data-tema="claro"] .enfase { color: #b45309; }
+  body[data-tema="claro"] .fala.falando {
+    background: rgba(124, 58, 237, .12);
+    color: #0f172a;
+  }
+  body[data-tema="claro"] .titulo-capitulo {
+    color: #64748b;
+    border-bottom-color: rgba(100, 116, 139, .2);
+  }
+  body[data-tema="claro"] .progresso-card {
+    background: rgba(100, 116, 139, .2);
+  }
+
+  /* Barra de progresso */
+  .progresso-card {
+    position: sticky;
+    top: -16px;
+    height: 3px;
+    background: rgba(148, 163, 184, .15);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: -16px -18px 10px -18px;
+    z-index: 2;
+  }
+  .progresso-card-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+    transition: width .35s ease;
+  }
+
+  /* Título do capítulo */
+  .titulo-capitulo {
+    display: block;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: .62rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin: 0 0 12px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, .2);
+  }
+
+  /* Falas */
+  .fala {
+    margin-bottom: 10px;
+    transition: opacity .25s, background .25s;
+    cursor: pointer;
+  }
+  .fala:last-child { margin-bottom: 0; }
+
+  .simbolo {
+    font-weight: 700;
+    margin-right: 6px;
+    font-size: 1.05em;
+    opacity: .9;
+  }
   .fala.professor .simbolo { color: #a78bfa; }
   .fala.aluno1 .simbolo   { color: #60a5fa; }
   .fala.aluno2 .simbolo   { color: #fbbf24; }
@@ -29,27 +123,78 @@
   .fala.aluno5 .simbolo   { color: #22d3ee; }
   .fala.aluno6 .simbolo   { color: #fb923c; }
   .fala.aluno7 .simbolo   { color: #c084fc; }
+
   .fala.falando {
     background: rgba(124, 58, 237, .18);
     border-left: 3px solid #7c3aed;
-    border-radius: 4px; padding: 6px 10px;
-    margin-left: -13px; margin-right: -10px; color: #f1f5f9;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-left: -11px;
+    margin-right: -8px;
+    color: #f1f5f9;
   }
   .fala.falada { opacity: .4; }
-  .fala.futura { opacity: .78; }
-  .enfase { color: #fbbf24; font-weight: 700; letter-spacing: .01em; }
-  .quebra { height: 14px; }
+  .fala.futura { opacity: .9; }
+  .fala:hover { background: rgba(124, 58, 237, .08); border-radius: 3px; }
 
+  .enfase {
+    color: #fbbf24;
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
+  .quebra { height: 8px; }
+
+  /* ============================================
+     TOOLBAR
+     ============================================ */
+  .toolbar {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 10px);
+    right: 12px;
+    display: flex;
+    gap: 5px;
+    z-index: 9998;
+  }
+  .toolbar button {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(148, 163, 184, .2);
+    background: rgba(15, 23, 42, .92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #cbd5e1;
+    font-size: .82rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .1s, background .2s;
+    font-family: inherit;
+    touch-action: manipulation;
+  }
+  .toolbar button:active { transform: scale(.9); }
+  .toolbar button:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* ============================================
+     PLAYER
+     ============================================ */
   #playerFlutuante {
-    position: fixed; z-index: 9999;
-    bottom: 24px; right: 18px; width: 240px;
+    position: fixed;
+    z-index: 9999;
+    bottom: 24px;
+    right: 18px;
+    width: 240px;
     background: rgba(15, 23, 42, .97);
-    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(148, 163, 184, .18);
     border-radius: 18px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, .5);
     padding: 10px 10px 12px;
-    user-select: none; -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
     touch-action: none;
     transition: box-shadow .2s, opacity .2s;
   }
@@ -58,20 +203,40 @@
     opacity: .96;
   }
   .handle {
-    height: 18px; display: flex; align-items: center; justify-content: center;
-    cursor: grab; margin-bottom: 4px; touch-action: none;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    margin-bottom: 4px;
+    touch-action: none;
   }
   .handle::before {
-    content: ''; width: 36px; height: 4px;
-    background: #475569; border-radius: 2px; transition: background .15s;
+    content: '';
+    width: 36px;
+    height: 4px;
+    background: #475569;
+    border-radius: 2px;
+    transition: background .15s;
   }
   #playerFlutuante.arrastando .handle::before { background: #7c3aed; }
-  .controles { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .controles {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
   .btn-ctrl {
-    border: none; background: #1e293b; color: #cbd5e1;
-    font-family: inherit; font-weight: 700;
-    border-radius: 12px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
+    border: none;
+    background: #1e293b;
+    color: #cbd5e1;
+    font-family: inherit;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: background .15s, transform .1s, color .15s;
     touch-action: manipulation;
   }
@@ -79,22 +244,37 @@
   .btn-ctrl:disabled { opacity: .35; }
   .btn-sec { width: 42px; height: 42px; font-size: .95rem; }
   .btn-play-flut {
-    width: 58px; height: 58px; border-radius: 50%;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
     background: linear-gradient(135deg, #2563eb, #7c3aed);
-    color: #fff; font-size: 1.4rem;
+    color: #fff;
+    font-size: 1.4rem;
     box-shadow: 0 6px 18px rgba(37, 99, 235, .4);
   }
   .btn-play-flut.tocando {
     background: linear-gradient(135deg, #dc2626, #b91c1c);
     box-shadow: 0 6px 18px rgba(220, 38, 38, .4);
   }
-  .rodape { display: flex; align-items: center; justify-content: center; margin-top: 8px; }
+  .rodape {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+  }
   .btn-vel {
-    padding: 6px 10px; font-size: .72rem;
-    background: #1e293b; color: #93c5fd;
-    border-radius: 8px; letter-spacing: .02em;
-    min-width: 52px; border: none; font-family: inherit; font-weight: 700;
-    cursor: pointer; touch-action: manipulation;
+    padding: 6px 10px;
+    font-size: .72rem;
+    background: #1e293b;
+    color: #93c5fd;
+    border-radius: 8px;
+    letter-spacing: .02em;
+    min-width: 52px;
+    border: none;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
   }
   .btn-vel.ativa { background: #1e3a8a; color: #fff; }
   #playerFlutuante.minimizado .handle,
@@ -103,46 +283,113 @@
   #playerFlutuante.minimizado { width: auto; padding: 6px; border-radius: 50%; }
   #playerFlutuante.minimizado .controles { gap: 0; }
 
+  /* ============================================
+     DEBUG
+     ============================================ */
   #debugPanel {
-    position: fixed; top: 12px; left: 12px; right: 12px;
-    background: rgba(0, 0, 0, .92); border: 1px solid #334155;
-    border-radius: 12px; padding: 12px;
-    color: #cbd5e1; font-family: ui-monospace, Menlo, monospace;
-    font-size: .68rem; line-height: 1.5;
-    z-index: 10000; max-height: 60vh; overflow-y: auto; display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, .92);
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 12px;
+    color: #cbd5e1;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: .68rem;
+    line-height: 1.5;
+    z-index: 10000;
+    max-height: 60vh;
+    overflow-y: auto;
+    display: none;
   }
   #debugPanel.ativo { display: block; }
   #debugPanel h3 {
-    font-size: .72rem; color: #fbbf24; margin-bottom: 8px;
-    display: flex; justify-content: space-between; align-items: center;
+    font-size: .72rem;
+    color: #fbbf24;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   #debugPanel h3 button {
-    background: #7c3aed; color: #fff; border: none;
-    border-radius: 6px; padding: 3px 8px;
-    font-size: .65rem; font-family: inherit; cursor: pointer;
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: .65rem;
+    font-family: inherit;
+    cursor: pointer;
   }
   #debugPanel .linha {
-    display: flex; justify-content: space-between; padding: 2px 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
     border-bottom: 1px solid rgba(148, 163, 184, .1);
   }
   #debugPanel .linha.ativa { color: #fbbf24; font-weight: 700; }
   #debugPanel .voz { color: #93c5fd; }
   #debugPanel .aviso {
-    margin-top: 8px; padding: 6px;
+    margin-top: 8px;
+    padding: 6px;
     background: rgba(220, 38, 38, .15);
-    border-radius: 6px; color: #fca5a5;
+    border-radius: 6px;
+    color: #fca5a5;
   }
   #debugPanel .sucesso {
-    margin-top: 8px; padding: 6px;
+    margin-top: 8px;
+    padding: 6px;
     background: rgba(34, 197, 94, .15);
-    border-radius: 6px; color: #86efac;
+    border-radius: 6px;
+    color: #86efac;
+  }
+
+  /* ============================================
+     TOAST
+     ============================================ */
+  .toast {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(124, 58, 237, .95);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-size: .75rem;
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+    z-index: 9997;
+    white-space: nowrap;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .toast.ativo {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media (max-width: 380px) {
+    .texto-bloco { padding: 14px 14px 18px; }
   }
 </style>
 </head>
-<body>
+<body data-tema="escuro">
+
+<div class="toolbar">
+  <button id="btnTema" type="button" aria-label="Alternar tema">☀️</button>
+  <button id="btnFonteMenos" type="button" aria-label="Diminuir fonte">A−</button>
+  <button id="btnFonteMais" type="button" aria-label="Aumentar fonte">A+</button>
+</div>
+
 <div class="conteudo">
   <div class="texto-bloco" id="texto"></div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <div id="debugPanel">
   <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
@@ -182,6 +429,103 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 const isMicrosoft = /Windows|Win32|Win64/.test(navigator.userAgent);
 
 /* =====================================================
+   PREFERÊNCIAS — LEITURA BLINDADA
+   ===================================================== */
+const FONTES = [0.80, 0.88, 0.95, 1.02, 1.10, 1.20, 1.30, 1.45];
+
+let prefTema = 'escuro';
+let prefTamanho = 1.02;
+let prefVelocidade = 1.0;
+
+// Lê com validação (não confia em nada que está no localStorage)
+try {
+  const t = localStorage.getItem('pref-tema');
+  if (t === 'claro' || t === 'escuro') prefTema = t;
+
+  const s = parseFloat(localStorage.getItem('pref-tamanho'));
+  if (isFinite(s) && s >= 0.5 && s <= 2.0) prefTamanho = s;
+
+  const v = parseFloat(localStorage.getItem('pref-velocidade'));
+  if (isFinite(v) && v >= 0.5 && v <= 3.0) prefVelocidade = v;
+} catch(e) {
+  // Se localStorage falhar (modo privado, etc.), segue com padrões
+}
+
+function salvarPrefs() {
+  try {
+    localStorage.setItem('pref-tema', prefTema);
+    localStorage.setItem('pref-tamanho', String(prefTamanho));
+    localStorage.setItem('pref-velocidade', String(prefVelocidade));
+  } catch(e) {}
+}
+
+/* =====================================================
+   TEMA
+   ===================================================== */
+function aplicarTema() {
+  const btn = document.getElementById('btnTema');
+  document.body.setAttribute('data-tema', prefTema);
+  if (btn) btn.textContent = (prefTema === 'claro') ? '🌙' : '☀️';
+}
+
+function alternarTema() {
+  prefTema = (prefTema === 'claro') ? 'escuro' : 'claro';
+  salvarPrefs();
+  aplicarTema();
+  mostrarToast(prefTema === 'claro' ? '☀️ Modo claro' : '🌙 Modo escuro');
+}
+
+/* =====================================================
+   FONTE
+   ===================================================== */
+function acharIndiceFonte() {
+  let melhor = 0;
+  let menorDist = Math.abs(FONTES[0] - prefTamanho);
+  for (let i = 1; i < FONTES.length; i++) {
+    const d = Math.abs(FONTES[i] - prefTamanho);
+    if (d < menorDist) { menorDist = d; melhor = i; }
+  }
+  return melhor;
+}
+
+function aplicarFonte() {
+  const tam = isFinite(prefTamanho) ? prefTamanho : 1.02;
+  document.documentElement.style.setProperty('--tamanho-fonte', tam + 'rem');
+
+  const card = document.getElementById('texto');
+  if (card) card.style.fontSize = tam + 'rem';
+
+  const i = acharIndiceFonte();
+  const btnM = document.getElementById('btnFonteMenos');
+  const btnP = document.getElementById('btnFonteMais');
+  if (btnM) btnM.disabled = (i <= 0);
+  if (btnP) btnP.disabled = (i >= FONTES.length - 1);
+}
+
+function ajustarFonte(direcao) {
+  const i = acharIndiceFonte();
+  const novo = Math.max(0, Math.min(FONTES.length - 1, i + direcao));
+  if (novo === i) return;
+  prefTamanho = FONTES[novo];
+  salvarPrefs();
+  aplicarFonte();
+  mostrarToast('🔤 Fonte: ' + Math.round(prefTamanho * 100) + '%');
+}
+
+/* =====================================================
+   TOAST
+   ===================================================== */
+let toastTimer = null;
+function mostrarToast(txt) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = txt;
+  el.classList.add('ativo');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('ativo'), 1400);
+}
+
+/* =====================================================
    VOZES
    ===================================================== */
 let todasAsVozes = [];
@@ -191,31 +535,25 @@ let felipeEncontrado = false;
 
 function carregarVozes(callback) {
   let jaChamou = false;
-  let timerEstabilizacao = null;
-
   const finalizar = () => {
     if (jaChamou) return;
     jaChamou = true;
-    if (timerEstabilizacao) clearTimeout(timerEstabilizacao);
-    try { speechSynthesis.removeEventListener('voiceschanged', handler); } catch(e) {}
     callback();
   };
 
-  const atualizar = (aguardar = isIOS ? 900 : 150) => {
-    const atuais = speechSynthesis.getVoices();
-    if (!atuais.length) return false;
-    todasAsVozes = atuais;
-    clearTimeout(timerEstabilizacao);
-    timerEstabilizacao = setTimeout(finalizar, aguardar);
-    return true;
-  };
-
   let vozes = speechSynthesis.getVoices();
-  if (vozes.length > 0) atualizar();
+  if (vozes.length > 0) {
+    todasAsVozes = vozes;
+    finalizar();
+    return;
+  }
 
   const handler = () => {
-    if (atualizar()) {
-      setTimeout(() => { if (!jaChamou) atualizar(250); }, 250);
+    vozes = speechSynthesis.getVoices();
+    if (vozes.length > 0) {
+      todasAsVozes = vozes;
+      speechSynthesis.removeEventListener('voiceschanged', handler);
+      finalizar();
     }
   };
 
@@ -228,7 +566,12 @@ function carregarVozes(callback) {
   let tentativas = 0;
   const poll = () => {
     tentativas++;
-    if (atualizar()) return;
+    vozes = speechSynthesis.getVoices();
+    if (vozes.length > 0) {
+      todasAsVozes = vozes;
+      finalizar();
+      return;
+    }
     if (tentativas < 30) setTimeout(poll, 200);
     else finalizar();
   };
@@ -243,7 +586,7 @@ function vozesPtBR() {
 }
 
 /* =====================================================
-   PERFIS — PROFESSOR MELHORADO
+   PERFIS
    ===================================================== */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
 const SIMBOLOS = {
@@ -362,7 +705,7 @@ let tocando = false;
 let pausado = false;
 let cancelar = false;
 let indiceAtual = 0;
-let velocidade = 1.0;
+let velocidade = prefVelocidade;
 
 /* =====================================================
    RENDER
@@ -375,8 +718,23 @@ function renderTextoLegivel(texto) {
 
 function renderAula() {
   const el = document.getElementById('texto');
+  if (!el) return;
   el.innerHTML = '';
-  AULA.forEach((fala, i) => {
+
+  // Barra de progresso
+  const progresso = document.createElement('div');
+  progresso.className = 'progresso-card';
+  progresso.innerHTML = '<div class="progresso-card-fill" id="progCard"></div>';
+  el.appendChild(progresso);
+
+  // Título
+  const titulo = document.createElement('div');
+  titulo.className = 'titulo-capitulo';
+  titulo.textContent = 'Capítulo 1 — Gestão de Pessoas';
+  el.appendChild(titulo);
+
+  // Falas
+  AULA.forEach(function(fala, i) {
     if (fala.tipo === 'pausa') {
       const br = document.createElement('div');
       br.className = 'quebra';
@@ -387,14 +745,43 @@ function renderAula() {
     div.className = 'fala ' + fala.papel + ' futura';
     div.id = 'fala-' + i;
     const simbolo = SIMBOLOS[fala.papel] || '·';
-    div.innerHTML = `<span class="simbolo">${simbolo}</span>${renderTextoLegivel(fala.texto)}`;
+    div.innerHTML = '<span class="simbolo">' + simbolo + '</span>' + renderTextoLegivel(fala.texto);
+    div.addEventListener('click', function() { irParaFala(i); });
     el.appendChild(div);
   });
 }
 renderAula();
 
+function irParaFala(idx) {
+  if (idx < 0 || idx >= AULA.length) return;
+  if (AULA[idx].tipo === 'pausa') return;
+
+  const estavaTocando = tocando && !pausado;
+  pararSilencioso();
+  indiceAtual = idx;
+
+  destacarFala(idx);
+  atualizarBotoesNavegacao();
+  atualizarProgressoCard();
+
+  if (estavaTocando) {
+    setTimeout(function() { tocarDeOndeParou(); }, 80);
+  } else {
+    mostrarToast('📍 Fala ' + contarFalas(idx));
+  }
+}
+
+function contarFalas(idx) {
+  let n = 0;
+  for (let k = 0; k <= idx && k < AULA.length; k++) {
+    if (AULA[k].tipo !== 'pausa') n++;
+  }
+  const total = AULA.filter(function(f) { return f.tipo !== 'pausa'; }).length;
+  return n + ' / ' + total;
+}
+
 function destacarFala(idx) {
-  document.querySelectorAll('.fala').forEach(el => {
+  document.querySelectorAll('.fala').forEach(function(el) {
     const numIdx = parseInt(el.id.replace('fala-', ''));
     el.classList.remove('falando', 'falada', 'futura');
     if (numIdx < idx) el.classList.add('falada');
@@ -404,14 +791,24 @@ function destacarFala(idx) {
   const atual = document.getElementById('fala-' + idx);
   if (atual) {
     const rect = atual.getBoundingClientRect();
-    if (rect.top < 80 || rect.bottom > window.innerHeight - 100) {
-      atual.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (rect.top < 100 || rect.bottom > window.innerHeight - 120) {
+      atual.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
+  atualizarProgressoCard();
+}
+
+function atualizarProgressoCard() {
+  const el = document.getElementById('progCard');
+  if (!el) return;
+  const total = AULA.filter(function(f) { return f.tipo !== 'pausa'; }).length;
+  const atual = AULA.slice(0, indiceAtual + 1).filter(function(f) { return f.tipo !== 'pausa'; }).length;
+  const pct = Math.round((atual / total) * 100);
+  el.style.width = pct + '%';
 }
 
 function resetDestaques() {
-  document.querySelectorAll('.fala').forEach(el => {
+  document.querySelectorAll('.fala').forEach(function(el) {
     el.classList.remove('falando', 'falada');
     el.classList.add('futura');
   });
@@ -423,6 +820,7 @@ function resetDestaques() {
 function setBtnEstado(playing) {
   const btn = document.getElementById('btnPlayFlut');
   const icone = document.getElementById('iconePlay');
+  if (!btn || !icone) return;
   if (playing) {
     btn.classList.add('tocando');
     icone.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
@@ -433,10 +831,13 @@ function setBtnEstado(playing) {
 }
 
 function atualizarBotoesNavegacao() {
-  const temAnterior = AULA.slice(0, indiceAtual).some(f => f.tipo !== 'pausa');
-  const temProximo  = AULA.slice(indiceAtual + 1).some(f => f.tipo !== 'pausa');
-  document.getElementById('btnAnterior').disabled = !temAnterior;
-  document.getElementById('btnProximo').disabled  = !temProximo;
+  const btnA = document.getElementById('btnAnterior');
+  const btnP = document.getElementById('btnProximo');
+  if (!btnA || !btnP) return;
+  const temAnterior = AULA.slice(0, indiceAtual).some(function(f) { return f.tipo !== 'pausa'; });
+  const temProximo  = AULA.slice(indiceAtual + 1).some(function(f) { return f.tipo !== 'pausa'; });
+  btnA.disabled = !temAnterior;
+  btnP.disabled = !temProximo;
 }
 
 /* =====================================================
@@ -444,16 +845,24 @@ function atualizarBotoesNavegacao() {
    ===================================================== */
 const VELOCIDADES = [0.75, 1.0, 1.25, 1.5, 2.0];
 
+function atualizarBtnVel() {
+  const btn = document.getElementById('btnVel');
+  if (!btn) return;
+  btn.textContent = velocidade.toFixed(2).replace(/0$/, '') + '×';
+  btn.classList.toggle('ativa', velocidade !== 1.0);
+}
+
 function ciclarVelocidade() {
   const i = VELOCIDADES.indexOf(velocidade);
   velocidade = VELOCIDADES[(i + 1) % VELOCIDADES.length];
-  const btn = document.getElementById('btnVel');
-  btn.textContent = velocidade.toFixed(2).replace(/0$/, '') + '×';
-  btn.classList.toggle('ativa', velocidade !== 1.0);
+  prefVelocidade = velocidade;
+  salvarPrefs();
+  atualizarBtnVel();
+  mostrarToast('⚡ ' + velocidade.toFixed(2).replace(/0$/, '') + '×');
   if (tocando && !pausado) {
     const idx = indiceAtual;
     pararSilencioso();
-    setTimeout(() => { indiceAtual = idx; tocarDeOndeParou(); }, 100);
+    setTimeout(function() { indiceAtual = idx; tocarDeOndeParou(); }, 100);
   }
 }
 
@@ -498,7 +907,7 @@ function pularFrase(direcao) {
   atualizarBotoesNavegacao();
 
   if (estavaTocando) {
-    setTimeout(() => tocarDeOndeParou(), 80);
+    setTimeout(function() { tocarDeOndeParou(); }, 80);
   }
 }
 
@@ -508,14 +917,14 @@ function pularFrase(direcao) {
 function dividirComMicroPausas(texto) {
   const partesLongas = texto.split(/\s*\|\|\s*/);
   const segmentos = [];
-  partesLongas.forEach((parte, iLonga) => {
+  partesLongas.forEach(function(parte, iLonga) {
     if (iLonga > 0) segmentos.push({ tipo:'pausaLonga' });
     const partesCurtas = parte.split(/\s*\|\s*/);
-    partesCurtas.forEach((p, iCurta) => {
+    partesCurtas.forEach(function(p, iCurta) {
       if (iCurta > 0) segmentos.push({ tipo:'pausaCurta' });
       if (p.trim()) {
         const comEnfase = p.split(/(\*[^*]+\*)/g);
-        comEnfase.forEach(frag => {
+        comEnfase.forEach(function(frag) {
           if (!frag) return;
           if (frag.startsWith('*') && frag.endsWith('*')) {
             segmentos.push({ tipo:'enfase', texto: frag.slice(1, -1).trim() });
@@ -530,21 +939,18 @@ function dividirComMicroPausas(texto) {
 }
 
 function falar(texto, rate, pitch, volume, voz) {
-  return new Promise(resolve => {
+  return new Promise(function(resolve) {
     let resolvido = false;
-    const finalizar = () => { if (!resolvido) { resolvido = true; resolve(); } };
+    const finalizar = function() {
+      if (!resolvido) { resolvido = true; resolve(); }
+    };
 
     const u = new SpeechSynthesisUtterance(texto);
-    // Usa o lang real da voz (evita forçar pt-BR quando a voz não é pt-BR)
     u.lang = (voz && voz.lang) || 'pt-BR';
     u.rate = Math.max(0.1, Math.min(2.0, rate * velocidade));
     u.pitch = Math.max(0, Math.min(2.0, pitch));
-    u.volume = volume ?? 1.0;
-
-    // Reatribuir SEMPRE a voz, inclusive quando é igual à anterior.
-    // Isso evita o bug do Safari/iPhone de fixar a primeira voz da fila.
+    u.volume = (volume == null) ? 1.0 : volume;
     if (voz) u.voice = voz;
-
     u.onend = finalizar;
     u.onerror = finalizar;
 
@@ -557,7 +963,8 @@ function falar(texto, rate, pitch, volume, voz) {
 
 async function falarComMicroPausas(textoOriginal, perfil, voz) {
   const segmentos = dividirComMicroPausas(textoOriginal);
-  for (const seg of segmentos) {
+  for (let i = 0; i < segmentos.length; i++) {
+    const seg = segmentos[i];
     if (cancelar) return;
     if (seg.tipo === 'pausaCurta') {
       await esperar(perfil.microCurta / velocidade);
@@ -571,13 +978,18 @@ async function falarComMicroPausas(textoOriginal, perfil, voz) {
   }
 }
 
-function esperar(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+function esperar(ms) {
+  return new Promise(function(resolve) { setTimeout(resolve, ms); });
+}
 
 /* =====================================================
    LOOP PRINCIPAL
    ===================================================== */
 async function tocarDeOndeParou() {
-  if (!elenco || !elenco.professor) return;
+  if (!elenco || !elenco.professor) {
+    mostrarToast('⚠️ Sem vozes pt-BR');
+    return;
+  }
 
   cancelar = false;
   tocando = true;
@@ -613,6 +1025,7 @@ async function tocarDeOndeParou() {
     tocando = false;
     pausado = false;
     atualizarBotoesNavegacao();
+    mostrarToast('✅ Fim da aula');
   }
 }
 
@@ -679,7 +1092,7 @@ function soltarArraste(e) {
   const destinoX = centroX < meio ? 12 : window.innerWidth - rect.width - 12;
   player.style.transition = 'left .25s cubic-bezier(.2,.8,.3,1)';
   player.style.left = destinoX + 'px';
-  setTimeout(() => { player.style.transition = ''; }, 300);
+  setTimeout(function() { player.style.transition = ''; }, 300);
   try {
     localStorage.setItem('playerPos', JSON.stringify({
       left: destinoX, top: parseInt(player.style.top)
@@ -696,18 +1109,18 @@ document.addEventListener('touchmove', moverArraste, { passive: false });
 document.addEventListener('touchend', soltarArraste);
 
 let toquesHandle = [];
-handle.addEventListener('touchend', () => {
+handle.addEventListener('touchend', function() {
   if (moveu) return;
   const agora = Date.now();
   toquesHandle.push(agora);
-  toquesHandle = toquesHandle.filter(t => agora - t < 600);
+  toquesHandle = toquesHandle.filter(function(t) { return agora - t < 600; });
 
   if (toquesHandle.length === 3) {
     document.getElementById('debugPanel').classList.toggle('ativo');
     atualizarDebug();
     toquesHandle = [];
   } else if (toquesHandle.length === 2) {
-    setTimeout(() => {
+    setTimeout(function() {
       if (toquesHandle.length === 2) {
         player.classList.toggle('minimizado');
         toquesHandle = [];
@@ -721,100 +1134,93 @@ handle.addEventListener('touchend', () => {
    ===================================================== */
 function atualizarDebug() {
   const el = document.getElementById('debugElenco');
+  if (!el) return;
   if (!elenco) { el.textContent = 'Elenco não montado.'; return; }
 
-  const linhas = Object.entries(elenco).map(([papel, voz]) => {
-    const ativo = AULA[indiceAtual] && AULA[indiceAtual].papel === papel ? ' ativa' : '';
+  const linhas = Object.entries(elenco).map(function(par) {
+    const papel = par[0];
+    const voz = par[1];
+    const ativo = (AULA[indiceAtual] && AULA[indiceAtual].papel === papel) ? ' ativa' : '';
     const perfil = PERFIS[papel];
     const pitchTxt = perfil ? perfil.pitch.toFixed(2) : '—';
     const rateTxt  = perfil ? perfil.rate.toFixed(2)  : '—';
-    return `<div class="linha${ativo}">
-      <span>${papel}</span>
-      <span class="voz">${voz.name} · pitch ${pitchTxt} · rate ${rateTxt}</span>
-    </div>`;
+    return '<div class="linha' + ativo + '">' +
+      '<span>' + papel + '</span>' +
+      '<span class="voz">' + voz.name + ' · pitch ' + pitchTxt + ' · rate ' + rateTxt + '</span>' +
+      '</div>';
   }).join('');
 
-  const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
+  const unicas = new Set(Object.values(elenco).map(function(v) { return v.name; })).size;
 
   let aviso = '';
   if (modoIOS && !felipeEncontrado) {
-    aviso = `<div class="aviso">
-      📱 iPhone sem Felipe! Usando Luciana com pitch natural + rate alto.<br>
-      <b>Para ficar incrível:</b> Ajustes → Acessibilidade → Conteúdo Falado → Vozes → Português (Brasil) → baixe <b>Felipe</b>. Depois feche o Safari (arraste pra cima) e abra de novo.
-    </div>`;
+    aviso = '<div class="aviso">📱 iPhone sem Felipe! Baixe em: Ajustes → Acessibilidade → Conteúdo Falado → Vozes → Português (Brasil) → Felipe.</div>';
   } else if (modoIOS && felipeEncontrado) {
-    aviso = `<div class="sucesso">✅ iPhone com Felipe! Professor usando voz masculina real.</div>`;
+    aviso = '<div class="sucesso">✅ iPhone com Felipe!</div>';
   }
 
-  el.innerHTML = linhas + `<div style="margin-top:8px;color:#94a3b8">
-    Vozes únicas: ${unicas} · pt-BR disponíveis: ${vozesPtBR().length}<br>
-    Total exposto pelo navegador: ${todasAsVozes.length}<br>
-    Modo: ${isIOS ? 'iPhone/Safari' : (isMicrosoft ? 'Microsoft' : 'Desktop')}<br>
-    Felipe detectado: ${felipeEncontrado ? '✅ sim' : '❌ não'}
-  </div>` + aviso;
+  el.innerHTML = linhas + '<div style="margin-top:8px;color:#94a3b8">' +
+    'Vozes únicas: ' + unicas + ' · pt-BR disponíveis: ' + vozesPtBR().length + '<br>' +
+    'Total exposto pelo navegador: ' + todasAsVozes.length + '<br>' +
+    'Modo: ' + (isIOS ? 'iPhone/Safari' : (isMicrosoft ? 'Microsoft' : 'Desktop')) + '<br>' +
+    'Felipe detectado: ' + (felipeEncontrado ? '✅ sim' : '❌ não') +
+    '</div>' + aviso;
 }
 
 function fecharDebug() {
-  document.getElementById('debugPanel').classList.remove('ativo');
+  const el = document.getElementById('debugPanel');
+  if (el) el.classList.remove('ativo');
 }
 
 /* =====================================================
-   ELENCO — FELIPE TEM PRIORIDADE MÁXIMA
+   ELENCO
    ===================================================== */
 function embaralhar(lista) {
-  const a = [...lista];
+  const a = lista.slice();
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+    const t = a[i]; a[i] = a[j]; a[j] = t;
   }
   return a;
 }
 
 const PRIORIDADE_PROFESSOR = [
-  /felipe/i,
-  /daniel/i,
-  /antonio|antônio/i,
-  /ricardo/i,
-  /lucas/i,
-  /thiago/i,
-  /paulo/i,
+  /felipe/i, /daniel/i, /antonio|antônio/i, /ricardo/i,
+  /lucas/i, /thiago/i, /paulo/i,
   /microsoft.*(daniel|antonio|ricardo|felipe)/i,
   /google.*português/i
 ];
 
 const PRIORIDADE_ALUNAS = [
-  /maria/i,
-  /francisca/i,
-  /thalita|talita/i,
-  /luciana/i,
-  /fernanda/i,
-  /camila/i,
-  /joana/i
+  /maria/i, /francisca/i, /thalita|talita/i,
+  /luciana/i, /fernanda/i, /camila/i, /joana/i
 ];
 
 function escolherVozProfessor(vozes) {
-  for (const regex of PRIORIDADE_PROFESSOR) {
-    const v = vozes.find(v => regex.test(v.name));
+  for (let i = 0; i < PRIORIDADE_PROFESSOR.length; i++) {
+    const regex = PRIORIDADE_PROFESSOR[i];
+    const v = vozes.find(function(v) { return regex.test(v.name); });
     if (v) {
       felipeEncontrado = /felipe/i.test(v.name);
       return v;
     }
   }
-  const masc = vozes.filter(v =>
-    /daniel|felipe|ricardo|lucas|joão|joao|carlos|pedro|paulo|thiago|mateus|gustavo|arthur|antonio|antônio|male|homem/i.test(v.name)
-  );
+  const masc = vozes.filter(function(v) {
+    return /daniel|felipe|ricardo|lucas|joão|joao|carlos|pedro|paulo|thiago|mateus|gustavo|arthur|antonio|antônio|male|homem/i.test(v.name);
+  });
   if (masc.length) return embaralhar(masc)[0];
   return embaralhar(vozes)[0];
 }
 
 function escolherVozAluna(vozes, usadas) {
-  for (const regex of PRIORIDADE_ALUNAS) {
-    const v = vozes.find(v => regex.test(v.name) && !usadas.has(v));
+  for (let i = 0; i < PRIORIDADE_ALUNAS.length; i++) {
+    const regex = PRIORIDADE_ALUNAS[i];
+    const v = vozes.find(function(v) { return regex.test(v.name) && !usadas.has(v); });
     if (v) return v;
   }
-  const fem = vozes.filter(v =>
-    /maria|francisca|thalita|talita|luciana|fernanda|camila|joana|helena|mariana|ana|beatriz|carolina|female|mulher/i.test(v.name) && !usadas.has(v)
-  );
+  const fem = vozes.filter(function(v) {
+    return /maria|francisca|thalita|talita|luciana|fernanda|camila|joana|helena|mariana|ana|beatriz|carolina|female|mulher/i.test(v.name) && !usadas.has(v);
+  });
   if (fem.length) return embaralhar(fem)[0];
   return null;
 }
@@ -824,17 +1230,17 @@ function distribuirElenco(vozes) {
 
   const professor = escolherVozProfessor(vozes);
   const usadas = new Set([professor]);
-  const e = { professor };
+  const e = { professor: professor };
 
   const alunasFem = ['aluno1','aluno3','aluno5','aluno6'];
-  alunasFem.forEach(papel => {
+  alunasFem.forEach(function(papel) {
     const v = escolherVozAluna(vozes, usadas);
     if (v) { e[papel] = v; usadas.add(v); }
   });
 
-  const restantes = embaralhar(vozes.filter(v => !usadas.has(v)));
-  const papeisRestantes = PAPEIS_ALUNO.filter(p => !e[p]);
-  papeisRestantes.forEach((papel, i) => {
+  const restantes = embaralhar(vozes.filter(function(v) { return !usadas.has(v); }));
+  const papeisRestantes = PAPEIS_ALUNO.filter(function(p) { return !e[p]; });
+  papeisRestantes.forEach(function(papel, i) {
     if (restantes.length) {
       e[papel] = restantes[i % restantes.length];
     } else {
@@ -846,19 +1252,10 @@ function distribuirElenco(vozes) {
   return e;
 }
 
-/* =====================================================
-   AJUSTE DO PROFESSOR POR DISPOSITIVO
-   =====================================================
-   Desktop: perfil original (pitch 0.90) — incrível
-   iPhone COM Felipe: perfil original (Felipe é masculino real)
-   iPhone SEM Felipe: pitch 1.0 + rate 1.15 (não fica rouco)
-   ===================================================== */
 function ajustarPerfilProfessor() {
   if (!isIOS) return;
   if (felipeEncontrado) return;
 
-  // Sem voz masculina no iPhone, NÃO abaixar o pitch (fica rouco).
-  // Diferenciar apenas pelo rate (mais rápido = motivado).
   PERFIS.professor = {
     rate: 1.15, pitch: 1.0, volume: 1.0,
     microCurta: 100, microLonga: 160,
@@ -875,11 +1272,9 @@ function preAquecerVozes() {
   if (preAquecido) return;
   preAquecido = true;
   if (!elenco) return;
-  // No iOS, utterance vazia trava o Safari na primeira voz. Pular.
-  if (isIOS) return;
-  const vozesUnicas = [...new Set(Object.values(elenco))];
-  vozesUnicas.forEach((voz, i) => {
-    setTimeout(() => {
+  const vozesUnicas = Array.from(new Set(Object.values(elenco)));
+  vozesUnicas.forEach(function(voz, i) {
+    setTimeout(function() {
       try {
         const u = new SpeechSynthesisUtterance(' ');
         u.voice = voz;
@@ -894,7 +1289,19 @@ function preAquecerVozes() {
 /* =====================================================
    INIT
    ===================================================== */
-carregarVozes(() => {
+aplicarTema();
+aplicarFonte();
+atualizarBtnVel();
+
+const btnTema = document.getElementById('btnTema');
+const btnMenos = document.getElementById('btnFonteMenos');
+const btnMais = document.getElementById('btnFonteMais');
+
+if (btnTema)  btnTema.addEventListener('click', alternarTema);
+if (btnMenos) btnMenos.addEventListener('click', function() { ajustarFonte(-1); });
+if (btnMais)  btnMais.addEventListener('click', function() { ajustarFonte(1); });
+
+carregarVozes(function() {
   const ptBR = vozesPtBR();
   if (ptBR.length === 0) {
     if (todasAsVozes.length > 0) {
@@ -903,11 +1310,10 @@ carregarVozes(() => {
     atualizarBotoesNavegacao();
     return;
   }
-
   elenco = distribuirElenco(ptBR);
   ajustarPerfilProfessor();
-
   atualizarBotoesNavegacao();
+  atualizarProgressoCard();
   atualizarDebug();
 });
 
