@@ -127,11 +127,6 @@
   }
   #debugPanel .linha.ativa { color: #fbbf24; font-weight: 700; }
   #debugPanel .voz { color: #93c5fd; }
-  #debugPanel .status-troca {
-    margin-top: 8px; padding: 6px;
-    background: rgba(124, 58, 237, .15);
-    border-radius: 6px; color: #c4b5fd;
-  }
   #debugPanel .aviso {
     margin-top: 8px; padding: 6px;
     background: rgba(220, 38, 38, .15);
@@ -152,7 +147,6 @@
 <div id="debugPanel">
   <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
   <div id="debugElenco"></div>
-  <div class="status-troca" id="debugTroca">Aguardando…</div>
 </div>
 
 <div id="playerFlutuante" role="region" aria-label="Controles de áudio">
@@ -192,7 +186,6 @@ const isMicrosoft = /Windows|Win32|Win64/.test(navigator.userAgent);
    ===================================================== */
 let todasAsVozes = [];
 let elenco = null;
-let vozesCarregadas = false;
 let modoIOS = false;
 let felipeEncontrado = false;
 
@@ -201,7 +194,6 @@ function carregarVozes(callback) {
   const finalizar = () => {
     if (jaChamou) return;
     jaChamou = true;
-    vozesCarregadas = true;
     callback();
   };
 
@@ -252,7 +244,6 @@ const SIMBOLOS = {
 };
 
 const PERFIS = {
-  // 🎯 PROFESSOR MOTIVACIONAL MASCULINO
   professor: {
     rate: 1.05, pitch: 0.90, volume: 1.0,
     microCurta: 120, microLonga: 180,
@@ -462,12 +453,17 @@ function ciclarVelocidade() {
    ===================================================== */
 function togglePlay() {
   if (tocando && !pausado) {
-    pausado = true; cancelar = true;
+    pausado = true;
+    cancelar = true;
     try { synth.cancel(); } catch(e) {}
     setBtnEstado(false);
     return;
   }
-  if (tocando && pausado) { pausado = false; tocarDeOndeParou(); return; }
+  if (tocando && pausado) {
+    pausado = false;
+    tocarDeOndeParou();
+    return;
+  }
   indiceAtual = 0;
   tocarDeOndeParou();
 }
@@ -475,7 +471,8 @@ function togglePlay() {
 function pararSilencioso() {
   cancelar = true;
   try { synth.cancel(); } catch(e) {}
-  tocando = false; pausado = false;
+  tocando = false;
+  pausado = false;
   setBtnEstado(false);
 }
 
@@ -488,11 +485,11 @@ function pularFrase(direcao) {
   pararSilencioso();
   indiceAtual = novo;
 
+  destacarFala(indiceAtual);
+  atualizarBotoesNavegacao();
+
   if (estavaTocando) {
     setTimeout(() => tocarDeOndeParou(), 80);
-  } else {
-    destacarFala(indiceAtual);
-    atualizarBotoesNavegacao();
   }
 }
 
@@ -573,11 +570,6 @@ async function tocarDeOndeParou() {
   pausado = false;
   setBtnEstado(true);
 
-  let ultimaVoz = null;
-  for (let k = indiceAtual - 1; k >= 0; k--) {
-    if (AULA[k].tipo !== 'pausa') { ultimaVoz = elenco[AULA[k].papel]; break; }
-  }
-
   for (let i = indiceAtual; i < AULA.length; i++) {
     if (cancelar) return;
     indiceAtual = i;
@@ -590,7 +582,6 @@ async function tocarDeOndeParou() {
 
     const voz = elenco[fala.papel];
     const perfil = PERFIS[fala.papel];
-    ultimaVoz = voz;
 
     const pausaAntes = perfil.pausas[fala.tipo] || 0;
     if (pausaAntes > 0) await esperar(pausaAntes / velocidade);
@@ -605,7 +596,9 @@ async function tocarDeOndeParou() {
   if (!cancelar) {
     resetDestaques();
     setBtnEstado(false);
-    tocando = false; pausado = false; indiceAtual = 0;
+    tocando = false;
+    pausado = false;
+    atualizarBotoesNavegacao();
   }
 }
 
@@ -634,12 +627,15 @@ let moveu = false;
 
 function iniciarArraste(e) {
   if (e.target !== handle && !handle.contains(e.target)) return;
-  arrastando = true; moveu = false;
+  arrastando = true;
+  moveu = false;
   player.classList.add('arrastando');
   const rect = player.getBoundingClientRect();
-  startLeft = rect.left; startTop = rect.top;
+  startLeft = rect.left;
+  startTop = rect.top;
   const ponto = e.touches ? e.touches[0] : e;
-  startX = ponto.clientX; startY = ponto.clientY;
+  startX = ponto.clientX;
+  startY = ponto.clientY;
   player.style.left = startLeft + 'px';
   player.style.top = startTop + 'px';
   player.style.right = 'auto';
