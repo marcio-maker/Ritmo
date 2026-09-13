@@ -5,315 +5,579 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Teste Siri Voz 1 vs Voz 2</title>
+<title>Loop de Vozes — RH</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: #0f172a; color: #e2e8f0;
-    min-height: 100dvh; padding: 18px;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    display: flex; flex-direction: column;
   }
-  h1 { font-size: 1rem; color: #f1f5f9; text-align: center; margin-bottom: 4px; }
-  .sub { font-size: .75rem; color: #64748b; text-align: center; margin-bottom: 16px; }
+  header { padding: 14px 18px 0; text-align: center; }
+  header h1 {
+    font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+    color: #64748b; text-transform: uppercase; margin-bottom: 4px;
+  }
+  header p { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
 
-  .diag {
+  .diagnostico {
+    margin: 10px 18px 0;
+    background: #1e293b;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: .72rem;
+    line-height: 1.5;
+    color: #94a3b8;
+  }
+  .diagnostico b { color: #22d3ee; }
+  .diagnostico .ok { color: #22d3ee; }
+  .diagnostico .aviso { color: #f87171; }
+
+  .tabs {
+    display: flex; gap: 6px; padding: 12px 18px 0; overflow-x: auto;
+  }
+  .tab {
+    flex: 1; min-width: 68px; padding: 9px 5px;
+    border: none; border-radius: 9px;
+    font-size: .72rem; font-weight: 700; font-family: inherit;
+    cursor: pointer; background: #1e293b; color: #64748b;
+    transition: background .15s, color .15s; white-space: nowrap;
+  }
+  .tab.ativa { background: #1e3a8a; color: #fff; }
+
+  .paineis { flex: 1; padding: 12px 18px 0; overflow: hidden; position: relative; }
+  .painel { display: none; flex-direction: column; gap: 8px; height: 100%; }
+  .painel.ativo { display: flex; }
+
+  .label-versao {
+    font-size: .66rem; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: #475569; padding-left: 2px;
+  }
+  .voz-info {
+    font-size: .68rem; color: #fbbf24; padding-left: 2px; line-height: 1.4;
+    font-weight: 600;
+  }
+  .voz-info.tocando { color: #22d3ee; }
+  .voz-info.erro { color: #f87171; }
+
+  .texto-bloco {
     background: #1e293b; border-radius: 12px; padding: 12px;
-    font-size: .72rem; line-height: 1.6; color: #94a3b8;
-    margin-bottom: 16px;
-  }
-  .diag b { color: #22d3ee; }
-  .diag .ok { color: #22d3ee; }
-  .diag .aviso { color: #f87171; }
-  .diag .lista { color: #fbbf24; font-size: .68rem; margin-top: 8px; }
-
-  .bloco {
-    background: #1e293b; border-radius: 12px; padding: 14px;
-    margin-bottom: 12px;
-  }
-  .bloco h2 {
-    font-size: .85rem; color: #93c5fd; margin-bottom: 6px;
-  }
-  .voz-label {
-    font-size: .7rem; color: #fbbf24; font-weight: 700;
-    margin-bottom: 10px;
-  }
-  .texto {
-    font-size: .9rem; color: #cbd5e1; line-height: 1.6;
-    margin-bottom: 12px;
+    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
   .frase {
-    padding: 4px 6px; border-radius: 5px; margin-bottom: 2px;
-    transition: background .15s, color .15s;
+    font-size: .9rem; line-height: 1.55; color: #cbd5e1;
+    padding: 4px 7px; border-radius: 6px; margin-bottom: 1px;
+    transition: background .15s, color .15s, transform .15s;
   }
-  .frase.falando { background: rgba(59,130,246,.25); color: #fff; }
+  .frase.falando { background: rgba(59,130,246,.2); color: #fff; transform: translateX(2px); }
   .frase.falada { color: #475569; }
+  .quebra { height: 8px; }
 
-  .btn {
-    width: 100%; min-height: 48px; border: none; border-radius: 10px;
-    font-size: .9rem; font-weight: 800; font-family: inherit; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    background: #2563eb; color: #fff;
+  .player { padding: 10px 0 0; }
+  .btn-play {
+    width: 100%; min-height: 50px; border: none; border-radius: 12px;
+    font-size: .92rem; font-weight: 800; font-family: inherit; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    transition: opacity .15s, transform .1s;
   }
-  .btn.tocando { background: #dc2626; }
-  .btn:active { opacity: .8; }
+  .btn-play:active { opacity: .8; transform: scale(.97); }
+  .btn-play.parado  { background: #2563eb; color: #fff; }
+  .btn-play.tocando { background: #dc2626; color: #fff; }
+
+  .progresso-wrap {
+    margin-top: 7px; height: 4px; background: #1e293b;
+    border-radius: 2px; overflow: hidden;
+  }
+  .progresso-fill {
+    height: 100%; background: #2563eb; border-radius: 2px;
+    width: 0%; transition: width .3s;
+  }
 </style>
 </head>
 <body>
 
-<h1>🎙 Teste Siri Voz 1 vs Voz 2</h1>
-<p class="sub">Bloco 1 = Siri Voz 1 · Bloco 2 = Siri Voz 2</p>
+<header>
+  <h1>👥 RH · Loop de Vozes</h1>
+  <p>Felipe → Fernanda → Luciana <span id="statusLoop" style="display:inline-flex;align-items:center;gap:4px;background:#0f3460;color:#93c5fd;font-size:.64rem;font-weight:700;padding:3px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;">iniciando...</span></p>
+</header>
 
-<div class="diag" id="diag">🔍 Carregando vozes...</div>
+<div class="diagnostico" id="diagnostico">🔍 Carregando vozes do iPhone...</div>
 
-<div class="bloco" id="bloco-1">
-  <h2>Bloco 1</h2>
-  <div class="voz-label" id="voz-1">🎙 Siri Voz 1</div>
-  <div class="texto" id="texto-1"></div>
-  <button class="btn" onclick="tocar('b1')">🔊 Ouvir Bloco 1</button>
+<div class="tabs">
+  <button class="tab ativa" data-v="b1" onclick="trocarTab('b1')">Bloco 1</button>
+  <button class="tab" data-v="b2" onclick="trocarTab('b2')">Bloco 2</button>
+  <button class="tab" data-v="b3" onclick="trocarTab('b3')">Bloco 3</button>
 </div>
 
-<div class="bloco" id="bloco-2">
-  <h2>Bloco 2</h2>
-  <div class="voz-label" id="voz-2">🎙 Siri Voz 2</div>
-  <div class="texto" id="texto-2"></div>
-  <button class="btn" onclick="tocar('b2')">🔊 Ouvir Bloco 2</button>
-</div>
+<div class="paineis" id="paineis"></div>
 
 <script>
 /* =====================================================
-   CONTEÚDO — 2 blocos curtos
+   CONEXÃO REAL COM AS VOZES DO iPHONE
+   Resolve os bugs do Safari:
+   1. voiceschanged não dispara sozinho
+   2. addEventListener não existe no iOS 15
+   3. Troca de voz ignorada se não setar u.voice
    ===================================================== */
-const BLOCOS = {
-  b1: {
-    vozIndex: 0,
-    frases: [
-      "Gestão de pessoas é a área responsável pelo ser humano no trabalho.",
-      "Ela atrai, desenvolve, motiva e mantém as pessoas na empresa.",
-      "Guarde isto: gestão de pessoas cuida do ser humano no trabalho."
-    ]
-  },
-  b2: {
-    vozIndex: 1,
-    frases: [
-      "A gestão estratégica de pessoas alinha as políticas de pessoal aos objetivos do negócio.",
-      "Se a empresa quer crescer, precisa preparar a equipe.",
-      "Guarde isto: gestão estratégica é alinhar gente e negócio."
-    ]
-  }
-};
 
-/* =====================================================
-   CONEXÃO COM AS VOZES — resolve bugs do Safari iOS
-   ===================================================== */
 let todasAsVozes = [];
 let vozesResolvidas = [];
-let carregado = false;
+let vozesCarregadas = false;
 
-function carregarVozes(callback) {
+function carregarVozesComRetry(callback) {
   let tentativas = 0;
+  const MAX_TENTATIVAS = 50; // 5 segundos
+
   function tentar() {
     tentativas++;
     const vozes = window.speechSynthesis.getVoices();
+
     if (vozes.length > 0) {
       todasAsVozes = vozes;
-      carregado = true;
+      vozesCarregadas = true;
       callback();
       return;
     }
-    if (tentativas < 50) setTimeout(tentar, 100);
-    else callback();
+
+    if (tentativas < MAX_TENTATIVAS) {
+      setTimeout(tentar, 100);
+    } else {
+      console.error('Vozes não carregaram após 5s');
+      callback();
+    }
   }
-  // iOS 15 bug: addEventListener pode não existir
+
+  // Detecta se addEventListener existe (iOS 15 tem bug)
   if (window.speechSynthesis.addEventListener) {
-    try { window.speechSynthesis.addEventListener('voiceschanged', tentar); }
-    catch (e) { window.speechSynthesis.onvoiceschanged = tentar; }
+    try {
+      window.speechSynthesis.addEventListener('voiceschanged', tentar);
+    } catch (e) {
+      window.speechSynthesis.onvoiceschanged = tentar;
+    }
   } else {
     window.speechSynthesis.onvoiceschanged = tentar;
   }
+
+  // Tenta imediatamente (pode já estar em cache)
   tentar();
 }
 
-function buscarVozSiri(indice) {
-  // Estratégia em cascata: tenta vários nomes possíveis
-  const candidatos = [
-    `Siri Voz ${indice + 1}`,
-    `Siri Voice ${indice + 1}`,
-    `Siri ${indice + 1}`
-  ];
-  for (const nome of candidatos) {
-    const exata = todasAsVozes.find(v => v.name === nome);
-    if (exata) return { voz: exata, nomeEncontrado: exata.name };
-  }
-  // match parcial
-  for (const nome of candidatos) {
-    const parcial = todasAsVozes.find(v => v.name.includes(nome));
-    if (parcial) return { voz: parcial, nomeEncontrado: parcial.name };
-  }
-  // fallback: qualquer "Siri"
-  const siri = todasAsVozes.find(v => v.name.toLowerCase().includes('siri'));
-  if (siri) return { voz: siri, nomeEncontrado: siri.name };
-  return null;
+function buscarVoz(nome) {
+  return todasAsVozes.find(v => v.name === `${nome} (Aprimorada)`)
+      || todasAsVozes.find(v => v.name === `${nome} (Enhanced)`)
+      || todasAsVozes.find(v => v.name === nome)
+      || todasAsVozes.find(v => v.name.includes(nome))
+      || null;
 }
 
 function resolverVozes() {
-  const s1 = buscarVozSiri(0);
-  const s2 = buscarVozSiri(1);
-  vozesResolvidas = [
-    { nome: 'Siri Voz 1', ...(s1 || { voz: null, nomeEncontrado: null }) },
-    { nome: 'Siri Voz 2', ...(s2 || { voz: null, nomeEncontrado: null }) }
-  ];
-  mostrarDiagnostico();
-}
+  const felipe = buscarVoz('Felipe');
+  const fernanda = buscarVoz('Fernanda');
+  const luciana = buscarVoz('Luciana');
 
-function mostrarDiagnostico() {
-  const diag = document.getElementById('diag');
+  vozesResolvidas = [
+    { nome: 'Felipe',   voz: felipe,   genero: 'M' },
+    { nome: 'Fernanda', voz: fernanda, genero: 'F' },
+    { nome: 'Luciana',  voz: luciana,  genero: 'F' }
+  ];
+
+  // Diagnóstico na tela
+  const diag = document.getElementById('diagnostico');
+  let html = `<b>🔍 Diagnóstico:</b> ${todasAsVozes.length} vozes no iPhone · `;
   const ptBR = todasAsVozes.filter(v => v.lang === 'pt-BR' || v.lang === 'pt_BR');
-  let html = `<b>🔍 Diagnóstico</b><br>`;
-  html += `Total de vozes: ${todasAsVozes.length} · pt-BR: ${ptBR.length}<br><br>`;
+  html += `${ptBR.length} em pt-BR<br>`;
 
   vozesResolvidas.forEach(r => {
     if (r.voz) {
-      html += `<span class="ok">✓ ${r.nome}: ${r.voz.name} (${r.voz.lang})</span><br>`;
+      const aprimorada = r.voz.name.includes('Aprimorada') || r.voz.name.includes('Enhanced');
+      html += `<span class="ok">✓ ${r.nome}: ${r.voz.name}${aprimorada ? ' (Aprimorada)' : ''}</span><br>`;
     } else {
       html += `<span class="aviso">✗ ${r.nome}: NÃO ENCONTRADA</span><br>`;
     }
   });
 
-  // Lista todas as pt-BR para debug
-  if (ptBR.length > 0) {
-    html += `<div class="lista"><b>Vozes pt-BR disponíveis:</b><br>`;
-    ptBR.forEach(v => { html += `· ${v.name}<br>`; });
-    html += `</div>`;
-  }
-
   diag.innerHTML = html;
 
-  // Atualiza rótulos
-  document.getElementById('voz-1').textContent =
-    vozesResolvidas[0].voz ? `🎙 ${vozesResolvidas[0].voz.name}` : '🎙 Siri Voz 1 (não encontrada)';
-  document.getElementById('voz-2').textContent =
-    vozesResolvidas[1].voz ? `🎙 ${vozesResolvidas[1].voz.name}` : '🎙 Siri Voz 2 (não encontrada)';
+  // Atualiza o status do loop
+  const status = document.getElementById('statusLoop');
+  const encontradas = vozesResolvidas.filter(r => r.voz).length;
+  if (encontradas === 3) {
+    status.textContent = '3/3 vozes ✓';
+    status.style.background = '#14532d';
+    status.style.color = '#86efac';
+  } else if (encontradas > 0) {
+    status.textContent = `${encontradas}/3 vozes`;
+    status.style.background = '#78350f';
+    status.style.color = '#fcd34d';
+  } else {
+    status.textContent = '0/3 vozes';
+    status.style.background = '#7f1d1d';
+    status.style.color = '#fca5a5';
+  }
+
+  console.log('Vozes resolvidas:', vozesResolvidas.map(r => r.voz ? r.voz.name : `[${r.nome} não encontrada]`));
+
+  return vozesResolvidas;
 }
 
-/* ── Render das frases ── */
-function renderBlocos() {
-  ['b1', 'b2'].forEach(id => {
-    const el = document.getElementById('texto-' + (id === 'b1' ? '1' : '2'));
-    el.innerHTML = '';
-    BLOCOS[id].frases.forEach((f, i) => {
-      const div = document.createElement('div');
-      div.className = 'frase';
-      div.id = id + '-f-' + i;
-      div.textContent = f;
-      el.appendChild(div);
-    });
-  });
-}
-renderBlocos();
+/* =====================================================
+   CONTEÚDO — 3 Blocos de RH
+   ===================================================== */
+const BLOCOS = [
+  {
+    id: "b1",
+    titulo: "Bloco 1",
+    heading: "O que é gestão de pessoas",
+    vozIndex: 0,
+    unidades: [
+      { tipo:"abertura",  texto:"Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
+      { tipo:"definicao", texto:"Ela atrai, desenvolve, motiva | e mantém as pessoas na empresa." },
+      { tipo:"pausa" },
+      { tipo:"definicao", texto:"Durante muito tempo, essa área foi vista apenas como operacional." },
+      { tipo:"definicao", texto:"Cuidava de folha de pagamento, ponto, férias e documentação. || Era o setor que resolvia papelada." },
+      { tipo:"pausa" },
+      { tipo:"definicao", texto:"Hoje o cenário mudou. || A gestão de pessoas passou a ser estratégica." },
+      { tipo:"definicao", texto:"Ela participa das decisões importantes da organização." },
+      { tipo:"pausa" },
+      { tipo:"guarde",    texto:"Guarde isto." },
+      { tipo:"guarde",    texto:"Gestão de pessoas é a área que cuida do ser humano no trabalho." }
+    ]
+  },
+  {
+    id: "b2",
+    titulo: "Bloco 2",
+    heading: "Gestão estratégica de pessoas",
+    vozIndex: 1,
+    unidades: [
+      { tipo:"abertura",  texto:"A gestão estratégica de pessoas é quando a área de recursos humanos deixa de agir só no operacional | e passa a participar do planejamento da organização." },
+      { tipo:"pausa" },
+      { tipo:"definicao", texto:"Na prática, significa alinhar as políticas de pessoas aos objetivos do negócio." },
+      { tipo:"definicao", texto:"Se a empresa quer crescer, o setor de pessoas precisa preparar a equipe para esse crescimento." },
+      { tipo:"definicao", texto:"Se a empresa quer inovar, precisa contratar e desenvolver pessoas com esse perfil." },
+      { tipo:"pausa" },
+      { tipo:"definicao", texto:"Uma gestão estratégica de pessoas trabalha em quatro frentes principais." },
+      { tipo:"definicao", texto:"Primeiro, atrai talentos. Segundo, desenvolve esses talentos." },
+      { tipo:"definicao", texto:"Terceiro, mantém as pessoas boas na empresa. || Quarto, garante que tudo isso esteja ligado à estratégia." },
+      { tipo:"pausa" },
+      { tipo:"guarde",    texto:"Guarde isto." },
+      { tipo:"guarde",    texto:"Gestão estratégica de pessoas é alinhar gente e negócio." }
+    ]
+  },
+  {
+    id: "b3",
+    titulo: "Bloco 3",
+    heading: "Recrutamento",
+    vozIndex: 2,
+    unidades: [
+      { tipo:"abertura",  texto:"Recrutamento é o processo de atrair candidatos para uma vaga." },
+      { tipo:"definicao", texto:"É a etapa em que a empresa vai ao mercado buscar pessoas com potencial para ocupar determinada função." },
+      { tipo:"pausa" },
+      { tipo:"definicao", texto:"Recrutamento não é a mesma coisa que seleção. || Muita gente confunde." },
+      { tipo:"definicao", texto:"Recrutamento atrai. Seleção escolhe. || São duas etapas diferentes, uma depois da outra." },
+      { tipo:"pausa" },
+      { tipo:"definicao", texto:"Existem dois tipos principais de recrutamento. || O recrutamento interno | e o recrutamento externo." },
+      { tipo:"pausa" },
+      { tipo:"guarde",    texto:"Guarde isto." },
+      { tipo:"guarde",    texto:"Recrutamento é atrair. E a escolha entre interno e externo depende do momento da empresa e do tipo de vaga." }
+    ]
+  }
+];
 
-/* ── Player ── */
+/* =====================================================
+   PERFIL V6b — Palestrante inspirador
+   ===================================================== */
+const V6B = {
+  base: { rate: 0.88, pitch: 0.96, volume: 1.0 },
+  pausas: {
+    abertura:700, definicao:400, lista:180, exemplo:220,
+    conclusao:500, guarde:800, pausa:650
+  },
+  ratePorTipo: {
+    abertura:0.86, definicao:0.90, lista:0.92,
+    exemplo:0.90, conclusao:0.84, guarde:0.80
+  },
+  pitchPorTipo: {
+    abertura:0.98, definicao:0.96, lista:0.96,
+    exemplo:0.98, conclusao:0.92, guarde:0.90
+  },
+  volumePorTipo: {
+    abertura:1.0, definicao:1.0, lista:0.98,
+    exemplo:0.96, conclusao:1.0, guarde:0.90
+  },
+  microCurta: 120, microLonga: 220
+};
+
+let synth = window.speechSynthesis;
 let tocando = null;
 let cancelar = false;
 
-function tocar(id) {
-  if (tocando === id) { parar(); return; }
-  if (tocando) parar();
+/* ── Render ── */
+const paineisEl = document.getElementById('paineis');
 
-  const bloco = BLOCOS[id];
-  const r = vozesResolvidas[bloco.vozIndex];
-  const voz = r ? r.voz : null;
-
-  cancelar = false;
-  tocando = id;
-
-  const btn = document.querySelector(`#bloco-${id === 'b1' ? '1' : '2'} .btn`);
-  if (btn) { btn.classList.add('tocando'); btn.textContent = '⏹ Parar'; }
-
-  // Marca a voz que está tocando
-  const vozLabel = document.getElementById('voz-' + (id === 'b1' ? '1' : '2'));
-  if (vozLabel && voz) vozLabel.textContent = `🎙 Tocando: ${voz.name}`;
-
-  falarBloco(id, bloco, voz);
+function renderTextoLegivel(texto) {
+  return texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
 }
 
-async function falarBloco(id, bloco, voz) {
-  // ── WORKAROUND iOS ──
-  // Fala um espaço vazio com a voz nova para "forçar" o Safari a registrá-la
-  await falar(' ', 1.0, 1.0, 1.0, voz);
-  await esperar(250);
+function renderTodos() {
+  paineisEl.innerHTML = '';
+  BLOCOS.forEach((bloco, idx) => {
+    const painel = document.createElement('div');
+    painel.className = 'painel' + (idx === 0 ? ' ativo' : '');
+    painel.id = 'painel-' + bloco.id;
 
-  for (let i = 0; i < bloco.frases.length; i++) {
-    if (cancelar) break;
-    highlight(id, i);
-    await falar(bloco.frases[i], 0.92, 0.96, 1.0, voz);
-    await esperar(200);
+    const label = document.createElement('div');
+    label.className = 'label-versao';
+    label.textContent = `${bloco.titulo} — ${bloco.heading}`;
+    painel.appendChild(label);
+
+    const vozInfo = document.createElement('div');
+    vozInfo.className = 'voz-info';
+    vozInfo.id = 'vozinfo-' + bloco.id;
+    vozInfo.textContent = '🎙 Aguardando vozes...';
+    painel.appendChild(vozInfo);
+
+    const texto = document.createElement('div');
+    texto.className = 'texto-bloco';
+    texto.id = 'texto-' + bloco.id;
+    bloco.unidades.forEach((u, i) => {
+      if (u.tipo === 'pausa') {
+        const br = document.createElement('div');
+        br.className = 'quebra';
+        br.dataset.idx = i;
+        texto.appendChild(br);
+      } else {
+        const el = document.createElement('div');
+        el.className = 'frase';
+        el.id = bloco.id + '-f-' + i;
+        el.textContent = renderTextoLegivel(u.texto);
+        texto.appendChild(el);
+      }
+    });
+    painel.appendChild(texto);
+
+    const player = document.createElement('div');
+    player.className = 'player';
+    player.innerHTML = `
+      <button class="btn-play parado" id="btn-${bloco.id}" onclick="togglePlay('${bloco.id}')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Ouvir ${bloco.titulo}
+      </button>
+      <div class="progresso-wrap"><div class="progresso-fill" id="prog-${bloco.id}"></div></div>
+    `;
+    painel.appendChild(player);
+
+    paineisEl.appendChild(painel);
+  });
+}
+renderTodos();
+
+/* Atualiza o rótulo de voz de cada bloco */
+function atualizarInfoVozes() {
+  BLOCOS.forEach(bloco => {
+    const r = vozesResolvidas[bloco.vozIndex];
+    const el = document.getElementById('vozinfo-' + bloco.id);
+    if (!el) return;
+    if (r && r.voz) {
+      el.textContent = `🎙 ${r.nome}: ${r.voz.name}`;
+      el.className = 'voz-info';
+    } else if (r) {
+      el.textContent = `⚠️ ${r.nome} não encontrada`;
+      el.className = 'voz-info erro';
+    } else {
+      el.textContent = '⚠️ Nenhuma voz pt-BR';
+      el.className = 'voz-info erro';
+    }
+  });
+}
+
+/* ── Tabs ── */
+function trocarTab(v) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('ativa', t.dataset.v === v));
+  document.querySelectorAll('.painel').forEach(p => p.classList.toggle('ativo', p.id === 'painel-' + v));
+  if (tocando && tocando !== v) pararTudo();
+}
+
+/* ── Player ── */
+function togglePlay(id) {
+  if (tocando === id) { pararTudo(); return; }
+  if (tocando) pararTudo();
+  tocarBloco(id);
+}
+
+function pararTudo() {
+  cancelar = true;
+  synth.cancel();
+  if (tocando) {
+    setBtnEstado(tocando, false);
+    resetHighlights(tocando);
+    setProgresso(tocando, 0);
   }
+  tocando = null;
+}
 
-  if (!cancelar) {
-    reset(id);
-    setTimeout(() => {
-      const btn = document.querySelector(`#bloco-${id === 'b1' ? '1' : '2'} .btn`);
-      if (btn) { btn.classList.remove('tocando'); btn.textContent = `🔊 Ouvir Bloco ${id === 'b1' ? '1' : '2'}`; }
-      tocando = null;
-      mostrarDiagnostico();
-    }, 600);
+function setBtnEstado(id, playing) {
+  const btn = document.getElementById('btn-' + id);
+  const bloco = BLOCOS.find(b => b.id === id);
+  if (!btn || !bloco) return;
+  if (playing) {
+    btn.className = 'btn-play tocando';
+    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Parar`;
+  } else {
+    btn.className = 'btn-play parado';
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M8 5v14l11-7z"/></svg> Ouvir ${bloco.titulo}`;
   }
 }
 
+function setProgresso(id, pct) {
+  const el = document.getElementById('prog-' + id);
+  if (el) el.style.width = pct + '%';
+}
+
+function resetHighlights(id) {
+  document.querySelectorAll('#texto-' + id + ' .frase').forEach(el => {
+    el.classList.remove('falando', 'falada');
+  });
+}
+
+function highlightFrase(id, idx) {
+  document.querySelectorAll('#texto-' + id + ' .frase').forEach(el => {
+    el.classList.remove('falando');
+    if (parseInt(el.id.split('-f-')[1]) < idx) el.classList.add('falada');
+  });
+  const el = document.getElementById(id + '-f-' + idx);
+  if (el) {
+    el.classList.add('falando');
+    el.classList.remove('falada');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+/* ── Micro-pausas ── */
+function dividirComMicroPausas(texto) {
+  const partesLongas = texto.split(/\s*\|\|\s*/);
+  const segmentos = [];
+  partesLongas.forEach((parte, iLonga) => {
+    if (iLonga > 0) segmentos.push({ tipo:'pausaLonga' });
+    const partesCurtas = parte.split(/\s*\|\s*/);
+    partesCurtas.forEach((p, iCurta) => {
+      if (iCurta > 0) segmentos.push({ tipo:'pausaCurta' });
+      if (p.trim()) segmentos.push({ tipo:'fala', texto:p.trim() });
+    });
+  });
+  return segmentos;
+}
+
+async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz) {
+  const segmentos = dividirComMicroPausas(textoOriginal);
+  for (const seg of segmentos) {
+    if (cancelar) return;
+    if (seg.tipo === 'pausaCurta') {
+      await esperar(V6B.microCurta);
+    } else if (seg.tipo === 'pausaLonga') {
+      await esperar(V6B.microLonga);
+    } else if (seg.tipo === 'fala') {
+      await falar(seg.texto, rate, pitch, volume, voz);
+    }
+  }
+}
+
+/* ── Fala com voz explícita (resolve Bug 2 do iOS) ── */
 function falar(texto, rate, pitch, volume, voz) {
   return new Promise(resolve => {
     const u = new SpeechSynthesisUtterance(texto);
     u.lang = 'pt-BR';
     u.rate = rate;
     u.pitch = pitch;
-    u.volume = volume;
-    if (voz) u.voice = voz;
+    u.volume = volume ?? 1.0;
+    if (voz) u.voice = voz;  // OBRIGATÓRIO: seta a voz explicitamente
     u.onend = resolve;
     u.onerror = resolve;
-    window.speechSynthesis.speak(u);
+    synth.speak(u);
   });
 }
 
-function esperar(ms) { return new Promise(r => setTimeout(r, ms)); }
+async function tocarBloco(id) {
+  const bloco = BLOCOS.find(b => b.id === id);
+  if (!bloco) return;
 
-function highlight(id, idx) {
-  document.querySelectorAll('#' + id + '-f-' + idx).forEach(() => {});
-  const prefixo = id === 'b1' ? 'b1' : 'b2';
-  for (let i = 0; i < 10; i++) {
-    const el = document.getElementById(prefixo + '-f-' + i);
-    if (!el) continue;
-    el.classList.remove('falando');
-    if (i < idx) el.classList.add('falada');
+  // Garante que as vozes estão resolvidas
+  if (!vozesCarregadas) {
+    carregarVozesComRetry(() => {
+      resolverVozes();
+      atualizarInfoVozes();
+      tocarBloco(id);
+    });
+    return;
   }
-  const atual = document.getElementById(prefixo + '-f-' + idx);
-  if (atual) { atual.classList.add('falando'); atual.classList.remove('falada'); }
-}
 
-function reset(id) {
-  const prefixo = id === 'b1' ? 'b1' : 'b2';
-  for (let i = 0; i < 10; i++) {
-    const el = document.getElementById(prefixo + '-f-' + i);
-    if (el) el.classList.remove('falando', 'falada');
+  const r = vozesResolvidas[bloco.vozIndex];
+  const voz = r ? r.voz : null;
+
+  cancelar = false;
+  tocando = id;
+  setBtnEstado(id, true);
+  resetHighlights(id);
+
+  const infoEl = document.getElementById('vozinfo-' + id);
+  if (infoEl && voz) {
+    infoEl.textContent = `🎙 Tocando agora: ${voz.name}`;
+    infoEl.className = 'voz-info tocando';
+  }
+
+  const total = bloco.unidades.filter(u => u.tipo !== 'pausa').length;
+  let faladas = 0;
+
+  for (let i = 0; i < bloco.unidades.length; i++) {
+    if (cancelar) break;
+    const u = bloco.unidades[i];
+
+    if (u.tipo === 'pausa') {
+      await esperar(V6B.pausas.pausa);
+      continue;
+    }
+
+    const pausaAntes = V6B.pausas[u.tipo] || 0;
+    if (pausaAntes > 0) await esperar(pausaAntes);
+
+    const rate   = V6B.ratePorTipo[u.tipo]   ?? V6B.base.rate;
+    const pitch  = V6B.pitchPorTipo[u.tipo]  ?? V6B.base.pitch;
+    const volume = V6B.volumePorTipo[u.tipo] ?? V6B.base.volume;
+
+    highlightFrase(id, i);
+    faladas++;
+    setProgresso(id, Math.round((faladas / total) * 100));
+
+    await falarComMicroPausas(u.texto, rate, pitch, volume, voz);
+    if (cancelar) break;
+  }
+
+  if (!cancelar) {
+    resetHighlights(id);
+    setProgresso(id, 100);
+    setTimeout(() => {
+      setBtnEstado(id, false);
+      setProgresso(id, 0);
+      if (tocando === id) tocando = null;
+      atualizarInfoVozes();
+    }, 700);
   }
 }
 
-function parar() {
-  cancelar = true;
-  window.speechSynthesis.cancel();
-  if (tocando) reset(tocando);
-  tocando = null;
-  document.querySelectorAll('.btn').forEach(b => {
-    b.classList.remove('tocando');
-    b.textContent = b.textContent.includes('Bloco 1') ? '🔊 Ouvir Bloco 1' : '🔊 Ouvir Bloco 2';
-  });
-  mostrarDiagnostico();
+function esperar(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/* ── Init ── */
-carregarVozes(() => {
+/* =====================================================
+   INICIALIZAÇÃO
+   ===================================================== */
+carregarVozesComRetry(() => {
   resolverVozes();
+  atualizarInfoVozes();
 });
 </script>
 </body>
