@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Loop 2 Vozes — Felipe e Fernanda</title>
+<title>3 Blocos · 3 Vozes</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
@@ -100,17 +100,16 @@
 <body>
 
 <header>
-  <h1>👥 RH · Loop 2 Vozes</h1>
-  <p>Felipe ↔ Fernanda <span id="statusLoop" style="display:inline-flex;align-items:center;gap:4px;background:#0f3460;color:#93c5fd;font-size:.64rem;font-weight:700;padding:3px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;">iniciando...</span></p>
+  <h1>👥 RH · 3 Blocos · 3 Vozes</h1>
+  <p>Cada bloco com sua voz fixa</p>
 </header>
 
 <div class="diagnostico" id="diagnostico">🔍 Carregando vozes do iPhone...</div>
 
 <div class="tabs">
-  <button class="tab ativa" data-v="b1" onclick="trocarTab('b1')">Bloco 1</button>
-  <button class="tab" data-v="b2" onclick="trocarTab('b2')">Bloco 2</button>
-  <button class="tab" data-v="b3" onclick="trocarTab('b3')">Bloco 3</button>
-  <button class="tab" data-v="b4" onclick="trocarTab('b4')">Bloco 4</button>
+  <button class="tab ativa" data-v="b1" onclick="trocarTab('b1')">Bloco 1 · Felipe</button>
+  <button class="tab" data-v="b2" onclick="trocarTab('b2')">Bloco 2 · Fernanda</button>
+  <button class="tab" data-v="b3" onclick="trocarTab('b3')">Bloco 3 · Luciana</button>
 </div>
 
 <div class="paineis" id="paineis"></div>
@@ -125,8 +124,7 @@ let vozesCarregadas = false;
 
 function carregarVozesComRetry(callback) {
   let tentativas = 0;
-  const MAX_TENTATIVAS = 50;
-
+  const MAX = 50;
   function tentar() {
     tentativas++;
     const vozes = window.speechSynthesis.getVoices();
@@ -136,19 +134,12 @@ function carregarVozesComRetry(callback) {
       callback();
       return;
     }
-    if (tentativas < MAX_TENTATIVAS) {
-      setTimeout(tentar, 100);
-    } else {
-      callback();
-    }
+    if (tentativas < MAX) setTimeout(tentar, 100);
+    else callback();
   }
-
   if (window.speechSynthesis.addEventListener) {
-    try {
-      window.speechSynthesis.addEventListener('voiceschanged', tentar);
-    } catch (e) {
-      window.speechSynthesis.onvoiceschanged = tentar;
-    }
+    try { window.speechSynthesis.addEventListener('voiceschanged', tentar); }
+    catch (e) { window.speechSynthesis.onvoiceschanged = tentar; }
   } else {
     window.speechSynthesis.onvoiceschanged = tentar;
   }
@@ -164,52 +155,33 @@ function buscarVoz(nome) {
 }
 
 function resolverVozes() {
-  // APENAS Felipe e Fernanda. Luciana foi removida.
-  const felipe = buscarVoz('Felipe');
+  const felipe   = buscarVoz('Felipe');
   const fernanda = buscarVoz('Fernanda');
+  const luciana  = buscarVoz('Luciana');
 
   vozesResolvidas = [
     { nome: 'Felipe',   voz: felipe },
-    { nome: 'Fernanda', voz: fernanda }
+    { nome: 'Fernanda', voz: fernanda },
+    { nome: 'Luciana',  voz: luciana }
   ];
 
   const diag = document.getElementById('diagnostico');
-  let html = `<b>🔍 Diagnóstico:</b> ${todasAsVozes.length} vozes no iPhone · `;
+  let html = `<b>🔍 Diagnóstico:</b> ${todasAsVozes.length} vozes · `;
   const ptBR = todasAsVozes.filter(v => v.lang === 'pt-BR' || v.lang === 'pt_BR');
   html += `${ptBR.length} em pt-BR<br>`;
-
   vozesResolvidas.forEach(r => {
     if (r.voz) {
-      const aprimorada = r.voz.name.includes('Aprimorada') || r.voz.name.includes('Enhanced');
-      html += `<span class="ok">✓ ${r.nome}: ${r.voz.name}${aprimorada ? ' (Aprimorada)' : ''}</span><br>`;
+      html += `<span class="ok">✓ ${r.nome}: ${r.voz.name}</span><br>`;
     } else {
       html += `<span class="aviso">✗ ${r.nome}: NÃO ENCONTRADA</span><br>`;
     }
   });
-
   diag.innerHTML = html;
-
-  const status = document.getElementById('statusLoop');
-  const encontradas = vozesResolvidas.filter(r => r.voz).length;
-  if (encontradas === 2) {
-    status.textContent = '2/2 vozes ✓';
-    status.style.background = '#14532d';
-    status.style.color = '#86efac';
-  } else if (encontradas === 1) {
-    status.textContent = '1/2 vozes';
-    status.style.background = '#78350f';
-    status.style.color = '#fcd34d';
-  } else {
-    status.textContent = '0/2 vozes';
-    status.style.background = '#7f1d1d';
-    status.style.color = '#fca5a5';
-  }
-
   return vozesResolvidas;
 }
 
 /* =====================================================
-   CONTEÚDO — 4 Blocos de RH
+   CONTEÚDO — 3 Blocos de RH
    ===================================================== */
 const BLOCOS = [
   {
@@ -242,7 +214,7 @@ const BLOCOS = [
   },
   {
     id: "b3", titulo: "Bloco 3", heading: "Recrutamento",
-    vozIndex: 0, // Felipe de novo (ciclo de 2)
+    vozIndex: 2, // Luciana
     unidades: [
       { tipo:"abertura",  texto:"Recrutamento é o processo de atrair candidatos para uma vaga." },
       { tipo:"definicao", texto:"É a etapa em que a empresa vai ao mercado buscar pessoas com potencial para ocupar determinada função." },
@@ -251,19 +223,6 @@ const BLOCOS = [
       { tipo:"definicao", texto:"Recrutamento atrai. Seleção escolhe. || São duas etapas diferentes, uma depois da outra." },
       { tipo:"guarde",    texto:"Guarde isto." },
       { tipo:"guarde",    texto:"Recrutamento é atrair." }
-    ]
-  },
-  {
-    id: "b4", titulo: "Bloco 4", heading: "Seleção de pessoas",
-    vozIndex: 1, // Fernanda de novo (ciclo de 2)
-    unidades: [
-      { tipo:"abertura",  texto:"Seleção é o processo de escolher, entre os candidatos recrutados, aquele que tem mais chance de dar certo na vaga." },
-      { tipo:"pausa" },
-      { tipo:"definicao", texto:"Se o recrutamento atrai, a seleção filtra." },
-      { tipo:"definicao", texto:"Ela compara o perfil de cada candidato com o que a vaga exige. | E escolhe o mais adequado." },
-      { tipo:"definicao", texto:"Existem várias técnicas de seleção. || As principais são a entrevista, as provas de conhecimento, os testes psicológicos, as dinâmicas de grupo e a análise curricular." },
-      { tipo:"guarde",    texto:"Guarde isto." },
-      { tipo:"guarde",    texto:"Recrutamento atrai, seleção escolhe." }
     ]
   }
 ];
@@ -449,30 +408,6 @@ function dividirComMicroPausas(texto) {
   return segmentos;
 }
 
-/* ── Workaround do iOS 26: força a troca de voz ──
-   1. Cancela tudo
-   2. Fala um espaço vazio com a voz nova (o iOS "grava" a voz)
-   3. Espera 250ms
-   4. Depois fala de verdade
-*/
-async function prepararVoz(voz) {
-  return new Promise(resolve => {
-    synth.cancel();
-    setTimeout(() => {
-      const u = new SpeechSynthesisUtterance(' ');
-      u.lang = 'pt-BR';
-      u.volume = 0;      // inaudível
-      u.rate = 2.0;      // rápido para não atrasar
-      if (voz) u.voice = voz;
-      u.onend = () => resolve();
-      u.onerror = () => resolve();
-      synth.speak(u);
-      // fallback caso onend não dispare
-      setTimeout(resolve, 300);
-    }, 100);
-  });
-}
-
 async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz) {
   const segmentos = dividirComMicroPausas(textoOriginal);
   for (const seg of segmentos) {
@@ -528,10 +463,6 @@ async function tocarBloco(id) {
     infoEl.className = 'voz-info tocando';
   }
 
-  // WORKAROUND iOS 26: força a voz antes de falar
-  await prepararVoz(voz);
-  if (cancelar) return;
-
   const total = bloco.unidades.filter(u => u.tipo !== 'pausa').length;
   let faladas = 0;
 
@@ -575,7 +506,6 @@ function esperar(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/* Inicialização */
 carregarVozesComRetry(() => {
   resolverVozes();
   atualizarInfoVozes();
