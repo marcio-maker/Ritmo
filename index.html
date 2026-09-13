@@ -17,20 +17,16 @@
     display: flex; flex-direction: column;
     overflow-x: hidden;
   }
-
   .conteudo { flex: 1; padding: 24px 22px 0; display: flex; flex-direction: column; }
-
   .texto-bloco {
     flex: 1;
     font-size: 1.02rem; line-height: 1.85;
     color: #cbd5e1;
   }
-
   .fala {
     margin-bottom: 14px;
     transition: opacity .25s, background .25s;
   }
-
   .simbolo {
     font-weight: 700;
     margin-right: 8px;
@@ -45,7 +41,6 @@
   .fala.aluno5 .simbolo   { color: #22d3ee; }
   .fala.aluno6 .simbolo   { color: #fb923c; }
   .fala.aluno7 .simbolo   { color: #c084fc; }
-
   .fala.falando {
     background: rgba(124, 58, 237, .18);
     border-left: 3px solid #7c3aed;
@@ -57,18 +52,14 @@
   }
   .fala.falada { opacity: .4; }
   .fala.futura { opacity: .78; }
-
   .enfase {
     color: #fbbf24;
     font-weight: 700;
     letter-spacing: .01em;
   }
-
   .quebra { height: 14px; }
 
-  /* =====================================================
-     PLAYER FLUTUANTE
-     ===================================================== */
+  /* PLAYER FLUTUANTE */
   #playerFlutuante {
     position: fixed;
     z-index: 9999;
@@ -90,7 +81,6 @@
     box-shadow: 0 20px 48px rgba(0, 0, 0, .7), 0 0 0 2px rgba(124, 58, 237, .5);
     opacity: .96;
   }
-
   .handle {
     height: 18px;
     display: flex; align-items: center; justify-content: center;
@@ -104,12 +94,10 @@
     transition: background .15s;
   }
   #playerFlutuante.arrastando .handle::before { background: #7c3aed; }
-
   .controles {
     display: flex; align-items: center; justify-content: space-between;
     gap: 6px;
   }
-
   .btn-ctrl {
     border: none; background: #1e293b; color: #cbd5e1;
     font-family: inherit; font-weight: 700;
@@ -120,9 +108,7 @@
   }
   .btn-ctrl:active { transform: scale(.92); }
   .btn-ctrl:disabled { opacity: .35; }
-
   .btn-sec { width: 42px; height: 42px; font-size: .95rem; }
-
   .btn-play-flut {
     width: 58px; height: 58px; border-radius: 50%;
     background: linear-gradient(135deg, #2563eb, #7c3aed);
@@ -133,12 +119,10 @@
     background: linear-gradient(135deg, #dc2626, #b91c1c);
     box-shadow: 0 6px 18px rgba(220, 38, 38, .4);
   }
-
   .rodape {
     display: flex; align-items: center; justify-content: space-between;
     margin-top: 8px; gap: 6px;
   }
-
   .btn-vel {
     padding: 6px 10px; font-size: .72rem;
     background: #1e293b; color: #93c5fd;
@@ -147,13 +131,11 @@
     cursor: pointer; touch-action: manipulation;
   }
   .btn-vel.ativa { background: #1e3a8a; color: #fff; }
-
   .status-mini {
     font-size: .62rem; color: #64748b;
     text-align: right; flex: 1;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-
   .progresso-mini {
     position: absolute; left: 12px; right: 12px; bottom: 5px;
     height: 2px; background: rgba(148, 163, 184, .15);
@@ -162,7 +144,6 @@
   .progresso-mini-fill {
     height: 100%; background: #3b82f6; width: 0%; transition: width .3s;
   }
-
   #playerFlutuante.minimizado .handle,
   #playerFlutuante.minimizado .controles .btn-sec,
   #playerFlutuante.minimizado .rodape,
@@ -170,9 +151,7 @@
   #playerFlutuante.minimizado { width: auto; padding: 6px; border-radius: 50%; }
   #playerFlutuante.minimizado .controles { gap: 0; }
 
-  /* =====================================================
-     PAINEL DE DEBUG (toggle com 3 toques no handle)
-     ===================================================== */
+  /* DEBUG */
   #debugPanel {
     position: fixed;
     top: 12px; left: 12px; right: 12px;
@@ -216,7 +195,6 @@
     background: rgba(220, 38, 38, .15);
     border-radius: 6px; color: #fca5a5;
   }
-
   .badge-voz {
     position: fixed;
     top: 12px; left: 50%;
@@ -235,15 +213,12 @@
 </style>
 </head>
 <body>
-
 <div class="conteudo">
   <div class="texto-bloco" id="texto"></div>
 </div>
 
-<!-- Badge que mostra a voz atual ao vivo -->
 <div class="badge-voz" id="badgeVoz"></div>
 
-<!-- Painel de debug (3 toques no handle) -->
 <div id="debugPanel">
   <h3>
     🎙️ Debug de Vozes
@@ -253,39 +228,29 @@
   <div class="status-troca" id="debugTroca">Aguardando…</div>
 </div>
 
-<!-- =====================================================
-     PLAYER FLUTUANTE
-     ===================================================== -->
 <div id="playerFlutuante" role="region" aria-label="Controles de áudio">
   <div class="handle" id="handle" aria-label="Arraste para mover"></div>
-
   <div class="controles">
     <button class="btn-ctrl btn-sec" id="btnAnterior" onclick="pularFrase(-1)" aria-label="Frase anterior">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
         <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
       </svg>
     </button>
-
     <button class="btn-ctrl btn-play-flut" id="btnPlayFlut" onclick="togglePlay()" aria-label="Ouvir ou pausar">
       <svg id="iconePlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z"/>
       </svg>
     </button>
-
     <button class="btn-ctrl btn-sec" id="btnProximo" onclick="pularFrase(1)" aria-label="Próxima frase">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
         <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
       </svg>
     </button>
   </div>
-
   <div class="rodape">
-    <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">
-      1.0×
-    </button>
+    <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">1.0×</button>
     <span class="status-mini" id="statusMini">Pronto</span>
   </div>
-
   <div class="progresso-mini">
     <div class="progresso-mini-fill" id="progMini"></div>
   </div>
@@ -299,7 +264,7 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 /* =====================================================
-   VOZES — carregamento agressivo
+   VOZES
    ===================================================== */
 let todasAsVozes = [];
 let elenco = null;
@@ -338,17 +303,15 @@ function vozesPtBR() {
   });
 }
 
+// Agora usamos TODAS as vozes (incluindo Siri)
 function filtrarVozes(ptBR) {
-  if (!isIOS) return ptBR;
-  const semSiri = ptBR.filter(v => !/siri/i.test(v.name));
-  return semSiri.length >= 2 ? semSiri : ptBR;
+  return ptBR;
 }
 
 /* =====================================================
-   PERFIS — ranges agressivos para diferenciar no iOS
+   PERFIS — contrastes mais fortes
    ===================================================== */
 const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
-
 const SIMBOLOS = {
   professor: '§',
   aluno1: '·', aluno2: '·', aluno3: '·', aluno4: '·',
@@ -357,24 +320,24 @@ const SIMBOLOS = {
 
 const PERFIS = {
   professor: {
-    rate: 0.78, pitch: 0.82, volume: 1.0,
+    rate: 0.76, pitch: 0.80, volume: 1.0,
     microCurta: 280, microLonga: 420,
-    rateEnfase: 0.72, pitchEnfase: 0.78,
+    rateEnfase: 0.70, pitchEnfase: 0.76,
     pausas: { abertura:1100, definicao:520, pergunta:350, confirmacao:480, guarde:1200, conclusao:900, pausa:800 }
   },
-  aluno1: { rate:1.10, pitch:1.40, volume:0.90, microCurta:80,  microLonga:150, rateEnfase:1.00, pitchEnfase:1.35,
+  aluno1: { rate:1.12, pitch:1.42, volume:0.92, microCurta:80,  microLonga:150, rateEnfase:1.02, pitchEnfase:1.38,
     pausas:{ abertura:220, definicao:180, pergunta:240, confirmacao:180, guarde:260, conclusao:240, pausa:360 } },
-  aluno2: { rate:0.82, pitch:0.75, volume:0.90, microCurta:160, microLonga:230, rateEnfase:0.75, pitchEnfase:0.72,
+  aluno2: { rate:0.80, pitch:0.72, volume:0.92, microCurta:160, microLonga:230, rateEnfase:0.73, pitchEnfase:0.70,
     pausas:{ abertura:280, definicao:240, pergunta:260, confirmacao:220, guarde:300, conclusao:280, pausa:420 } },
-  aluno3: { rate:1.00, pitch:1.20, volume:0.90, microCurta:100, microLonga:170, rateEnfase:0.92, pitchEnfase:1.15,
+  aluno3: { rate:1.02, pitch:1.22, volume:0.92, microCurta:100, microLonga:170, rateEnfase:0.94, pitchEnfase:1.18,
     pausas:{ abertura:300, definicao:240, pergunta:300, confirmacao:220, guarde:300, conclusao:280, pausa:400 } },
-  aluno4: { rate:0.80, pitch:0.95, volume:0.90, microCurta:180, microLonga:240, rateEnfase:0.72, pitchEnfase:0.92,
+  aluno4: { rate:0.78, pitch:0.93, volume:0.92, microCurta:180, microLonga:240, rateEnfase:0.70, pitchEnfase:0.90,
     pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:320, conclusao:300, pausa:420 } },
-  aluno5: { rate:1.15, pitch:1.30, volume:0.90, microCurta:70,  microLonga:140, rateEnfase:1.05, pitchEnfase:1.25,
+  aluno5: { rate:1.18, pitch:1.32, volume:0.92, microCurta:70,  microLonga:140, rateEnfase:1.08, pitchEnfase:1.28,
     pausas:{ abertura:200, definicao:160, pergunta:220, confirmacao:160, guarde:240, conclusao:220, pausa:340 } },
-  aluno6: { rate:0.92, pitch:1.10, volume:0.90, microCurta:110, microLonga:180, rateEnfase:0.85, pitchEnfase:1.05,
+  aluno6: { rate:0.90, pitch:1.08, volume:0.92, microCurta:110, microLonga:180, rateEnfase:0.83, pitchEnfase:1.03,
     pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } },
-  aluno7: { rate:0.98, pitch:0.88, volume:0.90, microCurta:140, microLonga:210, rateEnfase:0.90, pitchEnfase:0.85,
+  aluno7: { rate:0.96, pitch:0.86, volume:0.92, microCurta:140, microLonga:210, rateEnfase:0.88, pitchEnfase:0.83,
     pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } }
 };
 
@@ -467,19 +430,20 @@ let cancelar = false;
 let indiceAtual = 0;
 let velocidade = 1.0;
 
-/* Ajustes adaptativos — aumentam se o iOS ignorar troca */
-let delayFantasma = 400;
-let delayPosFantasma = 350;
+/* Delays maiores para iOS */
+let delayFantasma = 650;
+let delayPosFantasma = 550;
 
 /* =====================================================
-   PRÉ-AQUECIMENTO DE VOZES
-   Executa uma vez no início: obriga o iOS a carregar cada voz
+   PRÉ-AQUECIMENTO
    ===================================================== */
 let vozesAquecidas = false;
+
 async function preAquecerVozes() {
   if (vozesAquecidas || !elenco) return;
   const vozesUnicas = [...new Set(Object.values(elenco))];
   mostrarBadge(`Carregando ${vozesUnicas.length} vozes…`);
+
   for (const voz of vozesUnicas) {
     try {
       await new Promise(resolve => {
@@ -491,9 +455,9 @@ async function preAquecerVozes() {
         u.onend = resolve;
         u.onerror = resolve;
         synth.speak(u);
-        setTimeout(resolve, 200);
+        setTimeout(resolve, 280);
       });
-      await esperar(80);
+      await esperar(100);
     } catch(e) {}
   }
   vozesAquecidas = true;
@@ -549,7 +513,7 @@ function resetDestaques() {
 }
 
 /* =====================================================
-   BADGE DE VOZ ATUAL
+   BADGE
    ===================================================== */
 let badgeTimer = null;
 function mostrarBadge(txt) {
@@ -557,7 +521,7 @@ function mostrarBadge(txt) {
   el.textContent = txt;
   el.classList.add('ativo');
   clearTimeout(badgeTimer);
-  badgeTimer = setTimeout(() => el.classList.remove('ativo'), 1600);
+  badgeTimer = setTimeout(() => el.classList.remove('ativo'), 1800);
 }
 
 /* =====================================================
@@ -719,47 +683,40 @@ function esperar(ms) {
 }
 
 /* =====================================================
-   TROCA DE VOZ — versão "à prova de iOS"
-   
-   Etapas:
-   1. Termina a fala atual com um utterance de silêncio na voz ANTIGA
-   2. Espera o engine processar
-   3. Cancela tudo
-   4. Utterance fantasma na voz NOVA (volume 0)
-   5. Espera delay longo para o engine "assentar"
-   6. Retorna — próxima fala será na voz nova
+   TROCA DE VOZ — versão reforçada para iOS
    ===================================================== */
 async function trocarVoz(vozAntiga, vozNova) {
   const debugEl = document.getElementById('debugTroca');
   const nomeAntigo = vozAntiga ? vozAntiga.name : '—';
   const nomeNovo = vozNova.name;
-  debugEl.textContent = `Trocando: ${nomeAntigo} → ${nomeNovo} (delay ${delayPosFantasma}ms)`;
+  debugEl.textContent = `Trocando: ${nomeAntigo} → ${nomeNovo}`;
 
-  // 1. Silêncio na voz ANTIGA (não corta abruptamente)
+  // 1. Solta a voz antiga
   if (vozAntiga) {
     await new Promise(resolve => {
-      const u = new SpeechSynthesisUtterance('.');
+      const u = new SpeechSynthesisUtterance(' ');
       u.voice = vozAntiga;
-      u.volume = 0;
-      u.rate = 2.0;   // rápido para não atrasar
+      u.volume = 0.01;
+      u.rate = 2.5;
       u.pitch = 1.0;
       u.onend = resolve;
       u.onerror = resolve;
       synth.speak(u);
-      setTimeout(resolve, 250);
+      setTimeout(resolve, 180);
     });
-    await esperar(100);
   }
 
-  // 2. Cancelar tudo
+  // 2. Cancela várias vezes
+  synth.cancel();
+  await esperar(120);
   synth.cancel();
   await esperar(180);
 
-  // 3. Fantasma na voz NOVA
+  // 3. Fantasma principal
   await new Promise(resolve => {
     const u = new SpeechSynthesisUtterance('.');
     u.voice = vozNova;
-    u.volume = 0;
+    u.volume = 0.01;
     u.rate = 1.0;
     u.pitch = 1.0;
     u.onend = resolve;
@@ -768,10 +725,22 @@ async function trocarVoz(vozAntiga, vozNova) {
     setTimeout(resolve, delayFantasma);
   });
 
-  // 4. Pausa crítica pós-fantasma
+  // 4. Pausa crítica
   await esperar(delayPosFantasma);
 
-  // 5. Mostra badge visual
+  // 5. Segundo fantasma (ajuda muito no iOS)
+  await new Promise(resolve => {
+    const u = new SpeechSynthesisUtterance(' ');
+    u.voice = vozNova;
+    u.volume = 0;
+    u.rate = 1.8;
+    u.onend = resolve;
+    u.onerror = resolve;
+    synth.speak(u);
+    setTimeout(resolve, 320);
+  });
+
+  await esperar(200);
   mostrarBadge(`🎙️ ${nomeNovo}`);
 }
 
@@ -793,7 +762,6 @@ async function tocarDeOndeParou() {
   const jaFaladas = AULA.slice(0, indiceAtual).filter(d => d.tipo !== 'pausa').length;
   let faladas = jaFaladas;
 
-  // Descobre última voz usada
   let ultimaVoz = null;
   for (let k = indiceAtual - 1; k >= 0; k--) {
     if (AULA[k].tipo !== 'pausa') {
@@ -805,7 +773,6 @@ async function tocarDeOndeParou() {
   for (let i = indiceAtual; i < AULA.length; i++) {
     if (cancelar) return;
     indiceAtual = i;
-
     const fala = AULA[i];
 
     if (fala.tipo === 'pausa') {
@@ -816,7 +783,7 @@ async function tocarDeOndeParou() {
     const voz = elenco[fala.papel];
     const perfil = PERFIS[fala.papel];
 
-    // Troca sempre que a voz muda (nunca usa "atalho" de mesma voz)
+    // Sempre tenta trocar quando a voz muda
     if (voz !== ultimaVoz) {
       await trocarVoz(ultimaVoz, voz);
       if (cancelar) return;
@@ -829,6 +796,7 @@ async function tocarDeOndeParou() {
     destacarFala(i);
     atualizarBotoesNavegacao();
     setStatus(fala.papel === 'professor' ? 'Professor' : 'Aluno');
+
     faladas++;
     setProgresso(Math.round((faladas / total) * 100));
 
@@ -852,11 +820,10 @@ async function tocarDeOndeParou() {
 }
 
 /* =====================================================
-   PLAYER ARRASTÁVEL (igual, mas com triplo-toque = debug)
+   PLAYER ARRASTÁVEL
    ===================================================== */
 const player = document.getElementById('playerFlutuante');
 const handle = document.getElementById('handle');
-
 let arrastando = false;
 let startX = 0, startY = 0, startLeft = 0, startTop = 0;
 let moveu = false;
@@ -931,7 +898,7 @@ handle.addEventListener('touchstart', iniciarArraste, { passive: false });
 document.addEventListener('touchmove', moverArraste, { passive: false });
 document.addEventListener('touchend', soltarArraste);
 
-/* Toques no handle: 2× minimiza, 3× abre debug */
+/* Toques no handle */
 let toquesHandle = [];
 handle.addEventListener('touchend', () => {
   if (moveu) return;
@@ -954,11 +921,12 @@ handle.addEventListener('touchend', () => {
 });
 
 /* =====================================================
-   DEBUG VISUAL
+   DEBUG
    ===================================================== */
 function atualizarDebug() {
   const el = document.getElementById('debugElenco');
   if (!elenco) { el.textContent = 'Elenco não montado.'; return; }
+
   const linhas = Object.entries(elenco).map(([papel, voz]) => {
     const ativo = AULA[indiceAtual] && AULA[indiceAtual].papel === papel ? ' ativa' : '';
     return `<div class="linha${ativo}">
@@ -984,31 +952,24 @@ function fecharDebug() {
 /* =====================================================
    DISTRIBUIÇÃO DE ELENCO
    ===================================================== */
-const REGEX_PROFESSOR = [
-  /felipe.*(enhanced|premium)/i, /felipe/i,
-  /daniel.*(enhanced|premium)/i, /daniel/i,
-  /bruno/i, /eddy/i, /antonio|antônio/i, /joão|joao/i
-];
-
-function escolherProfessor(vozes) {
-  for (const re of REGEX_PROFESSOR) {
-    const v = vozes.find(v => re.test(v.name));
-    if (v) return v;
-  }
-  return vozes[0];
-}
-
 function distribuirElenco(vozes) {
   if (vozes.length === 0) return null;
-  const professor = escolherProfessor(vozes);
-  const restantes = vozes.filter(v => v !== professor);
-  const enhanced = restantes.filter(v => /enhanced|premium/i.test(v.name));
-  const compactas = restantes.filter(v => !/enhanced|premium/i.test(v.name));
-  const ordenadas = [...enhanced, ...compactas];
-  const fila = ordenadas.length > 0 ? ordenadas : [professor];
+
+  // Prioriza vozes normais e depois Siri
+  const normais = vozes.filter(v => !/siri/i.test(v.name));
+  const siris   = vozes.filter(v => /siri/i.test(v.name));
+  const ordenadas = [...normais, ...siris];
+
+  // Professor prefere Felipe
+  let professor = ordenadas.find(v => /felipe/i.test(v.name)) || ordenadas[0];
+
+  const restantes = ordenadas.filter(v => v !== professor);
 
   const e = { professor };
-  PAPEIS_ALUNO.forEach((papel, i) => { e[papel] = fila[i % fila.length]; });
+  PAPEIS_ALUNO.forEach((papel, i) => {
+    e[papel] = restantes[i % restantes.length];
+  });
+
   return e;
 }
 
@@ -1021,14 +982,14 @@ carregarVozesComRetry(async () => {
     setStatus('Sem vozes pt-BR');
     return;
   }
+
   elenco = distribuirElenco(ptBR);
   const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
   setStatus(`${unicas} vozes · 1.0×`);
   atualizarBotoesNavegacao();
 
-  // Pré-aquece vozes silenciosamente (só no iOS, para não atrasar outros)
   if (isIOS) {
-    setTimeout(() => preAquecerVozes(), 500);
+    setTimeout(() => preAquecerVozes(), 600);
   } else {
     vozesAquecidas = true;
   }
