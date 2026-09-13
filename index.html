@@ -5,472 +5,581 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>3 Vozes BR — Ritmo V6b</title>
+<title>Sala de Aula — RH Bloco 1</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0f172a; color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Georgia, serif;
+    background: #0f172a; color: #cbd5e1;
     min-height: 100dvh;
-    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    padding: env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 130px);
     display: flex; flex-direction: column;
+    overflow-x: hidden;
   }
-  header { padding: 16px 18px 0; text-align: center; }
-  header h1 {
-    font-size: .68rem; font-weight: 700; letter-spacing: .08em;
-    color: #64748b; text-transform: uppercase; margin-bottom: 4px;
-  }
-  header p { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
-
-  .tabs {
-    display: flex; gap: 6px; padding: 14px 18px 0; overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    flex: 1; min-width: 68px; padding: 9px 5px;
-    border: none; border-radius: 9px;
-    font-size: .72rem; font-weight: 700; font-family: inherit;
-    cursor: pointer; background: #1e293b; color: #64748b;
-    transition: background .15s, color .15s; white-space: nowrap;
-  }
-  .tab.ativa { background: #1e3a8a; color: #fff; }
-
-  .paineis { flex: 1; padding: 12px 18px 0; overflow: hidden; position: relative; }
-  .painel { display: none; flex-direction: column; gap: 8px; height: 100%; }
-  .painel.ativo { display: flex; }
-
-  .label-versao {
-    font-size: .66rem; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: #475569; padding-left: 2px;
-  }
-  .descricao {
-    font-size: .7rem; color: #64748b; padding-left: 2px; line-height: 1.4;
-  }
-  .descricao b { color: #93c5fd; }
-  .voz-info {
-    font-size: .68rem; color: #fbbf24; padding-left: 2px; line-height: 1.4;
-    font-weight: 600;
-  }
-
+  .conteudo { flex: 1; padding: 24px 22px 0; display: flex; flex-direction: column; }
   .texto-bloco {
-    background: #1e293b; border-radius: 12px; padding: 12px;
-    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    flex: 1;
+    font-size: 1.02rem; line-height: 1.85;
+    color: #cbd5e1;
   }
-  .frase {
-    font-size: .9rem; line-height: 1.55; color: #cbd5e1;
-    padding: 4px 7px; border-radius: 6px; margin-bottom: 1px;
-    transition: background .15s, color .15s, transform .15s;
+  .fala { margin-bottom: 14px; transition: opacity .25s, background .25s; }
+  .simbolo { font-weight: 700; margin-right: 8px; font-size: 1.1em; opacity: .85; }
+  .fala.professor .simbolo { color: #a78bfa; }
+  .fala.aluno1 .simbolo   { color: #60a5fa; }
+  .fala.aluno2 .simbolo   { color: #fbbf24; }
+  .fala.aluno3 .simbolo   { color: #34d399; }
+  .fala.aluno4 .simbolo   { color: #f472b6; }
+  .fala.aluno5 .simbolo   { color: #22d3ee; }
+  .fala.aluno6 .simbolo   { color: #fb923c; }
+  .fala.aluno7 .simbolo   { color: #c084fc; }
+  .fala.falando {
+    background: rgba(124, 58, 237, .18);
+    border-left: 3px solid #7c3aed;
+    border-radius: 4px;
+    padding: 6px 10px; margin-left: -13px; margin-right: -10px;
+    color: #f1f5f9;
   }
-  .frase.falando { background: rgba(59,130,246,.2); color: #fff; transform: translateX(2px); }
-  .frase.falada { color: #475569; }
-  .quebra { height: 8px; }
+  .fala.falada { opacity: .4; }
+  .fala.futura { opacity: .78; }
+  .enfase { color: #fbbf24; font-weight: 700; letter-spacing: .01em; }
+  .quebra { height: 14px; }
 
-  .player { padding: 10px 0 0; }
-  .btn-play {
-    width: 100%; min-height: 50px; border: none; border-radius: 12px;
-    font-size: .92rem; font-weight: 800; font-family: inherit; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 9px;
-    transition: opacity .15s, transform .1s;
+  #playerFlutuante {
+    position: fixed; z-index: 9999;
+    bottom: 24px; right: 18px; width: 240px;
+    background: rgba(15, 23, 42, .97);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(148, 163, 184, .18);
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .5);
+    padding: 10px 10px 12px;
+    user-select: none; -webkit-user-select: none;
+    touch-action: none;
+    transition: box-shadow .2s, opacity .2s;
   }
-  .btn-play:active { opacity: .8; transform: scale(.97); }
-  .btn-play.parado  { background: #2563eb; color: #fff; }
-  .btn-play.tocando { background: #dc2626; color: #fff; }
+  #playerFlutuante.arrastando {
+    box-shadow: 0 20px 48px rgba(0, 0, 0, .7), 0 0 0 2px rgba(124, 58, 237, .5);
+    opacity: .96;
+  }
+  .handle {
+    height: 18px; display: flex; align-items: center; justify-content: center;
+    cursor: grab; margin-bottom: 4px; touch-action: none;
+  }
+  .handle::before {
+    content: ''; width: 36px; height: 4px;
+    background: #475569; border-radius: 2px; transition: background .15s;
+  }
+  #playerFlutuante.arrastando .handle::before { background: #7c3aed; }
+  .controles { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .btn-ctrl {
+    border: none; background: #1e293b; color: #cbd5e1;
+    font-family: inherit; font-weight: 700;
+    border-radius: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, transform .1s, color .15s;
+    touch-action: manipulation;
+  }
+  .btn-ctrl:active { transform: scale(.92); }
+  .btn-ctrl:disabled { opacity: .35; }
+  .btn-sec { width: 42px; height: 42px; font-size: .95rem; }
+  .btn-play-flut {
+    width: 58px; height: 58px; border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff; font-size: 1.4rem;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, .4);
+  }
+  .btn-play-flut.tocando {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    box-shadow: 0 6px 18px rgba(220, 38, 38, .4);
+  }
+  .rodape { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; gap: 6px; }
+  .btn-vel {
+    padding: 6px 10px; font-size: .72rem;
+    background: #1e293b; color: #93c5fd;
+    border-radius: 8px; letter-spacing: .02em;
+    min-width: 52px; border: none; font-family: inherit; font-weight: 700;
+    cursor: pointer; touch-action: manipulation;
+  }
+  .btn-vel.ativa { background: #1e3a8a; color: #fff; }
+  .status-mini {
+    font-size: .62rem; color: #64748b;
+    text-align: right; flex: 1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .progresso-mini {
+    position: absolute; left: 12px; right: 12px; bottom: 5px;
+    height: 2px; background: rgba(148, 163, 184, .15);
+    border-radius: 1px; overflow: hidden;
+  }
+  .progresso-mini-fill { height: 100%; background: #3b82f6; width: 0%; transition: width .3s; }
+  #playerFlutuante.minimizado .handle,
+  #playerFlutuante.minimizado .controles .btn-sec,
+  #playerFlutuante.minimizado .rodape,
+  #playerFlutuante.minimizado .progresso-mini { display: none; }
+  #playerFlutuante.minimizado { width: auto; padding: 6px; border-radius: 50%; }
+  #playerFlutuante.minimizado .controles { gap: 0; }
 
-  .progresso-wrap {
-    margin-top: 7px; height: 4px; background: #1e293b;
-    border-radius: 2px; overflow: hidden;
+  #debugPanel {
+    position: fixed; top: 12px; left: 12px; right: 12px;
+    background: rgba(0, 0, 0, .92); border: 1px solid #334155;
+    border-radius: 12px; padding: 12px;
+    color: #cbd5e1; font-family: ui-monospace, Menlo, monospace;
+    font-size: .68rem; line-height: 1.5;
+    z-index: 10000; max-height: 60vh; overflow-y: auto; display: none;
   }
-  .progresso-fill {
-    height: 100%; background: #2563eb; border-radius: 2px;
-    width: 0%; transition: width .3s;
+  #debugPanel.ativo { display: block; }
+  #debugPanel h3 {
+    font-size: .72rem; color: #fbbf24; margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
   }
-
-  .dica {
-    margin-top: 7px; font-size: .7rem; color: #475569;
-    text-align: center; line-height: 1.5; padding-bottom: 6px;
+  #debugPanel h3 button {
+    background: #7c3aed; color: #fff; border: none;
+    border-radius: 6px; padding: 3px 8px;
+    font-size: .65rem; font-family: inherit; cursor: pointer;
   }
-  .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    background: #0f3460; color: #93c5fd; font-size: .64rem;
-    font-weight: 700; padding: 3px 8px; border-radius: 99px;
-    margin-left: 6px; vertical-align: middle;
+  #debugPanel .linha {
+    display: flex; justify-content: space-between; padding: 2px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, .1);
   }
+  #debugPanel .linha.ativa { color: #fbbf24; font-weight: 700; }
+  #debugPanel .voz { color: #93c5fd; }
+  #debugPanel .status-troca {
+    margin-top: 8px; padding: 6px;
+    background: rgba(124, 58, 237, .15);
+    border-radius: 6px; color: #c4b5fd;
+  }
+  #debugPanel .aviso {
+    margin-top: 8px; padding: 6px;
+    background: rgba(220, 38, 38, .15);
+    border-radius: 6px; color: #fca5a5;
+  }
+  .badge-voz {
+    position: fixed; top: 12px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(124, 58, 237, .9); color: #fff;
+    font-size: .7rem; font-weight: 700;
+    padding: 5px 12px; border-radius: 99px;
+    z-index: 9998; pointer-events: none;
+    opacity: 0; transition: opacity .3s;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+  .badge-voz.ativo { opacity: 1; }
 </style>
 </head>
 <body>
-
-<header>
-  <h1>👥 RH · Bloco 1 · 3 Vozes BR</h1>
-  <p>Ritmo V6b <span class="badge">Palestrante</span></p>
-</header>
-
-<div class="tabs">
-  <button class="tab ativa" data-v="luciana" onclick="trocarTab('luciana')">Luciana</button>
-  <button class="tab" data-v="felipe" onclick="trocarTab('felipe')">Felipe</button>
-  <button class="tab" data-v="fernanda" onclick="trocarTab('fernanda')">Fernanda</button>
+<div class="conteudo">
+  <div class="texto-bloco" id="texto"></div>
 </div>
 
-<div class="paineis" id="paineis"></div>
+<div class="badge-voz" id="badgeVoz"></div>
+
+<div id="debugPanel">
+  <h3>🎙️ Debug de Vozes <button onclick="fecharDebug()">Fechar</button></h3>
+  <div id="debugElenco"></div>
+  <div class="status-troca" id="debugTroca">Aguardando…</div>
+</div>
+
+<div id="playerFlutuante" role="region" aria-label="Controles de áudio">
+  <div class="handle" id="handle" aria-label="Arraste para mover"></div>
+  <div class="controles">
+    <button class="btn-ctrl btn-sec" id="btnAnterior" onclick="pularFrase(-1)" aria-label="Frase anterior">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+      </svg>
+    </button>
+    <button class="btn-ctrl btn-play-flut" id="btnPlayFlut" onclick="togglePlay()" aria-label="Ouvir ou pausar">
+      <svg id="iconePlay" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+    <button class="btn-ctrl btn-sec" id="btnProximo" onclick="pularFrase(1)" aria-label="Próxima frase">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
+      </svg>
+    </button>
+  </div>
+  <div class="rodape">
+    <button class="btn-vel" id="btnVel" onclick="ciclarVelocidade()" aria-label="Velocidade">1.0×</button>
+    <span class="status-mini" id="statusMini">Toque em ▶ para iniciar</span>
+  </div>
+  <div class="progresso-mini">
+    <div class="progresso-mini-fill" id="progMini"></div>
+  </div>
+</div>
 
 <script>
 /* =====================================================
-   CONTEÚDO — Bloco 1 RH (cadenciado, com micro-pausas)
+   AMBIENTE
    ===================================================== */
-const UNIDADES = [
-  { tipo:"abertura",  texto:"Gestão de pessoas é a área responsável pelo ser humano no trabalho." },
-  { tipo:"definicao", texto:"Ela atrai, desenvolve, motiva | e mantém as pessoas na empresa." },
-  { tipo:"pausa" },
-  { tipo:"definicao", texto:"Durante muito tempo, essa área foi vista apenas como operacional." },
-  { tipo:"definicao", texto:"Cuidava de folha de pagamento, ponto, férias e documentação. || Era o setor que resolvia papelada." },
-  { tipo:"pausa" },
-  { tipo:"definicao", texto:"Hoje o cenário mudou. || A gestão de pessoas passou a ser estratégica." },
-  { tipo:"definicao", texto:"Ela participa das decisões importantes da organização." },
-  { tipo:"pausa" },
-  { tipo:"definicao", texto:"Existe uma diferença importante entre gestão de pessoas | e gestão de recursos humanos." },
-  { tipo:"definicao", texto:"Gestão de recursos humanos é o nome mais antigo, ligado à ideia de que pessoas são recursos, como máquinas ou dinheiro." },
-  { tipo:"definicao", texto:"Gestão de pessoas é o nome mais moderno, que enxerga o ser humano como parceiro da organização." },
-  { tipo:"pausa" },
-  { tipo:"definicao", texto:"Essa mudança de nome reflete uma mudança de mentalidade." },
-  { tipo:"definicao", texto:"Antes, a pessoa era vista como custo. || Agora, é vista como diferencial competitivo." },
-  { tipo:"pausa" },
-  { tipo:"guarde",    texto:"Guarde isto." },
-  { tipo:"guarde",    texto:"Gestão de pessoas é a área que cuida do ser humano no trabalho." },
-  { tipo:"guarde",    texto:"Quando ela é estratégica, deixa de apenas resolver problemas | e passa a construir resultados." }
-];
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 /* =====================================================
-   PERFIS DE RITMO — cada voz tem personalidade própria
+   VOZES
    ===================================================== */
+let todasAsVozes = [];
+let elenco = null;
+let vozesCarregadas = false;
+let modoIOS = false; // true quando usamos a mesma voz com pitch/rate variados
 
-/* Luciana — neutra, clara, podcast (equilíbrio) */
-const PERFIL_LUCIANA = {
-  base: { rate: 0.88, pitch: 0.96, volume: 1.0 },
-  pausas: {
-    abertura:700, definicao:400, lista:180, exemplo:220,
-    conclusao:500, guarde:800, pausa:650
-  },
-  ratePorTipo:  { abertura:0.86, definicao:0.90, lista:0.92, exemplo:0.90, conclusao:0.84, guarde:0.80 },
-  pitchPorTipo: { abertura:0.98, definicao:0.96, lista:0.96, exemplo:0.98, conclusao:0.92, guarde:0.90 },
-  volumePorTipo:{ abertura:1.0,  definicao:1.0,  lista:0.98, exemplo:0.96, conclusao:1.0,  guarde:0.90 },
-  microCurta: 120, microLonga: 220
-};
-
-/* Felipe — grave, madura, palestrante (pausado e imponente) */
-const PERFIL_FELIPE = {
-  base: { rate: 0.80, pitch: 0.85, volume: 1.0 },
-  pausas: {
-    abertura:950, definicao:520, lista:220, exemplo:280,
-    conclusao:650, guarde:1050, pausa:850
-  },
-  ratePorTipo:  { abertura:0.78, definicao:0.82, lista:0.86, exemplo:0.84, conclusao:0.76, guarde:0.72 },
-  pitchPorTipo: { abertura:0.86, definicao:0.84, lista:0.86, exemplo:0.88, conclusao:0.82, guarde:0.80 },
-  volumePorTipo:{ abertura:1.0,  definicao:1.0,  lista:0.98, exemplo:0.96, conclusao:1.0,  guarde:0.92 },
-  microCurta: 180, microLonga: 320
-};
-
-/* Fernanda — calorosa, próxima, conversa (mais rápido e agudo) */
-const PERFIL_FERNANDA = {
-  base: { rate: 0.98, pitch: 1.08, volume: 1.0 },
-  pausas: {
-    abertura:550, definicao:320, lista:140, exemplo:180,
-    conclusao:420, guarde:680, pausa:520
-  },
-  ratePorTipo:  { abertura:0.96, definicao:1.00, lista:1.02, exemplo:1.00, conclusao:0.94, guarde:0.90 },
-  pitchPorTipo: { abertura:1.10, definicao:1.08, lista:1.08, exemplo:1.10, conclusao:1.04, guarde:1.02 },
-  volumePorTipo:{ abertura:1.0,  definicao:1.0,  lista:0.98, exemplo:0.96, conclusao:1.0,  guarde:0.90 },
-  microCurta: 90, microLonga: 170
-};
-
-/* =====================================================
-   DEFINIÇÃO DAS 3 VOZES — busca multi-plataforma
-   iOS (Safari):  Luciana, Felipe, Fernanda
-   Edge Neural:   Francisca, Antonio, Thalita, Nicolau, Yara, etc.
-   Chrome/Google: Google português do Brasil
-   Windows SAPI:  Microsoft Maria, Microsoft Daniel
-   ===================================================== */
-const VOZES = {
-  luciana: {
-    nome: "Luciana",
-    descricao: "Feminina neutra (pt-BR). <b>Clara e equilibrada, estilo podcast.</b>",
-    dica: "🎧 Neutra · ritmo médio · dicção limpa",
-    busca: [
-      "Luciana (Premium)", "Luciana (Enhanced)", "Luciana",
-      "pt-BR-FranciscaNeural", "Francisca",
-      "Microsoft Maria", "Microsoft Francisca",
-      "Google português do Brasil",
-      "Fernanda (Premium)", "Fernanda (Enhanced)", "Fernanda"
-    ],
-    genero: "feminino",
-    fallbackLang: "pt-BR",
-    perfil: PERFIL_LUCIANA
-  },
-  felipe: {
-    nome: "Felipe",
-    descricao: "Masculina grave (pt-BR). <b>Madura e imponente, ritmo de palestra.</b>",
-    dica: "🎤 Grave · pausado · autoridade",
-    busca: [
-      "Felipe (Premium)", "Felipe (Enhanced)", "Felipe",
-      "pt-BR-AntonioNeural", "Antonio", "Nicolau",
-      "Microsoft Daniel", "Microsoft Henrique",
-      "Google português do Brasil"
-    ],
-    genero: "masculino",
-    fallbackLang: "pt-BR",
-    perfil: PERFIL_FELIPE
-  },
-  fernanda: {
-    nome: "Fernanda",
-    descricao: "Feminina calorosa (pt-BR). <b>Próxima e envolvente, jeito de conversa.</b>",
-    dica: "💬 Calorosa · ágil · conversa próxima",
-    busca: [
-      "Fernanda (Premium)", "Fernanda (Enhanced)", "Fernanda",
-      "pt-BR-ThalitaNeural", "Thalita", "Yara",
-      "Microsoft Francisca", "Microsoft Maria",
-      "Google português do Brasil"
-    ],
-    genero: "feminino",
-    fallbackLang: "pt-BR",
-    perfil: PERFIL_FERNANDA
-  }
-};
-
-/* =====================================================
-   VOZES — detecção, gênero e escolha única
-   ===================================================== */
-let synth = window.speechSynthesis;
-let tocando = null;
-let cancelar = false;
-let vozesDisponiveis = [];
-const vozesEscolhidas = {};   // { luciana: SpeechSynthesisVoice, ... }
-
-/* ── Heurística de gênero pelo nome (multi-plataforma) ── */
-const NOMES_FEMININOS = [
-  "luciana","fernanda","joana","maria","francisca","helena","catarina",
-  "célia","celia","ines","inês","marina","raquel","rita","vitória","vitoria",
-  "thalita","yara","leila","valeria","valéria",
-  "google português","google portuguese"
-];
-const NOMES_MASCULINOS = [
-  "felipe","daniel","henrique","ricardo","joão","joao","thiago","tiago",
-  "marcos","paulo","carlos","bruno","antonio","antônio","nicolau","julio","júlio"
-];
-
-function detectarGenero(voz) {
-  const n = voz.name.toLowerCase();
-  if (NOMES_FEMININOS.some(x => n.includes(x))) return "feminino";
-  if (NOMES_MASCULINOS.some(x => n.includes(x))) return "masculino";
-  return "desconhecido";
-}
-
-/* ── Carrega vozes ── */
-function carregarVozes() {
-  vozesDisponiveis = synth.getVoices();
-}
-
-/* ── Encontra voz para um perfil, excluindo já usadas ── */
-function encontrarVoz(perfil, excluir = []) {
-  carregarVozes();
-
-  // 1) Filtra pt-BR (com fallback pra pool geral se não houver pt-BR)
-  const ptBR = vozesDisponiveis.filter(v =>
-    v.lang === "pt-BR" || v.lang.replace('_','-') === "pt-BR"
-  );
-  const pool = ptBR.length ? ptBR : vozesDisponiveis;
-
-  // 2) Nome exato
-  for (const nome of perfil.busca) {
-    const v = pool.find(x => x.name === nome && !excluir.includes(x.name));
-    if (v) return v;
-  }
-  // 3) Nome parcial
-  for (const nome of perfil.busca) {
-    const v = pool.find(x => x.name.includes(nome) && !excluir.includes(x.name));
-    if (v) return v;
-  }
-  // 4) Por gênero
-  const porGenero = pool.find(x =>
-    detectarGenero(x) === perfil.genero && !excluir.includes(x.name)
-  );
-  if (porGenero) return porGenero;
-
-  // 5) Qualquer voz livre no pool
-  const livre = pool.find(x => !excluir.includes(x.name));
-  if (livre) return livre;
-
-  // 6) Último recurso: pool[0] mesmo repetida
-  return pool[0] || null;
-}
-
-/* ── Escolhe 3 vozes ÚNICAS (uma por aba) ── */
-function escolherVozesUnicas() {
-  const usadas = [];
-  Object.keys(VOZES).forEach(v => {
-    const voz = encontrarVoz(VOZES[v], usadas);
-    vozesEscolhidas[v] = voz;
-    if (voz) usadas.push(voz.name);
-  });
-}
-
-/* ── Descrição da voz realmente usada ── */
-function descreverVoz(voz) {
-  if (!voz) return "⚠️ Nenhuma voz pt-BR encontrada — usando padrão do sistema";
-  return `🎙 Voz em uso: ${voz.name} (${voz.lang})`;
-}
-
-if (synth.onvoiceschanged !== undefined) {
-  synth.onvoiceschanged = () => {
-    carregarVozes();
-    escolherVozesUnicas();
-    atualizarInfoVozes();
+function carregarVozes(callback) {
+  let jaChamou = false;
+  const finalizar = () => {
+    if (jaChamou) return;
+    jaChamou = true;
+    vozesCarregadas = true;
+    callback();
   };
-}
 
-/* ── Render ── */
-const paineisEl = document.getElementById('paineis');
-
-function renderTextoLegivel(texto) {
-  return texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
-}
-
-function renderTodos() {
-  paineisEl.innerHTML = '';
-  Object.keys(VOZES).forEach((v, idx) => {
-    const cfg = VOZES[v];
-    const painel = document.createElement('div');
-    painel.className = 'painel' + (idx === 0 ? ' ativo' : '');
-    painel.id = 'painel-' + v;
-
-    const label = document.createElement('div');
-    label.className = 'label-versao';
-    label.textContent = cfg.nome;
-    painel.appendChild(label);
-
-    const desc = document.createElement('div');
-    desc.className = 'descricao';
-    desc.innerHTML = cfg.descricao;
-    painel.appendChild(desc);
-
-    const vozInfo = document.createElement('div');
-    vozInfo.className = 'voz-info';
-    vozInfo.id = 'vozinfo-' + v;
-    vozInfo.textContent = '🎙 Detectando voz...';
-    painel.appendChild(vozInfo);
-
-    const texto = document.createElement('div');
-    texto.className = 'texto-bloco';
-    texto.id = 'texto-' + v;
-    UNIDADES.forEach((u, i) => {
-      if (u.tipo === 'pausa') {
-        const br = document.createElement('div');
-        br.className = 'quebra';
-        br.dataset.idx = i;
-        texto.appendChild(br);
-      } else {
-        const el = document.createElement('div');
-        el.className = 'frase';
-        el.id = v + '-f-' + i;
-        el.textContent = renderTextoLegivel(u.texto);
-        texto.appendChild(el);
-      }
-    });
-    painel.appendChild(texto);
-
-    const player = document.createElement('div');
-    player.className = 'player';
-    player.innerHTML = `
-      <button class="btn-play parado" id="btn-${v}" onclick="togglePlay('${v}')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        Ouvir ${cfg.nome}
-      </button>
-      <div class="progresso-wrap"><div class="progresso-fill" id="prog-${v}"></div></div>
-      <p class="dica">${cfg.dica}</p>
-    `;
-    painel.appendChild(player);
-
-    paineisEl.appendChild(painel);
-  });
-}
-
-function atualizarInfoVozes() {
-  Object.keys(VOZES).forEach(v => {
-    const voz = vozesEscolhidas[v] || encontrarVoz(VOZES[v]);
-    const el = document.getElementById('vozinfo-' + v);
-    if (el) el.textContent = descreverVoz(voz);
-  });
-}
-
-/* ── Inicialização ── */
-carregarVozes();
-escolherVozesUnicas();
-renderTodos();
-setTimeout(() => { carregarVozes(); escolherVozesUnicas(); atualizarInfoVozes(); }, 300);
-setTimeout(() => { carregarVozes(); escolherVozesUnicas(); atualizarInfoVozes(); }, 1500);
-
-/* ── Tabs ── */
-function trocarTab(v) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('ativa', t.dataset.v === v));
-  document.querySelectorAll('.painel').forEach(p => p.classList.toggle('ativo', p.id === 'painel-' + v));
-  if (tocando && tocando !== v) pararTudo();
-}
-
-/* ── Player ── */
-function togglePlay(v) {
-  if (tocando === v) { pararTudo(); return; }
-  if (tocando) pararTudo();
-  tocarVersao(v);
-}
-
-function pararTudo() {
-  cancelar = true;
-  synth.cancel();
-  if (tocando) {
-    setBtnEstado(tocando, false);
-    resetHighlights(tocando);
-    setProgresso(tocando, 0);
+  let vozes = speechSynthesis.getVoices();
+  if (vozes.length > 0) {
+    todasAsVozes = vozes;
+    finalizar();
+    return;
   }
-  tocando = null;
-}
 
-function setBtnEstado(v, playing) {
-  const btn = document.getElementById('btn-' + v);
-  const cfg = VOZES[v];
-  if (playing) {
-    btn.className = 'btn-play tocando';
-    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Parar`;
+  const handler = () => {
+    vozes = speechSynthesis.getVoices();
+    if (vozes.length > 0) {
+      todasAsVozes = vozes;
+      speechSynthesis.removeEventListener('voiceschanged', handler);
+      finalizar();
+    }
+  };
+
+  if (speechSynthesis.addEventListener) {
+    speechSynthesis.addEventListener('voiceschanged', handler);
   } else {
-    btn.className = 'btn-play parado';
-    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M8 5v14l11-7z"/></svg> Ouvir ${cfg.nome}`;
+    speechSynthesis.onvoiceschanged = handler;
+  }
+
+  let tentativas = 0;
+  const poll = () => {
+    tentativas++;
+    vozes = speechSynthesis.getVoices();
+    if (vozes.length > 0) {
+      todasAsVozes = vozes;
+      finalizar();
+      return;
+    }
+    if (tentativas < 30) setTimeout(poll, 200);
+    else finalizar();
+  };
+  setTimeout(poll, 200);
+}
+
+function vozesPtBR() {
+  return todasAsVozes.filter(v => {
+    const lang = (v.lang || '').toLowerCase().replace('_', '-');
+    return lang === 'pt-br' || lang.startsWith('pt-br');
+  });
+}
+
+/* =====================================================
+   PERFIS — VOZES DIFERENCIADAS POR PITCH/RATE
+   =====================================================
+   Professor: autoridade + coach
+     - pitch baixo (0.75) → voz grave, impõe respeito
+     - rate baixo (0.78) → fala pausada, didática
+     - ênfase ainda mais grave e lenta
+   
+   Alunos: variação EXTREMA de pitch para ficarem distintos
+     - aluno1: agudo rápido (jovem ansioso)
+     - aluno2: grave lento (reflexivo)
+     - aluno3: médio-agudo (curioso)
+     - aluno4: grave calmo (maduro)
+     - aluno5: muito agudo rápido (empolgado)
+     - aluno6: médio (neutro)
+     - aluno7: grave muito lento (cético)
+   ===================================================== */
+const PAPEIS_ALUNO = ['aluno1','aluno2','aluno3','aluno4','aluno5','aluno6','aluno7'];
+const SIMBOLOS = {
+  professor: '§',
+  aluno1: '·', aluno2: '·', aluno3: '·', aluno4: '·',
+  aluno5: '·', aluno6: '·', aluno7: '·'
+};
+
+const PERFIS = {
+  professor: {
+    rate: 0.78, pitch: 0.75, volume: 1.0,
+    microCurta: 300, microLonga: 460,
+    rateEnfase: 0.70, pitchEnfase: 0.72,
+    pausas: { abertura:1200, definicao:560, pergunta:380, confirmacao:520, guarde:1300, conclusao:1000, pausa:850 }
+  },
+  // Agudo + rápido
+  aluno1: { rate:1.18, pitch:1.55, volume:0.92, microCurta:70,  microLonga:140, rateEnfase:1.08, pitchEnfase:1.50,
+    pausas:{ abertura:200, definicao:160, pergunta:220, confirmacao:160, guarde:240, conclusao:220, pausa:340 } },
+  // Grave + lento
+  aluno2: { rate:0.76, pitch:0.65, volume:0.92, microCurta:180, microLonga:250, rateEnfase:0.70, pitchEnfase:0.62,
+    pausas:{ abertura:300, definicao:260, pergunta:280, confirmacao:240, guarde:320, conclusao:300, pausa:440 } },
+  // Médio-agudo
+  aluno3: { rate:1.04, pitch:1.28, volume:0.92, microCurta:100, microLonga:170, rateEnfase:0.96, pitchEnfase:1.24,
+    pausas:{ abertura:300, definicao:240, pergunta:300, confirmacao:220, guarde:300, conclusao:280, pausa:400 } },
+  // Grave calmo
+  aluno4: { rate:0.82, pitch:0.85, volume:0.92, microCurta:170, microLonga:240, rateEnfase:0.74, pitchEnfase:0.82,
+    pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:320, conclusao:300, pausa:420 } },
+  // Muito agudo + muito rápido
+  aluno5: { rate:1.24, pitch:1.65, volume:0.92, microCurta:60,  microLonga:130, rateEnfase:1.14, pitchEnfase:1.60,
+    pausas:{ abertura:180, definicao:150, pergunta:200, confirmacao:150, guarde:220, conclusao:200, pausa:320 } },
+  // Médio neutro
+  aluno6: { rate:0.92, pitch:1.10, volume:0.92, microCurta:110, microLonga:180, rateEnfase:0.85, pitchEnfase:1.05,
+    pausas:{ abertura:280, definicao:220, pergunta:240, confirmacao:200, guarde:300, conclusao:280, pausa:400 } },
+  // Grave + muito lento (cético)
+  aluno7: { rate:0.74, pitch:0.72, volume:0.92, microCurta:200, microLonga:280, rateEnfase:0.68, pitchEnfase:0.70,
+    pausas:{ abertura:320, definicao:280, pergunta:300, confirmacao:260, guarde:340, conclusao:320, pausa:460 } }
+};
+
+/* =====================================================
+   DIÁLOGO
+   ===================================================== */
+const AULA = [
+  { papel:'professor', tipo:'abertura',
+    texto:"Bom dia, turma. Hoje vamos entender o que é *gestão de pessoas*." },
+  { papel:'aluno1', tipo:'pergunta',
+    texto:"Professor, gestão de pessoas é a área que cuida do quê, exatamente?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"Boa pergunta. Gestão de pessoas é a área responsável pelo *ser humano* no trabalho." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Ela atrai, desenvolve, motiva | e *mantém* as pessoas dentro da empresa." },
+  { papel:'aluno2', tipo:'confirmacao',
+    texto:"Entendi. Então é tudo que envolve gente dentro da organização." },
+  { papel:'professor', tipo:'definicao',
+    texto:"*Exatamente.* Tudo que envolve gente: atrair, desenvolver, motivar, manter." },
+  { papel:'aluno5', tipo:'pergunta',
+    texto:"E como isso funciona no dia a dia?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"No dia a dia, aparece em *cada decisão* sobre pessoas." },
+  { tipo:'pausa' },
+  { papel:'aluno3', tipo:'pergunta',
+    texto:"Mas professor, isso sempre foi assim?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"*Não.* Durante muito tempo, essa área foi vista apenas como operacional." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Cuidava de folha de pagamento, ponto, férias | e documentação." },
+  { papel:'aluno1', tipo:'confirmacao',
+    texto:"Ah, o famoso setor que resolvia papelada." },
+  { papel:'professor', tipo:'confirmacao',
+    texto:"Isso mesmo. Era o setor da *papelada*." },
+  { papel:'aluno6', tipo:'pergunta',
+    texto:"E o que fazia alguém mudar de ideia?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"A percepção de que *pessoas* fazem a diferença nos resultados." },
+  { tipo:'pausa' },
+  { papel:'aluno2', tipo:'pergunta',
+    texto:"E hoje, o que mudou?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"Hoje o cenário mudou *completamente*." },
+  { papel:'professor', tipo:'definicao',
+    texto:"A gestão de pessoas passou a ser *estratégica*." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Ela participa das *decisões importantes* da organização." },
+  { papel:'aluno4', tipo:'confirmacao',
+    texto:"Então ela deixou de só resolver problemas e passou a construir resultados." },
+  { papel:'professor', tipo:'confirmacao',
+    texto:"*Exatamente.* Essa é a virada de chave." },
+  { tipo:'pausa' },
+  { papel:'aluno7', tipo:'pergunta',
+    texto:"Tem diferença entre gestão de pessoas | e gestão de recursos humanos?" },
+  { papel:'professor', tipo:'definicao',
+    texto:"Tem. E é uma diferença *importante*." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Gestão de recursos humanos é o nome mais antigo." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Ligado à ideia de que pessoas são *recursos*. Como máquinas, como dinheiro." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Gestão de pessoas é o nome mais *moderno*." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Ela enxerga o ser humano como *parceiro* da organização. Não como recurso." },
+  { papel:'aluno1', tipo:'confirmacao',
+    texto:"Então não é só uma troca de nome." },
+  { papel:'professor', tipo:'definicao',
+    texto:"*Não.* É uma mudança de *mentalidade*." },
+  { papel:'professor', tipo:'definicao',
+    texto:"Antes, a pessoa era vista como custo. || Agora, é vista como *diferencial competitivo*." },
+  { tipo:'pausa' },
+  { papel:'professor', tipo:'guarde',
+    texto:"*Guarde isto.*" },
+  { papel:'professor', tipo:'guarde',
+    texto:"Gestão de pessoas é a área que cuida do *ser humano* no trabalho." },
+  { papel:'aluno4', tipo:'guarde',
+    texto:"E quando ela é estratégica, deixa de apenas resolver problemas." },
+  { papel:'professor', tipo:'guarde',
+    texto:"E passa a *construir resultados*." },
+  { papel:'aluno2', tipo:'guarde',
+    texto:"Agora ficou claro, professor." },
+  { papel:'professor', tipo:'conclusao',
+    texto:"Então guardem bem essa ideia. Gestão de pessoas é sobre *gente*. Sempre foi. E sempre será." }
+];
+
+let synth = window.speechSynthesis;
+let tocando = false;
+let pausado = false;
+let cancelar = false;
+let indiceAtual = 0;
+let velocidade = 1.0;
+
+/* =====================================================
+   RENDER
+   ===================================================== */
+function renderTextoLegivel(texto) {
+  let t = texto.replace(/\s*\|\|\s*/g, ' ').replace(/\s*\|\s*/g, ' ');
+  t = t.replace(/\*([^*]+)\*/g, '<span class="enfase">$1</span>');
+  return t;
+}
+
+function renderAula() {
+  const el = document.getElementById('texto');
+  el.innerHTML = '';
+  AULA.forEach((fala, i) => {
+    if (fala.tipo === 'pausa') {
+      const br = document.createElement('div');
+      br.className = 'quebra';
+      el.appendChild(br);
+      return;
+    }
+    const div = document.createElement('div');
+    div.className = 'fala ' + fala.papel + ' futura';
+    div.id = 'fala-' + i;
+    const simbolo = SIMBOLOS[fala.papel] || '·';
+    div.innerHTML = `<span class="simbolo">${simbolo}</span>${renderTextoLegivel(fala.texto)}`;
+    el.appendChild(div);
+  });
+}
+renderAula();
+
+function destacarFala(idx) {
+  document.querySelectorAll('.fala').forEach(el => {
+    const numIdx = parseInt(el.id.replace('fala-', ''));
+    el.classList.remove('falando', 'falada', 'futura');
+    if (numIdx < idx) el.classList.add('falada');
+    else if (numIdx === idx) el.classList.add('falando');
+    else el.classList.add('futura');
+  });
+  const atual = document.getElementById('fala-' + idx);
+  if (atual) {
+    const rect = atual.getBoundingClientRect();
+    if (rect.top < 80 || rect.bottom > window.innerHeight - 100) {
+      atual.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   }
 }
 
-function setProgresso(v, pct) {
-  document.getElementById('prog-' + v).style.width = pct + '%';
-}
-
-function resetHighlights(v) {
-  document.querySelectorAll('#texto-' + v + ' .frase').forEach(el => {
+function resetDestaques() {
+  document.querySelectorAll('.fala').forEach(el => {
     el.classList.remove('falando', 'falada');
+    el.classList.add('futura');
   });
 }
 
-function highlightFrase(v, idx) {
-  document.querySelectorAll('#texto-' + v + ' .frase').forEach(el => {
-    el.classList.remove('falando');
-    if (parseInt(el.id.split('-f-')[1]) < idx) el.classList.add('falada');
-  });
-  const el = document.getElementById(v + '-f-' + idx);
-  if (el) {
-    el.classList.add('falando');
-    el.classList.remove('falada');
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+/* =====================================================
+   BADGE
+   ===================================================== */
+let badgeTimer = null;
+function mostrarBadge(txt) {
+  const el = document.getElementById('badgeVoz');
+  el.textContent = txt;
+  el.classList.add('ativo');
+  clearTimeout(badgeTimer);
+  badgeTimer = setTimeout(() => el.classList.remove('ativo'), 1600);
+}
+
+/* =====================================================
+   UI
+   ===================================================== */
+function setBtnEstado(playing) {
+  const btn = document.getElementById('btnPlayFlut');
+  const icone = document.getElementById('iconePlay');
+  if (playing) {
+    btn.classList.add('tocando');
+    icone.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+  } else {
+    btn.classList.remove('tocando');
+    icone.innerHTML = '<path d="M8 5v14l11-7z"/>';
   }
 }
 
-/* ── Micro-pausas ── */
+function setProgresso(pct) { document.getElementById('progMini').style.width = pct + '%'; }
+function setStatus(txt)    { document.getElementById('statusMini').textContent = txt; }
+
+function atualizarBotoesNavegacao() {
+  const temAnterior = AULA.slice(0, indiceAtual).some(f => f.tipo !== 'pausa');
+  const temProximo  = AULA.slice(indiceAtual + 1).some(f => f.tipo !== 'pausa');
+  document.getElementById('btnAnterior').disabled = !temAnterior;
+  document.getElementById('btnProximo').disabled  = !temProximo;
+}
+
+/* =====================================================
+   VELOCIDADE
+   ===================================================== */
+const VELOCIDADES = [0.75, 1.0, 1.25, 1.5, 2.0];
+
+function ciclarVelocidade() {
+  const i = VELOCIDADES.indexOf(velocidade);
+  velocidade = VELOCIDADES[(i + 1) % VELOCIDADES.length];
+  const btn = document.getElementById('btnVel');
+  btn.textContent = velocidade.toFixed(2).replace(/0$/, '') + '×';
+  btn.classList.toggle('ativa', velocidade !== 1.0);
+  if (tocando && !pausado) {
+    const idx = indiceAtual;
+    pararSilencioso();
+    setTimeout(() => { indiceAtual = idx; tocarDeOndeParou(); }, 100);
+  }
+}
+
+/* =====================================================
+   PLAY / PAUSE / PULAR
+   ===================================================== */
+function togglePlay() {
+  if (tocando && !pausado) {
+    pausado = true;
+    cancelar = true;
+    try { synth.cancel(); } catch(e) {}
+    setBtnEstado(false);
+    setStatus('Pausado');
+    return;
+  }
+  if (tocando && pausado) {
+    pausado = false;
+    tocarDeOndeParou();
+    return;
+  }
+  indiceAtual = 0;
+  tocarDeOndeParou();
+}
+
+function pararSilencioso() {
+  cancelar = true;
+  try { synth.cancel(); } catch(e) {}
+  tocando = false;
+  pausado = false;
+  setBtnEstado(false);
+}
+
+function pularFrase(direcao) {
+  let novo = indiceAtual + direcao;
+  while (novo >= 0 && novo < AULA.length && AULA[novo].tipo === 'pausa') {
+    novo += direcao;
+  }
+  if (novo < 0 || novo >= AULA.length) return;
+
+  const estavaTocando = tocando && !pausado;
+  pararSilencioso();
+  indiceAtual = novo;
+
+  if (estavaTocando) {
+    setTimeout(() => tocarDeOndeParou(), 80);
+  } else {
+    destacarFala(indiceAtual);
+    atualizarBotoesNavegacao();
+    const f = AULA[indiceAtual];
+    setStatus(f.papel === 'professor' ? 'Professor' : 'Aluno');
+  }
+}
+
+/* =====================================================
+   FALA
+   ===================================================== */
 function dividirComMicroPausas(texto) {
   const partesLongas = texto.split(/\s*\|\|\s*/);
   const segmentos = [];
@@ -479,90 +588,442 @@ function dividirComMicroPausas(texto) {
     const partesCurtas = parte.split(/\s*\|\s*/);
     partesCurtas.forEach((p, iCurta) => {
       if (iCurta > 0) segmentos.push({ tipo:'pausaCurta' });
-      if (p.trim()) segmentos.push({ tipo:'fala', texto:p.trim() });
+      if (p.trim()) {
+        const comEnfase = p.split(/(\*[^*]+\*)/g);
+        comEnfase.forEach(frag => {
+          if (!frag) return;
+          if (frag.startsWith('*') && frag.endsWith('*')) {
+            segmentos.push({ tipo:'enfase', texto: frag.slice(1, -1).trim() });
+          } else if (frag.trim()) {
+            segmentos.push({ tipo:'fala', texto: frag.trim() });
+          }
+        });
+      }
     });
   });
   return segmentos;
 }
 
-async function falarComMicroPausas(textoOriginal, rate, pitch, volume, voz, perfil) {
+function falar(texto, rate, pitch, volume, voz) {
+  return new Promise(resolve => {
+    let resolvido = false;
+    const finalizar = () => { if (!resolvido) { resolvido = true; resolve(); } };
+
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = 'pt-BR';
+    u.rate = Math.max(0.1, Math.min(2.0, rate * velocidade));
+    u.pitch = Math.max(0, Math.min(2.0, pitch));
+    u.volume = volume ?? 1.0;
+    if (voz) u.voice = voz;
+    u.onend = finalizar;
+    u.onerror = finalizar;
+
+    try {
+      synth.speak(u);
+    } catch(e) {
+      finalizar();
+      return;
+    }
+
+    const estimativa = Math.max(3000, texto.length * 130 / u.rate);
+    setTimeout(finalizar, estimativa);
+  });
+}
+
+async function falarComMicroPausas(textoOriginal, perfil, voz) {
   const segmentos = dividirComMicroPausas(textoOriginal);
   for (const seg of segmentos) {
     if (cancelar) return;
     if (seg.tipo === 'pausaCurta') {
-      await esperar(perfil.microCurta);
+      await esperar(perfil.microCurta / velocidade);
     } else if (seg.tipo === 'pausaLonga') {
-      await esperar(perfil.microLonga);
+      await esperar(perfil.microLonga / velocidade);
+    } else if (seg.tipo === 'enfase') {
+      await falar(seg.texto, perfil.rateEnfase, perfil.pitchEnfase, perfil.volume, voz);
     } else if (seg.tipo === 'fala') {
-      await falar(seg.texto, rate, pitch, volume, voz);
+      await falar(seg.texto, perfil.rate, perfil.pitch, perfil.volume, voz);
     }
   }
-}
-
-async function tocarVersao(v) {
-  const cfg = VOZES[v];
-  const perfil = cfg.perfil;
-  const voz = vozesEscolhidas[v] || encontrarVoz(cfg);
-  cancelar = false;
-  tocando = v;
-  setBtnEstado(v, true);
-  resetHighlights(v);
-
-  const total = UNIDADES.filter(u => u.tipo !== 'pausa').length;
-  let faladas = 0;
-
-  for (let i = 0; i < UNIDADES.length; i++) {
-    if (cancelar) break;
-    const u = UNIDADES[i];
-
-    if (u.tipo === 'pausa') {
-      await esperar(perfil.pausas.pausa);
-      continue;
-    }
-
-    const pausaAntes = perfil.pausas[u.tipo] || 0;
-    if (pausaAntes > 0) await esperar(pausaAntes);
-
-    const rate   = perfil.ratePorTipo[u.tipo]   ?? perfil.base.rate;
-    const pitch  = perfil.pitchPorTipo[u.tipo]  ?? perfil.base.pitch;
-    const volume = perfil.volumePorTipo[u.tipo] ?? perfil.base.volume;
-
-    highlightFrase(v, i);
-    faladas++;
-    setProgresso(v, Math.round((faladas / total) * 100));
-
-    await falarComMicroPausas(u.texto, rate, pitch, volume, voz, perfil);
-    if (cancelar) break;
-  }
-
-  if (!cancelar) {
-    resetHighlights(v);
-    setProgresso(v, 100);
-    setTimeout(() => {
-      setBtnEstado(v, false);
-      setProgresso(v, 0);
-      if (tocando === v) tocando = null;
-    }, 700);
-  }
-}
-
-function falar(texto, rate, pitch, volume, voz) {
-  return new Promise(resolve => {
-    const u = new SpeechSynthesisUtterance(texto);
-    u.lang = voz ? voz.lang : 'pt-BR';
-    u.rate = rate;
-    u.pitch = pitch;
-    u.volume = volume ?? 1.0;
-    if (voz) u.voice = voz;
-    u.onend = resolve;
-    u.onerror = resolve;
-    synth.speak(u);
-  });
 }
 
 function esperar(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/* =====================================================
+   TROCA DE VOZ
+   =====================================================
+   No modo IOS (mesma voz base), NÃO trocamos voz.
+   Apenas aplicamos pitch/rate diferentes em cada fala.
+   No desktop, trocamos a voz de verdade.
+   ===================================================== */
+async function trocarVoz(vozAntiga, vozNova) {
+  const debugEl = document.getElementById('debugTroca');
+
+  // Modo IOS: mesma voz, não troca. Só aplica pitch/rate por fala.
+  if (modoIOS) {
+    if (debugEl) {
+      debugEl.textContent = `iOS: mesma voz base · variação por pitch/rate`;
+    }
+    return;
+  }
+
+  if (debugEl) {
+    debugEl.textContent = `Trocando: ${vozAntiga ? vozAntiga.name : '—'} → ${vozNova.name}`;
+  }
+
+  if (!isIOS) {
+    try { synth.cancel(); } catch(e) {}
+    await esperar(50);
+    mostrarBadge(`🎙️ ${vozNova.name}`);
+    return;
+  }
+
+  // iOS com vozes distintas (raro, mas pode acontecer)
+  if (vozAntiga && vozAntiga !== vozNova) {
+    try {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.voice = vozAntiga;
+      u.volume = 0.01;
+      u.rate = 2.5;
+      synth.speak(u);
+      await esperar(120);
+    } catch(e) {}
+  }
+
+  try { synth.cancel(); } catch(e) {}
+  await esperar(80);
+
+  try {
+    const u = new SpeechSynthesisUtterance('.');
+    u.voice = vozNova;
+    u.volume = 0.01;
+    u.rate = 1.5;
+    synth.speak(u);
+    await esperar(180);
+  } catch(e) {}
+
+  try { synth.cancel(); } catch(e) {}
+  await esperar(80);
+
+  mostrarBadge(`🎙️ ${vozNova.name}`);
+}
+
+/* =====================================================
+   LOOP PRINCIPAL
+   ===================================================== */
+async function tocarDeOndeParou() {
+  if (!elenco || !elenco.professor) {
+    setStatus('Sem vozes pt-BR');
+    return;
+  }
+
+  cancelar = false;
+  tocando = true;
+  pausado = false;
+  setBtnEstado(true);
+
+  const total = AULA.filter(d => d.tipo !== 'pausa').length;
+  const jaFaladas = AULA.slice(0, indiceAtual).filter(d => d.tipo !== 'pausa').length;
+  let faladas = jaFaladas;
+
+  let ultimaVoz = null;
+  for (let k = indiceAtual - 1; k >= 0; k--) {
+    if (AULA[k].tipo !== 'pausa') {
+      ultimaVoz = elenco[AULA[k].papel];
+      break;
+    }
+  }
+
+  for (let i = indiceAtual; i < AULA.length; i++) {
+    if (cancelar) return;
+    indiceAtual = i;
+    const fala = AULA[i];
+
+    if (fala.tipo === 'pausa') {
+      await esperar(PERFIS.professor.pausas.pausa / velocidade);
+      continue;
+    }
+
+    const voz = elenco[fala.papel];
+    const perfil = PERFIS[fala.papel];
+
+    if (voz !== ultimaVoz) {
+      await trocarVoz(ultimaVoz, voz);
+      if (cancelar) return;
+      ultimaVoz = voz;
+    }
+
+    const pausaAntes = perfil.pausas[fala.tipo] || 0;
+    if (pausaAntes > 0) await esperar(pausaAntes / velocidade);
+
+    destacarFala(i);
+    atualizarBotoesNavegacao();
+
+    // Status mostra o personagem + o perfil aplicado
+    const label = fala.papel === 'professor'
+      ? `Professor · pitch ${perfil.pitch.toFixed(2)}`
+      : `Aluno · pitch ${perfil.pitch.toFixed(2)}`;
+    setStatus(label);
+
+    faladas++;
+    setProgresso(Math.round((faladas / total) * 100));
+
+    await falarComMicroPausas(fala.texto, perfil, voz);
+    if (cancelar) return;
+  }
+
+  if (!cancelar) {
+    resetDestaques();
+    setProgresso(100);
+    setStatus('Fim');
+    setTimeout(() => {
+      setBtnEstado(false);
+      setProgresso(0);
+      setStatus('Pronto');
+      tocando = false;
+      pausado = false;
+      indiceAtual = 0;
+    }, 800);
+  }
+}
+
+/* =====================================================
+   PLAYER ARRASTÁVEL
+   ===================================================== */
+const player = document.getElementById('playerFlutuante');
+const handle = document.getElementById('handle');
+let arrastando = false;
+let startX = 0, startY = 0, startLeft = 0, startTop = 0;
+let moveu = false;
+
+(function restaurarPosicao() {
+  try {
+    const salvo = JSON.parse(localStorage.getItem('playerPos') || 'null');
+    if (salvo && typeof salvo.left === 'number' && typeof salvo.top === 'number') {
+      const maxL = window.innerWidth - 80;
+      const maxT = window.innerHeight - 80;
+      player.style.left = Math.max(0, Math.min(maxL, salvo.left)) + 'px';
+      player.style.top  = Math.max(0, Math.min(maxT, salvo.top)) + 'px';
+      player.style.right = 'auto';
+      player.style.bottom = 'auto';
+    }
+  } catch(e) {}
+})();
+
+function iniciarArraste(e) {
+  if (e.target !== handle && !handle.contains(e.target)) return;
+  arrastando = true;
+  moveu = false;
+  player.classList.add('arrastando');
+  const rect = player.getBoundingClientRect();
+  startLeft = rect.left;
+  startTop = rect.top;
+  const ponto = e.touches ? e.touches[0] : e;
+  startX = ponto.clientX;
+  startY = ponto.clientY;
+  player.style.left = startLeft + 'px';
+  player.style.top = startTop + 'px';
+  player.style.right = 'auto';
+  player.style.bottom = 'auto';
+  e.preventDefault();
+}
+
+function moverArraste(e) {
+  if (!arrastando) return;
+  const ponto = e.touches ? e.touches[0] : e;
+  const dx = ponto.clientX - startX;
+  const dy = ponto.clientY - startY;
+  if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moveu = true;
+  const novoLeft = Math.max(8, Math.min(window.innerWidth - player.offsetWidth - 8, startLeft + dx));
+  const novoTop  = Math.max(8, Math.min(window.innerHeight - player.offsetHeight - 8, startTop + dy));
+  player.style.left = novoLeft + 'px';
+  player.style.top  = novoTop + 'px';
+}
+
+function soltarArraste(e) {
+  if (!arrastando) return;
+  arrastando = false;
+  player.classList.remove('arrastando');
+  const rect = player.getBoundingClientRect();
+  const centroX = rect.left + rect.width / 2;
+  const meio = window.innerWidth / 2;
+  const destinoX = centroX < meio ? 12 : window.innerWidth - rect.width - 12;
+  player.style.transition = 'left .25s cubic-bezier(.2,.8,.3,1)';
+  player.style.left = destinoX + 'px';
+  setTimeout(() => { player.style.transition = ''; }, 300);
+  try {
+    localStorage.setItem('playerPos', JSON.stringify({
+      left: destinoX, top: parseInt(player.style.top)
+    }));
+  } catch(e) {}
+  if (e && e.preventDefault) e.preventDefault();
+}
+
+handle.addEventListener('mousedown', iniciarArraste);
+document.addEventListener('mousemove', moverArraste);
+document.addEventListener('mouseup', soltarArraste);
+handle.addEventListener('touchstart', iniciarArraste, { passive: false });
+document.addEventListener('touchmove', moverArraste, { passive: false });
+document.addEventListener('touchend', soltarArraste);
+
+let toquesHandle = [];
+handle.addEventListener('touchend', () => {
+  if (moveu) return;
+  const agora = Date.now();
+  toquesHandle.push(agora);
+  toquesHandle = toquesHandle.filter(t => agora - t < 600);
+
+  if (toquesHandle.length === 3) {
+    document.getElementById('debugPanel').classList.toggle('ativo');
+    atualizarDebug();
+    toquesHandle = [];
+  } else if (toquesHandle.length === 2) {
+    setTimeout(() => {
+      if (toquesHandle.length === 2) {
+        player.classList.toggle('minimizado');
+        toquesHandle = [];
+      }
+    }, 620);
+  }
+});
+
+/* =====================================================
+   DEBUG
+   ===================================================== */
+function atualizarDebug() {
+  const el = document.getElementById('debugElenco');
+  if (!elenco) { el.textContent = 'Elenco não montado.'; return; }
+
+  const linhas = Object.entries(elenco).map(([papel, voz]) => {
+    const ativo = AULA[indiceAtual] && AULA[indiceAtual].papel === papel ? ' ativa' : '';
+    const perfil = PERFIS[papel];
+    const pitchTxt = perfil ? perfil.pitch.toFixed(2) : '—';
+    const rateTxt  = perfil ? perfil.rate.toFixed(2)  : '—';
+    return `<div class="linha${ativo}">
+      <span>${papel}</span>
+      <span class="voz">${voz.name} · pitch ${pitchTxt} · rate ${rateTxt}</span>
+    </div>`;
+  }).join('');
+
+  const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
+
+  let aviso = '';
+  if (modoIOS) {
+    aviso = `<div class="aviso">📱 Modo iOS: mesma voz base · diferenciação por pitch/rate. O Safari expõe apenas ${todasAsVozes.length} voz(es).</div>`;
+  } else if (unicas < 3) {
+    aviso = `<div class="aviso">⚠️ Só ${unicas} vozes distintas. Instale mais em Ajustes → Acessibilidade → Conteúdo Falado → Vozes.</div>`;
+  }
+
+  el.innerHTML = linhas + `<div style="margin-top:8px;color:#94a3b8">
+    Vozes únicas: ${unicas} · pt-BR disponíveis: ${vozesPtBR().length}<br>
+    Total exposto pelo navegador: ${todasAsVozes.length}<br>
+    Modo: ${modoIOS ? 'iOS (pitch/rate)' : 'Desktop (vozes distintas)'}
+  </div>` + aviso;
+}
+
+function fecharDebug() {
+  document.getElementById('debugPanel').classList.remove('ativo');
+}
+
+/* =====================================================
+   ELENCO
+   ===================================================== */
+function distribuirElenco(vozes) {
+  if (vozes.length === 0) return null;
+
+  // Se só há 1 voz, todos usam ela — modoIOS liga
+  if (vozes.length === 1) {
+    modoIOS = true;
+    const e = { professor: vozes[0] };
+    PAPEIS_ALUNO.forEach(p => { e[p] = vozes[0]; });
+    return e;
+  }
+
+  // iOS com poucas vozes: usa a melhor disponível para todos
+  if (isIOS && vozes.length < 3) {
+    modoIOS = true;
+    const melhor = vozes.find(v => /felipe|luciana/i.test(v.name)) || vozes[0];
+    const e = { professor: melhor };
+    PAPEIS_ALUNO.forEach(p => { e[p] = melhor; });
+    return e;
+  }
+
+  // Desktop ou iOS com 3+ vozes: distribui normalmente
+  modoIOS = false;
+  const normais = vozes.filter(v => !/siri/i.test(v.name));
+  const siris   = vozes.filter(v => /siri/i.test(v.name));
+  const ordenadas = [...normais, ...siris];
+
+  let professor = ordenadas.find(v => /felipe/i.test(v.name))
+              || ordenadas.find(v => !/siri/i.test(v.name))
+              || ordenadas[0];
+
+  const restantes = ordenadas.filter(v => v !== professor);
+  const e = { professor };
+  PAPEIS_ALUNO.forEach((papel, i) => {
+    e[papel] = restantes[i % restantes.length] || professor;
+  });
+  return e;
+}
+
+/* =====================================================
+   PRÉ-AQUECIMENTO
+   ===================================================== */
+let preAquecido = false;
+function preAquecerVozes() {
+  if (preAquecido) return;
+  preAquecido = true;
+  if (!elenco) return;
+  const vozesUnicas = [...new Set(Object.values(elenco))];
+  vozesUnicas.forEach((voz, i) => {
+    setTimeout(() => {
+      try {
+        const u = new SpeechSynthesisUtterance(' ');
+        u.voice = voz;
+        u.volume = 0.01;
+        u.rate = 2.0;
+        synth.speak(u);
+      } catch(e) {}
+    }, i * 100);
+  });
+}
+
+/* =====================================================
+   INIT
+   ===================================================== */
+setStatus('Carregando vozes…');
+
+carregarVozes(() => {
+  const ptBR = vozesPtBR();
+  if (ptBR.length === 0) {
+    setStatus('Sem vozes pt-BR');
+    mostrarBadge('⚠️ Nenhuma voz pt-BR');
+    if (todasAsVozes.length > 0) {
+      elenco = distribuirElenco(todasAsVozes);
+      setStatus(`${todasAsVozes.length} vozes (não pt-BR)`);
+    } else {
+      setStatus('Nenhuma voz disponível');
+    }
+    atualizarBotoesNavegacao();
+    return;
+  }
+
+  elenco = distribuirElenco(ptBR);
+  const unicas = new Set(Object.values(elenco).map(v => v.name)).size;
+
+  if (modoIOS) {
+    setStatus(`📱 iOS · pitch/rate variados`);
+  } else {
+    setStatus(`${unicas} vozes pt-BR · toque ▶`);
+  }
+
+  atualizarBotoesNavegacao();
+  atualizarDebug();
+});
+
+document.addEventListener('touchstart', preAquecerVozes, { once: true, passive: true });
+document.addEventListener('mousedown', preAquecerVozes, { once: true });
 </script>
 </body>
 </html>
