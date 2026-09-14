@@ -1025,12 +1025,46 @@
   <script>
     'use strict';
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isIOS = (() => {
+      const ua = navigator.userAgent || '';
+      if (/iPad|iPhone|iPod/.test(ua)) return true;
+      if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) return true;
+      return false;
+    })();
     const synth = window.speechSynthesis || null;
     const $ = id => document.getElementById(id);
     const esc = s => String(s).replace(/[&<>"']/g, c =>
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    /* ══════════ NORMALIZAÇÃO PARA FALA ══════════ */
+    function normalizarParaFala(texto) {
+      return String(texto)
+        .replace(/\s*[—–]\s*/g, ', ')
+        .replace(/\s*\/\s*/g, ' ou ')
+        .replace(/\s*\(\s*/g, ', ')
+        .replace(/\s*\)\s*/g, ', ')
+        .replace(/[“”‘’"']/g, '')
+        .replace(/\s*\[\s*/g, ', ')
+        .replace(/\s*\]\s*/g, ', ')
+        .replace(/\.{3,}/g, ', ')
+        .replace(/,\s*,+/g, ', ')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+    }
+
+    /* ══════════ DESBLOQUEIO DE ÁUDIO (iOS) ══════════ */
+    function desbloquearIOS() {
+      if (!synth || iosDesbloqueado) return;
+      try {
+        synth.cancel();
+        const utterance = new SpeechSynthesisUtterance('');
+        utterance.volume = 0;
+        synth.speak(utterance);
+        iosDesbloqueado = true;
+      } catch (e) {
+        console.warn('Falha ao desbloquear áudio no iOS:', e);
+      }
+    }
 
     /* ══════════ PREFS ══════════ */
     const FONTES = [0.80, 0.88, 0.95, 1.02, 1.10, 1.20, 1.30, 1.45];
@@ -1059,6 +1093,7 @@
       $('temaSwitch').classList.toggle('ativo', prefTema === 'claro');
     }
     function alternarTema() {
+      desbloquearIOS();
       prefTema = prefTema === 'claro' ? 'escuro' : 'claro';
       salvarPrefs(); aplicarTema();
     }
@@ -1081,6 +1116,7 @@
       $('btnFonteMais').disabled = i >= FONTES.length - 1;
     }
     function ajustarFonte(dir) {
+      desbloquearIOS();
       const i = indiceFonte();
       const novo = Math.max(0, Math.min(FONTES.length - 1, i + dir));
       if (novo === i) return;
@@ -1100,6 +1136,7 @@
 
     /* ══════════ MENU ══════════ */
     function abrirMenu() {
+      desbloquearIOS();
       $('drawer').classList.add('ativo');
       $('overlay').classList.add('ativo');
       $('btnMenu').setAttribute('aria-expanded', 'true');
@@ -1120,24 +1157,24 @@
       let jaChamou = false;
       const fim = () => { if (!jaChamou) { jaChamou = true; cb(); } };
 
-      let v = speechSynthesis.getVoices();
+      let v = synth.getVoices();
       if (v.length) { todasAsVozes = v; return fim(); }
 
       const handler = () => {
-        v = speechSynthesis.getVoices();
+        v = synth.getVoices();
         if (v.length) {
           todasAsVozes = v;
-          if (speechSynthesis.removeEventListener) speechSynthesis.removeEventListener('voiceschanged', handler);
+          if (synth.removeEventListener) synth.removeEventListener('voiceschanged', handler);
           fim();
         }
       };
-      if (speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', handler);
-      else speechSynthesis.onvoiceschanged = handler;
+      if (synth.addEventListener) synth.addEventListener('voiceschanged', handler);
+      else synth.onvoiceschanged = handler;
 
       let t = 0;
       const poll = () => {
         t++;
-        v = speechSynthesis.getVoices();
+        v = synth.getVoices();
         if (v.length) { todasAsVozes = v; return fim(); }
         if (t < 30) setTimeout(poll, 200);
         else fim();
@@ -1145,10 +1182,14 @@
       setTimeout(poll, 200);
     }
 
-    const vozesPtBR = () => todasAsVozes.filter(v => {
-      const l = (v.lang || '').toLowerCase().replace('_', '-');
-      return l === 'pt-br' || l.startsWith('pt-br');
-    });
+    const vozesPtBR = () => {
+      // Filtra prioritariamente por pt-BR e adiciona fallback genérico para pt se necessário
+      const lista = todasAsVozes.filter(v => {
+        const l = (v.lang || '').toLowerCase().replace('_', '-');
+        return l === 'pt-br' || l.startsWith('pt-br') || l === 'pt';
+      });
+      return lista.length ? lista : todasAsVozes; // Fallback absoluto se nenhuma pt for encontrada
+    };
 
     /* ══════════ PERFIS ══════════ */
     const PAPEIS_ALUNO = ['aluno1', 'aluno2', 'aluno3', 'aluno4', 'aluno5', 'aluno6', 'aluno7'];
@@ -1157,7 +1198,16 @@
       aluno4: '‹', aluno5: '▴', aluno6: '●', aluno7: '▾'
     };
 
-    const VOZ_BASE = {
+    const VOZ_BASE = isIOS ? {
+      professor: [0.92, 0.82, 180, 300],
+      aluno1: [1.10, 1.35, 55, 110],
+      aluno2: [0.95, 1.05, 155, 230],
+      aluno3: [1.05, 1.25, 75, 140],
+      aluno4: [0.98, 1.10, 135, 210],
+      aluno5: [1.12, 1.40, 45, 100],
+      aluno6: [1.00, 1.15, 100, 180],
+      aluno7: [0.90, 1.00, 175, 260]
+    } : {
       professor: [0.90, 0.75, 180, 300],
       aluno1: [1.22, 1.38, 55, 110],
       aluno2: [0.88, 0.96, 155, 230],
@@ -4785,7 +4835,7 @@
       }
     ];
 
-    /* ══════════ ESTADO ══════════ */
+        /* ══════════ ESTADO ══════════ */
     let tocando = false, pausado = false, cancelar = false;
     let indiceCapitulo = 0, indiceAtual = 0, velocidade = prefVelocidade;
 
@@ -5073,7 +5123,10 @@
         const fim = () => { if (!ok) { ok = true; resolve(); } };
         if (!synth) return fim();
 
-        const u = new SpeechSynthesisUtterance(texto);
+        const textoLimpo = normalizarParaFala(texto);
+        if (!textoLimpo) return fim();
+
+        const u = new SpeechSynthesisUtterance(textoLimpo);
         u.lang = (voz && voz.lang) || 'pt-BR';
         u.rate = Math.max(0.1, Math.min(2.0, rate * velocidade));
         u.pitch = Math.max(0, Math.min(2.0, pitch));
@@ -5082,7 +5135,7 @@
         u.onend = fim; u.onerror = fim;
 
         try { synth.speak(u); } catch (e) { return fim(); }
-        setTimeout(fim, Math.max(3000, texto.length * 130 / u.rate));
+        setTimeout(fim, Math.max(3000, textoLimpo.length * 130 / u.rate));
       });
     }
 
